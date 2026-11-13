@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#04060c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Arise</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-title" content="Arise">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#04060c;--panel:rgba(8,18,38,.84);--panel2:rgba(14,30,60,.7);--line:rgba(110,200,255,.42);--glow:#3aa0ff;--cyan:#7fe6ff;--txt:#dbe9ff;--dim:#8193b8;--gold:#ffd166;--red:#ff4d6d;--green:#4ef0a0;--purple:#b388ff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:'Rajdhani',system-ui,sans-serif;font-size:17px;font-weight:600}
+body{min-height:100vh;min-height:100dvh;background:radial-gradient(ellipse at 50% -10%,#0f2a5a 0%,transparent 60%),radial-gradient(ellipse at 100% 110%,#1d0c40 0%,transparent 55%),var(--bg);background-attachment:fixed;overscroll-behavior-y:none}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);z-index:1}
+button,input,select,textarea{font:inherit;color:inherit}
+#app{position:relative;z-index:2;max-width:520px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 96px)}
+.h{font-family:'Chakra Petch',sans-serif;letter-spacing:.1em;text-transform:uppercase}
+.win{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;margin:12px 0;box-shadow:0 0 18px rgba(58,160,255,.16),inset 0 0 26px rgba(58,160,255,.07)}
+.win::before,.win::after{content:'';position:absolute;width:12px;height:12px;border:2px solid var(--cyan);pointer-events:none;filter:drop-shadow(0 0 4px var(--cyan))}
+.win::before{top:-2px;left:-2px;border-right:0;border-bottom:0}
+.win::after{bottom:-2px;right:-2px;border-left:0;border-top:0}
+.wt{font-family:'Chakra Petch';font-size:12.5px;letter-spacing:.24em;color:var(--cyan);text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-bottom:10px;text-shadow:0 0 8px rgba(127,230,255,.6)}
+.wt::before{content:'◆';font-size:10px}
+.wt .sp{flex:1}
+.dim{color:var(--dim)}
+.small{font-size:14px}
+.tiny{font-size:12.5px}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.grow{flex:1;min-width:0}
+.btn{appearance:none;border:1px solid var(--line);background:linear-gradient(180deg,rgba(40,90,170,.35),rgba(10,30,70,.5));color:var(--txt);border-radius:5px;padding:10px 14px;font-family:'Chakra Petch';font-size:14px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;box-shadow:0 0 10px rgba(58,160,255,.15);transition:transform .08s,box-shadow .2s}
+.btn:active{transform:scale(.97)}
+.btn.pri{border-color:var(--cyan);background:linear-gradient(180deg,rgba(60,160,255,.55),rgba(20,70,160,.6));box-shadow:0 0 16px rgba(127,230,255,.35)}
+.btn.gold{border-color:var(--gold);color:#fff3cc;background:linear-gradient(180deg,rgba(255,190,60,.4),rgba(120,70,0,.45));box-shadow:0 0 18px rgba(255,209,102,.35)}
+.btn.red{border-color:rgba(255,77,109,.7);background:linear-gradient(180deg,rgba(255,77,109,.3),rgba(90,10,30,.45))}
+.btn.ghost{background:transparent;box-shadow:none}
+.btn.sm{padding:6px 10px;font-size:12px}
+.btn.block{display:block;width:100%}
+.btn:disabled{opacity:.4}
+.ico{width:38px;height:38px;padding:0;display:inline-grid;place-items:center;font-size:18px}
+input.f,select.f,textarea.f{width:100%;background:rgba(0,10,30,.6);border:1px solid rgba(110,200,255,.3);border-radius:4px;padding:9px 10px;color:var(--txt);outline:none}
+input.f:focus,select.f:focus,textarea.f:focus{border-color:var(--cyan);box-shadow:0 0 8px rgba(127,230,255,.35)}
+label.l{display:block;font-size:13px;color:var(--dim);margin:10px 0 4px;letter-spacing:.06em;text-transform:uppercase}
+.bar{height:10px;background:rgba(0,10,30,.8);border:1px solid rgba(110,200,255,.3);border-radius:3px;overflow:hidden}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,#1f6fff,var(--cyan));box-shadow:0 0 10px var(--cyan);transition:width .5s}
+.bar.hp>i{background:linear-gradient(90deg,#ff2d55,#ff8a5c);box-shadow:0 0 10px #ff4d6d}
+.bar.gold>i{background:linear-gradient(90deg,#ff9f1c,var(--gold));box-shadow:0 0 10px var(--gold)}
+.rank{display:inline-grid;place-items:center;min-width:30px;height:30px;padding:0 6px;border:1.5px solid currentColor;border-radius:4px;font-family:'Chakra Petch';font-weight:700;font-size:16px;text-shadow:0 0 8px currentColor;box-shadow:0 0 8px currentColor inset}
+.rE{color:#a9b4c8}.rD{color:#4ef0a0}.rC{color:#4fb8ff}.rB{color:#b388ff}.rA{color:#ffd166}.rS{color:#ff4d6d}
+.big{font-family:'Chakra Petch';font-size:44px;font-weight:700;line-height:1;text-shadow:0 0 14px rgba(127,230,255,.6)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{background:var(--panel2);border:1px solid rgba(110,200,255,.22);border-radius:4px;padding:8px 10px}
+.stat b{font-family:'Chakra Petch';font-size:22px;color:#fff}
+.stat .k{font-family:'Chakra Petch';letter-spacing:.15em;font-size:12px;color:var(--cyan)}
+.pill{display:inline-block;padding:2px 8px;border:1px solid rgba(110,200,255,.35);border-radius:20px;font-size:12.5px;color:var(--dim)}
+.list>*+*{border-top:1px solid rgba(110,200,255,.14)}
+.item{padding:10px 0}
+.tabs{position:fixed;z-index:20;left:0;right:0;bottom:0;padding:8px 10px calc(env(safe-area-inset-bottom) + 8px);background:linear-gradient(180deg,rgba(4,6,12,.4),rgba(4,6,12,.96) 35%);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.tabs .in{max-width:440px;margin:0 auto;padding:0 18px;display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.tab{background:transparent;border:1px solid transparent;border-radius:6px;padding:6px 0 4px;color:var(--dim);font-family:'Chakra Petch';font-size:10px;letter-spacing:.06em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+.tab svg{width:24px;height:24px}
+.tab.on{color:var(--cyan);border-color:rgba(127,230,255,.35);background:rgba(30,90,180,.18);text-shadow:0 0 8px var(--cyan)}
+.tab.on svg{filter:drop-shadow(0 0 5px var(--cyan))}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin:2px 0 4px}
+.logo{font-family:'Chakra Petch';font-weight:700;letter-spacing:.42em;font-size:19px;color:var(--cyan);text-shadow:0 0 10px var(--cyan)}
+.sync{font-size:11.5px;letter-spacing:.08em;color:var(--dim);display:flex;align-items:center;gap:6px}
+.sync i{width:7px;height:7px;border-radius:50%;background:var(--dim)}
+.sync.ok i{background:var(--green);box-shadow:0 0 6px var(--green)}
+.sync.busy i{background:var(--gold);box-shadow:0 0 6px var(--gold)}
+.sync.err i{background:var(--red)}
+.gate{position:relative;overflow:hidden}
+.portal{position:absolute;right:-34px;top:-34px;width:120px;height:120px;border-radius:50%;opacity:.3;pointer-events:none;border:2px dashed currentColor;box-shadow:0 0 28px currentColor,inset 0 0 28px currentColor;animation:spin 14s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.qrow{display:flex;align-items:center;gap:8px;padding:9px 0}
+.qrow .nm{flex:1;min-width:0}
+.qrow .cnt{font-family:'Chakra Petch';font-size:15px;min-width:86px;text-align:right}
+.qrow.done .nm,.qrow.done .cnt{color:var(--green);text-shadow:0 0 8px rgba(78,240,160,.5)}
+.warn{color:var(--red);font-size:14px;text-align:center;margin-top:10px;text-shadow:0 0 8px rgba(255,77,109,.5)}
+/* overlays */
+.ov{position:fixed;inset:0;z-index:40;background:rgba(2,4,10,.72);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center;animation:fade .18s}
+.sheet{width:100%;max-width:520px;max-height:92vh;max-height:92dvh;overflow:auto;background:#060d1c;border:1px solid var(--line);border-bottom:0;border-radius:12px 12px 0 0;padding:16px 16px calc(env(safe-area-inset-bottom) + 20px);box-shadow:0 -10px 40px rgba(58,160,255,.2);animation:up .22s ease-out}
+.ov.center{align-items:center;padding:20px}
+.ov.center .sheet{border-radius:8px;border-bottom:1px solid var(--line);max-height:86vh;padding-bottom:18px}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+@keyframes fade{from{opacity:0}}
+#raid{position:fixed;inset:0;z-index:30;overflow:auto;background:radial-gradient(ellipse at 50% -20%,#3a0b1e 0%,transparent 55%),radial-gradient(ellipse at 50% 120%,#0b1e44 0%,transparent 60%),#04060c;padding:calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 120px)}
+#raid .wrap{max-width:520px;margin:0 auto}
+.setrow{display:grid;grid-template-columns:30px 1fr 18px 1fr 44px;gap:6px;align-items:center;padding:5px 0}
+.setrow.t{grid-template-columns:30px 1fr 44px}
+.setrow input{text-align:center;font-family:'Chakra Petch';font-size:17px;padding:8px 4px}
+.setrow .n{font-family:'Chakra Petch';color:var(--dim);text-align:center}
+.chk{width:44px;height:40px;border:1px solid var(--line);border-radius:5px;background:rgba(0,10,30,.6);display:grid;place-items:center;font-size:20px;color:transparent;cursor:pointer}
+.setrow.done .chk{background:rgba(78,240,160,.2);border-color:var(--green);color:var(--green);box-shadow:0 0 10px rgba(78,240,160,.4)}
+.setrow.done input{border-color:rgba(78,240,160,.45);color:#c9ffe6}
+.mon{font-family:'Chakra Petch';font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#ff8aa0}
+.mon.boss{color:var(--gold);text-shadow:0 0 8px var(--gold)}
+.slain{opacity:.62}
+.slain .mon::after{content:' — SLAIN';color:var(--green)}
+.rest{position:fixed;z-index:35;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 76px);width:calc(100% - 28px);max-width:492px;background:#081530;border:1px solid var(--cyan);border-radius:8px;padding:10px 12px;box-shadow:0 0 22px rgba(127,230,255,.35);display:none}
+.rest.on{display:block;animation:up .2s}
+.rest .t{font-family:'Chakra Petch';font-size:26px;font-weight:700;min-width:70px}
+.raidfoot{position:fixed;z-index:34;left:0;right:0;bottom:0;padding:10px 14px calc(env(safe-area-inset-bottom) + 10px);background:linear-gradient(180deg,transparent,rgba(4,6,12,.97) 30%)}
+.raidfoot .in{max-width:520px;margin:0 auto;display:flex;gap:8px}
+#toasts{position:fixed;z-index:60;left:0;right:0;top:calc(env(safe-area-inset-top) + 10px);display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;padding:0 14px}
+.toast{max-width:480px;width:100%;background:rgba(6,16,36,.96);border:1px solid var(--cyan);border-radius:6px;padding:10px 14px;box-shadow:0 0 22px rgba(127,230,255,.35);animation:drop .3s ease-out;font-size:15.5px}
+.toast b{color:var(--cyan)}
+.toast.gold{border-color:var(--gold);box-shadow:0 0 22px rgba(255,209,102,.35)}
+.toast.gold b{color:var(--gold)}
+.toast.red{border-color:var(--red);box-shadow:0 0 22px rgba(255,77,109,.35)}
+.toast.red b{color:var(--red)}
+@keyframes drop{from{transform:translateY(-20px);opacity:0}}
+.sys{text-align:center}
+.sys .h1{font-family:'Chakra Petch';font-weight:700;font-size:26px;letter-spacing:.14em;color:#fff;text-shadow:0 0 16px var(--cyan)}
+.sys.gold .h1{text-shadow:0 0 16px var(--gold);color:#fff6d8}
+.lvlup{font-family:'Chakra Petch';font-weight:700;font-size:40px;letter-spacing:.12em;color:var(--gold);text-shadow:0 0 20px var(--gold);animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{text-shadow:0 0 34px var(--gold),0 0 6px #fff}}
+.cls{display:grid;gap:8px}
+.clsc{border:1px solid rgba(110,200,255,.3);border-radius:6px;padding:10px 12px;background:var(--panel2);cursor:pointer;text-align:left}
+.clsc.on{border-color:var(--cyan);box-shadow:0 0 14px rgba(127,230,255,.35)}
+.seg{display:flex;border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.seg button{flex:1;background:transparent;border:0;padding:8px;cursor:pointer;color:var(--dim);font-family:'Chakra Petch';letter-spacing:.1em}
+.seg button.on{background:rgba(60,160,255,.35);color:#fff}
+.title{display:flex;align-items:center;gap:10px;padding:9px 0}
+.title .tic{width:34px;height:34px;border-radius:5px;display:grid;place-items:center;border:1px solid rgba(110,200,255,.3);font-size:17px;flex:none}
+.title.locked{opacity:.6}
+.title.eq .tic{border-color:var(--gold);box-shadow:0 0 10px rgba(255,209,102,.5)}
+.pick{padding:10px 2px;cursor:pointer;display:flex;align-items:center;gap:8px}
+.statdot{font-family:'Chakra Petch';font-size:11px;letter-spacing:.1em;padding:1px 6px;border-radius:3px;border:1px solid currentColor}
+.sSTR{color:#ff8a5c}.sVIT{color:#4ef0a0}.sAGI{color:#7fe6ff}.sEND{color:#b388ff}
+.chart text{fill:var(--dim);font-size:10px;font-family:'Chakra Petch'}
+.empty{text-align:center;color:var(--dim);padding:18px 6px}
+.flash{position:fixed;inset:0;z-index:55;pointer-events:none;background:radial-gradient(circle,rgba(127,230,255,.35),transparent 70%);animation:fl .7s forwards}
+@keyframes fl{to{opacity:0}}
+.mono{font-family:'Chakra Petch'}
+details summary{cursor:pointer;list-style:none}
+details summary::-webkit-details-summary{display:none}
+.hide{display:none!important}
+.authov{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% -10%,#0f2a5a 0%,transparent 60%),#04060c}
+.authov.hide{display:none}.authbox{width:100%;max-width:420px}
+.lbrow.me{background:rgba(127,230,255,.07);border-radius:5px}.lbpos{width:30px;text-align:center;font-family:'Chakra Petch';font-size:18px}
+.portalspin{width:90px;height:120px;margin:0 auto;border-radius:50%;border:3px dashed var(--cyan);box-shadow:0 0 24px rgba(127,230,255,.5),inset 0 0 24px rgba(127,230,255,.4);animation:spin 3s linear infinite}
+.sync{cursor:pointer}
+.manual ul{margin:6px 0;padding-left:18px}.manual li{margin:4px 0}.manual p{margin:6px 0}.manual b{color:var(--cyan)}.manual details[open] summary .tiny{transform:rotate(180deg)}
+/* Fit to the visible screen when shown inside the Claude app */
+html.embed,html.embed body{height:var(--avail);overflow:hidden}
+html.embed #app{height:var(--avail);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+html.embed .tabs{bottom:auto;top:calc(var(--avail) - var(--tabh,74px))}
+html.embed .tabs{padding-bottom:calc(env(safe-area-inset-bottom) + 22px)}
+html.embed .raidfoot{padding-bottom:calc(env(safe-area-inset-bottom) + 22px)}
+html.embed #app{padding-bottom:120px}
+html.embed #raid{bottom:auto;height:var(--avail)}
+html.embed .raidfoot{bottom:auto;top:calc(var(--avail) - var(--rfh,64px))}
+html.embed .rest,html.embed #circ{bottom:auto;top:calc(var(--avail) - var(--rfh,64px) - 10px);transform:translate(-50%,-100%);animation:none}
+html.embed .ov{bottom:auto;height:var(--avail)}
+html.embed .sheet{max-height:calc(var(--avail) * .92)}
+html.embed .ov.center .sheet{max-height:calc(var(--avail) * .86)}
+html.embed body::after{height:var(--avail)}
+
+.sscard{border-color:rgba(179,136,255,.5)}.sscard::before,.sscard::after{border-color:var(--purple)}
+.ssmember{padding:8px 0;border-bottom:1px dashed rgba(179,136,255,.25)}.ssmember:last-of-type{border-bottom:0}
+.sslbl{display:inline-block;font-family:'Chakra Petch';font-size:12px;color:var(--purple);border:1px solid var(--purple);border-radius:3px;padding:0 4px;letter-spacing:.04em}
+.setrow .n.sslbl{border:0;padding:0;font-size:13px}
+.ssround{margin-top:8px;padding:6px 8px;border-left:2px solid rgba(179,136,255,.5);border-radius:3px;background:rgba(179,136,255,.05)}.ssround.rdone{border-left-color:var(--green);opacity:.75}
+.setrow{grid-template-columns:26px 1fr 12px 60px 44px!important}.setrow.t{grid-template-columns:26px 1fr 44px!important}
+.wgrp{display:flex;align-items:stretch;gap:3px;min-width:0}.wgrp input{flex:1;min-width:0}.stp{width:30px;flex:none;background:rgba(40,90,170,.3);border:1px solid rgba(110,200,255,.3);border-radius:4px;color:var(--cyan);font-size:18px;cursor:pointer;padding:0}
+.setrow.live{background:rgba(179,136,255,.14);border-radius:5px;box-shadow:0 0 12px rgba(179,136,255,.35)}
+.sug{display:flex;align-items:center;gap:6px;margin-top:6px;padding:6px 8px;border:1px solid rgba(255,209,102,.6);border-radius:4px;background:rgba(255,209,102,.08);font-size:13.5px;color:#ffe6a6}
+.circbox{border-color:rgba(179,136,255,.55)}.circbox::before,.circbox::after{border-color:var(--purple)}
+#circ{position:fixed;z-index:36;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 76px);width:calc(100% - 28px);max-width:492px;background:#120a26;border:1px solid var(--purple);border-radius:10px;padding:12px 14px;box-shadow:0 0 26px rgba(179,136,255,.45);display:none}
+#circ.on{display:block;animation:up .2s}#circ .ct{font-family:'Chakra Petch';font-size:54px;font-weight:700;line-height:1;min-width:84px;text-align:center;text-shadow:0 0 16px var(--purple)}
+.sstag{display:inline-block;margin-left:4px;padding:0 6px;border:1px solid var(--purple);border-radius:3px;color:var(--purple);letter-spacing:.06em;text-transform:none;font-size:11px}
+.acts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.actb{background:var(--panel2);border:1px solid rgba(110,200,255,.2);border-radius:5px;padding:7px 2px;cursor:pointer;color:var(--txt);min-height:62px}.actb.on{border-color:var(--green);box-shadow:0 0 10px rgba(78,240,160,.45);background:rgba(78,240,160,.12)}
+.btn.green{border-color:var(--green);background:linear-gradient(180deg,rgba(78,240,160,.28),rgba(10,70,50,.45));box-shadow:0 0 12px rgba(78,240,160,.25)}
+.pips{display:flex;gap:6px;margin:12px 0 4px}.pip{flex:1;height:10px;border:1px solid var(--zc);border-radius:2px;overflow:hidden;background:rgba(0,0,0,.4)}.pip i{display:block;height:100%;background:var(--zc);box-shadow:0 0 8px var(--zc)}
+.floors{margin-top:12px;border-left:2px solid rgba(255,255,255,.08);padding-left:8px}
+.fl{display:flex;gap:10px;align-items:center;padding:6px 8px;margin:3px 0;border-radius:4px;border-left:3px solid var(--zc);background:rgba(255,255,255,.02);font-size:14.5px;color:var(--dim)}
+.fl .fn{min-width:28px;color:var(--zc)}.fl.cur{background:rgba(127,230,255,.1);color:#fff;box-shadow:0 0 12px rgba(127,230,255,.2)}.fl.done{opacity:.5}.fl.bossf{color:#ff8aa0}.fl.bossf.done{color:var(--green)}
+.callout{margin-top:10px;padding:10px;border:1px solid rgba(127,230,255,.35);border-radius:5px;background:rgba(30,90,180,.15);font-size:14.5px}.callout.red{border-color:rgba(255,77,109,.6);background:rgba(255,77,109,.1);color:#ffc2cd}
+.bicon{font-size:56px;line-height:1.1;margin:6px 0;filter:drop-shadow(0 0 16px rgba(255,77,109,.7));display:flex;justify-content:center}
+.boss-in{animation:shake .5s}@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.bmini{width:42px;height:42px;display:grid;place-items:center;font-size:26px;flex:none}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.slotb{background:var(--panel2);border:1px solid rgba(110,200,255,.2);border-radius:5px;padding:8px 4px;text-align:center;min-height:74px;cursor:pointer}
+.comps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.comp{background:var(--panel2);border:1px solid rgba(110,200,255,.2);border-radius:5px;padding:6px 2px;cursor:pointer;color:var(--txt)}.comp.on{border-color:var(--gold);box-shadow:0 0 10px rgba(255,209,102,.4)}
+.weak{margin-top:6px;padding:6px 8px;border:1px dashed rgba(255,77,109,.7);border-radius:4px;font-size:13.5px;color:#ffc2cd;background:rgba(255,77,109,.08)}
+.tower .wt::before{color:var(--zc)}
+#sbx{position:fixed;z-index:58;top:0;left:0;right:0;padding:calc(env(safe-area-inset-top) + 6px) 12px 6px;background:repeating-linear-gradient(45deg,#5a3c00 0 12px,#3d2900 12px 24px);border-bottom:1px solid var(--gold);display:none;align-items:center;gap:10px;font-family:'Chakra Petch';font-size:12.5px;letter-spacing:.1em;color:#ffe9a8}
+body.sbx #sbx{display:flex}
+body.sbx #app,body.sbx #raid{padding-top:calc(env(safe-area-inset-top) + 50px)}
+body.sbx #toasts{top:calc(env(safe-area-inset-top) + 48px)}
+.strip{display:flex;gap:6px;overflow-x:auto;padding:2px 0 6px;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.day{flex:none;width:62px;border:1px solid rgba(110,200,255,.25);border-radius:5px;padding:6px 4px;text-align:center;background:var(--panel2)}
+.day .dw{font-family:'Chakra Petch';font-size:11px;letter-spacing:.12em;color:var(--dim)}
+.day .dn{font-family:'Chakra Petch';font-size:17px;color:#fff}
+.day .dg{font-size:11.5px;line-height:1.15;margin-top:3px;height:28px;overflow:hidden}
+.day.today{border-color:var(--cyan);box-shadow:0 0 12px rgba(127,230,255,.4)}
+.day.rest .dg{color:var(--dim)}
+.day .st{font-size:13px;height:16px}
+.slot{display:grid;grid-template-columns:58px 1fr;gap:8px;align-items:center;padding:5px 0}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav class="tabs hide" id="tabs"><div class="in">
+  <button class="tab" data-a="tab" data-t="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Status</button>
+  <button class="tab" data-a="tab" data-t="quest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h4"/></svg>Quest</button>
+  <button class="tab" data-a="tab" data-t="gates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="6" ry="9"/><ellipse cx="12" cy="12" rx="2.5" ry="5"/></svg>Gates</button>
+  <button class="tab" data-a="tab" data-t="tower"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 21V8l5-5 5 5v13zM4 21h16M10 21v-4h4v4M10 11h4M10 14h4"/></svg>Tower</button>
+  <button class="tab" data-a="tab" data-t="chron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Chronicle</button>
+</div></nav>
+<div id="raid" class="hide"></div>
+<div class="rest" id="rest"><div class="row">
+  <div class="grow"><div class="tiny dim h">Recovering</div><div class="t" id="restT">1:30</div></div>
+  <button class="btn sm" data-a="rest" data-d="-15">−15</button>
+  <button class="btn sm" data-a="rest" data-d="15">+15</button>
+  <button class="btn sm pri" data-a="restskip">Skip</button>
+</div><div class="bar gold" style="margin-top:8px"><i id="restB" style="width:100%"></i></div></div>
+<div id="circ"><div class="row"><div class="ct" id="circT">30</div><div class="grow"><div class="tiny h" id="circPh">Go</div><div class="h" style="color:#fff;font-size:18px" id="circName">—</div><div class="tiny dim" id="circNext"></div></div></div>
+ <div class="bar" style="margin:8px 0;height:6px"><i id="circB" style="width:100%;background:linear-gradient(90deg,#7c4dff,#b388ff);box-shadow:0 0 8px #b388ff"></i></div>
+ <div class="row"><button class="btn sm grow" data-a="circ-stop">Stop</button><button class="btn sm grow" data-a="circ-skip">Skip move</button><button class="btn sm pri grow" data-a="circ-pause" id="circPause">Pause</button></div></div>
+<div id="sbx"><span class="grow">⚠ TEST MODE · not saved</span><button class="btn sm gold" data-a="sbx-exit">Exit test mode</button></div>
+<div id="toasts"></div>
+<div id="authOv" class="authov hide"><div class="authbox win">
+  <div class="sys"><div class="portalspin" style="width:70px;height:92px"></div><div class="h1" style="margin-top:14px;letter-spacing:.3em">ARISE</div><div class="small dim" style="margin:4px 0 14px">Sign in to sync your hunter and join the guild leaderboard.</div></div>
+  <button class="btn pri block" id="authGoogle">Continue with Google</button>
+  <div class="tiny dim" style="text-align:center;margin:12px 0 6px">or use email</div>
+  <input class="f" id="authEmail" type="email" autocomplete="email" placeholder="Email">
+  <input class="f" id="authPass" type="password" autocomplete="current-password" placeholder="Password (6+ characters)" style="margin-top:8px">
+  <div class="row" style="margin-top:10px"><button class="btn grow" id="authIn">Sign in</button><button class="btn grow" id="authUp">Create account</button></div>
+  <button class="btn ghost sm block" style="margin-top:6px" id="authReset">Forgot password</button>
+  <div class="small" id="authMsg" style="margin-top:8px;text-align:center"></div>
+</div></div>
+<script src="config.js"></script>
+<script>window.__cloudReady=new Promise(function(r){window.__resolveCloud=r});window.claude={use:function(n){return window.__cloudReady.then(function(api){return api.use(n)})}};</script>
+
+<script>
+'use strict';
+/* ---- fit layout to the visible screen (Claude app shows pages taller than the screen) ---- */
+function fitScreen(){const root=document.documentElement;
+  const framed=(()=>{try{return window.self!==window.top}catch(e){return true}})();
+  const standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone;
+  const sh=(window.screen&&screen.height)||window.innerHeight;const ih=window.innerHeight;
+  const tall=!standalone&&ih>=sh-60;
+  if(!framed&&!tall){root.classList.remove('embed');return}
+  const avail=Math.max(320,Math.min(ih,sh-98));
+  root.style.setProperty('--avail',avail+'px');root.classList.add('embed');
+  const tb=document.getElementById('tabs');if(tb&&tb.offsetHeight)root.style.setProperty('--tabh',tb.offsetHeight+'px');
+  const rf=document.querySelector('.raidfoot');if(rf&&rf.offsetHeight)root.style.setProperty('--rfh',rf.offsetHeight+'px')}
+window.addEventListener('resize',fitScreen);window.addEventListener('orientationchange',()=>setTimeout(fitScreen,300));
+fitScreen();
+
+/* ================= DATA ================= */
+const EX_LIST=[
+['bench','Bench Press','STR','w'],['incdb','Incline DB Press','STR','w'],['ohp','Overhead Press','STR','w'],['dbsp','DB Shoulder Press','STR','w'],['lateral','Lateral Raise','STR','w'],['fly','Cable Fly','STR','w'],['dip','Dips','STR','bw'],['pushup','Push-up','STR','bw'],['pushdown','Triceps Pushdown','STR','w'],['skull','Skull Crusher','STR','w'],
+['deadlift','Deadlift','STR','w'],['pullup','Pull-up','STR','bw'],['chinup','Chin-up','STR','bw'],['bbrow','Barbell Row','STR','w'],['dbrow','DB Row','STR','w'],['latpd','Lat Pulldown','STR','w'],['cablerow','Seated Cable Row','STR','w'],['facepull','Face Pull','STR','w'],['curl','Barbell Curl','STR','w'],['hammer','Hammer Curl','STR','w'],['shrug','Shrug','STR','w'],['pecdeck','Pec Deck Fly','STR','w'],['shpress','Shoulder Press','STR','w'],['ohtri','Overhead Triceps Extension','STR','w'],['sadbrow','Single-Arm DB Row','STR','w'],['machrow','Machine Row','STR','w'],['revfly','Reverse Cable Fly','STR','w'],['elbcurl','Elbow-Locked Barbell Curl','STR','w'],['lyingext','Barbell Lying Triceps Extension','STR','w'],['incbench','Incline Bench Press','STR','w'],['chestfly','Chest Fly','STR','w'],['bentrow','Bent-Over Row','STR','w'],['sohp','Seated Barbell Overhead Press','STR','w'],['cgbench','Close-Grip Bench Press','STR','w'],['conccurl','Concentration Curl','STR','w'],['reardelt','Rear Delt Fly','STR','w'],['ropeext','Rope Triceps Extension','STR','w'],['ohcurl','Overhand Bar Curl','STR','w'],['inccurl','Incline DB Curl','STR','w'],
+['squat','Back Squat','VIT','w'],['fsquat','Front Squat','VIT','w'],['goblet','Goblet Squat','VIT','w'],['rdl','Romanian Deadlift','VIT','w'],['legpress','Leg Press','VIT','w'],['lunge','Walking Lunge','VIT','w'],['bss','Bulgarian Split Squat','VIT','w'],['legcurl','Leg Curl','VIT','w'],['legext','Leg Extension','VIT','w'],['hipthrust','Hip Thrust','VIT','w'],['calf','Calf Raise','VIT','w'],['hipabd','Hip Abduction','VIT','w'],['hipadd','Hip Adduction','VIT','w'],['hamcurl','Seated Hamstring Curl','VIT','w'],['seatlegext','Seated Leg Extension','VIT','w'],['bwsquat','Air Squat','VIT','bw'],
+['run','Run','AGI','t'],['bike','Bike','AGI','t'],['erg','Rowing Machine','AGI','t'],['stairs','Stair Climber','AGI','t'],['walk','Incline Walk','AGI','t'],['rope','Jump Rope','AGI','t'],['burpee','Burpee','AGI','bw'],['kbswing','Kettlebell Swing','AGI','w'],['boxjump','Box Jump','AGI','bw'],
+['plank','Plank','END','t'],['situp','Sit-up','END','bw'],['hlr','Hanging Leg Raise','END','bw'],['abwheel','Ab Wheel Rollout','END','bw'],['crunch','Cable Crunch','END','w'],['russian','Russian Twist','END','t'],['flutter','Leg Flutters','END','t'],['heeltap','Heel Taps','END','t'],['legraise','Lying Leg Raise','END','t'],['bicycle','Bicycle Kicks','END','t'],['scissor','Leg Scissors','END','t'],['abcrunch','Ab Crunch','END','t'],['farmer','Farmer Carry','END','w']
+];
+const EXM={};EX_LIST.forEach(([id,name,stat,type])=>EXM[id]={id,name,stat,type});
+const STATS={STR:'Strength',VIT:'Vitality',AGI:'Agility',END:'Endurance'};
+const STAT_DESC={STR:'Upper body · push & pull',VIT:'Legs & posterior chain',AGI:'Cardio & conditioning',END:'Core & grit'};
+const CLASSES={
+ warrior:{name:'Warrior',stat:'STR',desc:'Masters of iron. Bonus +3 STR.',icon:'⚔️'},
+ juggernaut:{name:'Juggernaut',stat:'VIT',desc:'Immovable foundation. Bonus +3 VIT.',icon:'🛡️'},
+ assassin:{name:'Assassin',stat:'AGI',desc:'Swift and relentless. Bonus +3 AGI.',icon:'🗡️'},
+ monk:{name:'Monk',stat:'END',desc:'Discipline over all. Bonus +3 END.',icon:'🔥'}
+};
+const MONSTERS={STR:['Hobgoblin','Orc Brute','Ironclad Knight','Minotaur','Stone Golem'],VIT:['Cave Troll','Ogre Chieftain','Earth Giant','Bone Colossus'],AGI:['Dire Wolf','Shadow Hound','Wind Wraith','Lizardman Scout'],END:['Slime Lord','Venom Serpent','Gargoyle','Lich Acolyte']};
+const BOSSES=['Gate Warden','Ancient Wyrm','Crimson Behemoth','Abyss Lord','Hollow King','Ember Titan'];
+const RANKS=[[1,'E'],[10,'D'],[20,'C'],[35,'B'],[50,'A'],[70,'S']];
+const RANK_NAMES={E:'E-Rank',D:'D-Rank',C:'C-Rank',B:'B-Rank',A:'A-Rank',S:'S-Rank'};
+
+function defaultGates(){return[
+ {id:'g1',name:'Goblin Warren',rank:'E',lore:'A shallow cave crawling with goblins. Full-body clear for new hunters.',ex:[['goblet',3,10],['pushup',3,12],['dbrow',3,10],['dbsp',3,10],['plank',3,1]]},
+ {id:'g2',name:'Iron Fortress',rank:'D',lore:'Armored knights guard the keep. Push day.',ex:[['bench',4,8],['ohp',3,8],['incdb',3,10],['lateral',3,15],['pushdown',3,12]]},
+ {id:'g3',name:'Spider Den',rank:'D',lore:'Something pulls from the dark. Pull day.',ex:[['deadlift',3,5],['pullup',4,8],['bbrow',3,8],['facepull',3,15],['curl',3,12]]},
+ {id:'g4',name:"Titan's Stair",rank:'C',lore:'A thousand steps carved by giants. Leg day.',ex:[['squat',4,6],['rdl',3,8],['legpress',3,12],['lunge',3,10],['calf',4,15]]},
+ {id:'g5',name:'Shadow Run',rank:'E',lore:'The hounds are fast. Be faster. Conditioning.',ex:[['run',1,20],['burpee',3,10],['kbswing',3,15],['hlr',3,10]]}
+].map(g=>({...g,ex:g.ex.map(([id,sets,reps])=>({id,sets,reps}))}))}
+function defaultDaily(){return[
+ {id:'d1',name:'Push-ups',target:50,unit:'reps',stat:'STR'},
+ {id:'d2',name:'Squats',target:50,unit:'reps',stat:'VIT'},
+ {id:'d3',name:'Sit-ups',target:50,unit:'reps',stat:'END'},
+ {id:'d4',name:'Walk or run',target:20,unit:'min',stat:'AGI'}
+]}
+const CORE8=['russian','flutter','heeltap','legraise','bicycle','scissor','abcrunch','plank'].map(id=>({id,sets:1,reps:0.5}));
+const PACKS=[{id:'pack-user-split-1',gates:[
+ {id:'gx-cb',name:'Twin Fang Keep',rank:'C',lore:'Chest & Back. Supersets are paired; core finisher is 30 sec per move.',ex:[{id:'bench',sets:5,reps:12,wu:1},{id:'cablerow',sets:4,reps:12},{id:'incbench',sets:3,reps:10},{id:'latpd',sets:3,reps:12},{id:'chestfly',sets:3,reps:12,ss:'A'},{id:'bentrow',sets:3,reps:12,ss:'A'},...CORE8]},
+ {id:'gx-legs',name:'Earthshaker Depths',rank:'C',lore:'Legs. Supersets are paired; core finisher is 30 sec per move.',ex:[{id:'squat',sets:5,reps:12,wu:1},{id:'hipabd',sets:4,reps:12,ss:'A'},{id:'hipadd',sets:4,reps:12,ss:'A'},{id:'hamcurl',sets:3,reps:15},{id:'seatlegext',sets:3,reps:15},{id:'calf',sets:5,reps:15},{id:'legpress',sets:4,reps:10},...CORE8]},
+ {id:'gx-arms',name:'Arsenal of the Warlord',rank:'C',lore:'Arms & Shoulders. Supersets are paired; core finisher is 30 sec per move.',ex:[{id:'sohp',sets:5,reps:12,wu:1},{id:'cgbench',sets:3,reps:12},{id:'conccurl',sets:4,reps:12,ss:'A'},{id:'reardelt',sets:4,reps:12,ss:'A'},{id:'ropeext',sets:3,reps:12,ss:'B'},{id:'ohcurl',sets:3,reps:12,ss:'B'},{id:'inccurl',sets:3,reps:12},...CORE8]}
+]},
+{id:'pack-user-split-2',gates:[
+ {id:'gx-pusha',name:'Push A · Vanguard Keep',rank:'C',lore:'Chest, shoulders, triceps.',ex:[{id:'incdb',sets:3,reps:10},{id:'pecdeck',sets:3,reps:12},{id:'shpress',sets:3,reps:8,rmax:10},{id:'lateral',sets:3,reps:10},{id:'pushdown',sets:3,reps:12},{id:'ohtri',sets:2,reps:12}]},
+ {id:'gx-pulla',name:'Pull A · Chain Hollow',rank:'C',lore:'Lats, upper back, rear delts, biceps. Swap Hammer Curls for Incline DB Curls if you prefer.',ex:[{id:'latpd',sets:3,reps:12},{id:'sadbrow',sets:3,reps:10},{id:'machrow',sets:3,reps:10,rmax:12},{id:'facepull',sets:3,reps:12},{id:'revfly',sets:3,reps:10},{id:'elbcurl',sets:3,reps:10,rmax:12},{id:'hammer',sets:3,reps:8,rmax:10}]},
+ {id:'gx-legs2',name:"Legs · Titan's Root",rank:'C',lore:'Adductors, hamstrings, quads, glutes, calves.',ex:[{id:'hipadd',sets:3,reps:10,rmax:12},{id:'legcurl',sets:3,reps:12},{id:'rdl',sets:3,reps:10},{id:'legpress',sets:3,reps:10,rmax:12},{id:'bss',sets:3,reps:8,rmax:10},{id:'calf',sets:3,reps:12}]},
+ {id:'gx-pushb',name:'Push B · Siege Bastion',rank:'C',lore:'Chest, shoulders, triceps, abs. Core finisher is 30 sec per move.',ex:[{id:'bench',sets:3,reps:8,rmax:10},{id:'incdb',sets:3,reps:10},{id:'fly',sets:3,reps:12},{id:'lateral',sets:3,reps:10},{id:'shpress',sets:3,reps:10,rmax:12},{id:'pushdown',sets:3,reps:12},{id:'lyingext',sets:3,reps:8,rmax:10},...CORE8]}
+]}];
+function fixForge(){if(!S.unlocked.includes('forge')||S.forgeFix)return false;S.forgeFix=1;if(!totals().forged){S.unlocked=S.unlocked.filter(x=>x!=='forge');if(S.title==='forge')S.title=''}return true}
+function applyPacks(){if(!S.hunter)return 0;S.packs=S.packs||[];let added=0;
+  PACKS.forEach(p=>{if(S.packs.includes(p.id))return;p.gates.slice().reverse().forEach(g=>{if(!S.gates.some(x=>x.id===g.id)){S.gates.unshift(JSON.parse(JSON.stringify(g)));added++}});S.packs.push(p.id)});return added}
+function defaults(){return{v:1,updated:0,hunter:null,xp:0,title:'',unlocked:[],gates:defaultGates(),custom:[],prs:{},prCount:0,bonus:{STR:0,VIT:0,AGI:0,END:0},rest:90,
+ plan:null,friends:[],onSched:0,tower:{floor:1,steps:0,misses:0,lastEval:'',dayD:'',dayAmt:0,beaten:[],regen:false},bosses:[],rankPassed:'E',trialBests:{},gear:[],equip:{},comps:[],comp:null,gearCount:0,bossKills:0,daily:{tasks:defaultDaily(),date:'',progress:{},claimed:false,streak:0,best:0,lastDone:'',claims:0,penaltyNote:false},active:null}}
+
+// rarity: c=common r=rare e=epic l=legendary · h=hidden until earned · p=progress [current,goal]
+const RAR={c:{n:'Common',col:'#a9b4c8',xp:25},r:{n:'Rare',col:'#4fb8ff',xp:50},e:{n:'Epic',col:'#b388ff',xp:100},l:{n:'Legendary',col:'#ffd166',xp:250}};
+const LIFT=(c,id,lb,kg)=>(c.lift[id]||0)>=(c.units==='kg'?kg:lb);
+const ACH=[
+ // — Gates cleared —
+ {id:'awake',name:'The Awakened',icon:'✦',r:'c',desc:'Clear your first gate.',p:c=>[c.raids,1]},
+ {id:'crawl',name:'Gate Crawler',icon:'🜂',r:'c',desc:'Clear 10 gates.',p:c=>[c.raids,10]},
+ {id:'g25',name:'Seasoned Raider',icon:'⚔',r:'r',desc:'Clear 25 gates.',p:c=>[c.raids,25]},
+ {id:'regular',name:'Dungeon Regular',icon:'⛓',r:'r',desc:'Clear 50 gates.',p:c=>[c.raids,50]},
+ {id:'century',name:'Centurion',icon:'🛡',r:'e',desc:'Clear 100 gates.',p:c=>[c.raids,100]},
+ {id:'g250',name:'Gate Eater',icon:'🕳',r:'e',desc:'Clear 250 gates.',p:c=>[c.raids,250]},
+ {id:'g500',name:'Breaker of Worlds',icon:'🌌',r:'l',desc:'Clear 500 gates.',p:c=>[c.raids,500]},
+ // — Sets & volume —
+ {id:'s100',name:'First Hundred',icon:'Ⅰ',r:'c',desc:'Complete 100 sets.',p:c=>[c.sets,100]},
+ {id:'thousand',name:'Thousand Cuts',icon:'⚔',r:'r',desc:'Complete 1,000 sets.',p:c=>[c.sets,1000]},
+ {id:'s5000',name:'Ten Thousand Blades',icon:'🗡',r:'e',desc:'Complete 5,000 sets.',p:c=>[c.sets,5000]},
+ {id:'jugg',name:'Juggernaut',icon:'🪨',r:'r',desc:'Move 20,000 lb (≈9,000 kg) in one raid.',p:c=>[c.maxVol,20000]},
+ {id:'mtn',name:'Mountain Mover',icon:'⛰',r:'e',desc:'Move 1,000,000 lb (≈450,000 kg) lifetime.',p:c=>[c.lifeVol,1e6]},
+ {id:'atlas',name:'Atlas',icon:'🌍',r:'l',desc:'Move 5,000,000 lb (≈2.3M kg) lifetime.',p:c=>[c.lifeVol,5e6]},
+ {id:'overkill',name:'Overkill',icon:'💥',r:'r',h:1,desc:'Complete 30+ sets in a single raid.',p:c=>[c.maxSets,30]},
+ // — Strength milestones (actual weight lifted) —
+ {id:'b135',name:'One Plate Bench',icon:'🏋',r:'c',desc:'Bench 135 lb / 60 kg.',test:c=>LIFT(c,'bench',135,60)},
+ {id:'b225',name:'Two Plate Bench',icon:'🏋',r:'r',desc:'Bench 225 lb / 100 kg.',test:c=>LIFT(c,'bench',225,100)},
+ {id:'b315',name:'Iron Chest',icon:'🏋',r:'e',desc:'Bench 315 lb / 140 kg.',test:c=>LIFT(c,'bench',315,140)},
+ {id:'q225',name:'Two Plate Squat',icon:'🦵',r:'c',desc:'Squat 225 lb / 100 kg.',test:c=>LIFT(c,'squat',225,100)},
+ {id:'q315',name:'Pillar of Stone',icon:'🦵',r:'r',desc:'Squat 315 lb / 140 kg.',test:c=>LIFT(c,'squat',315,140)},
+ {id:'q405',name:'Giant\'s Legs',icon:'🦵',r:'e',desc:'Squat 405 lb / 180 kg.',test:c=>LIFT(c,'squat',405,180)},
+ {id:'d315',name:'Grave Lifter',icon:'💀',r:'c',desc:'Deadlift 315 lb / 140 kg.',test:c=>LIFT(c,'deadlift',315,140)},
+ {id:'d405',name:'Earthshaker',icon:'💀',r:'r',desc:'Deadlift 405 lb / 180 kg.',test:c=>LIFT(c,'deadlift',405,180)},
+ {id:'d495',name:'Titan\'s Grip',icon:'💀',r:'e',desc:'Deadlift 495 lb / 225 kg.',test:c=>LIFT(c,'deadlift',495,225)},
+ {id:'o135',name:'Skybreaker',icon:'☝',r:'r',desc:'Overhead press 135 lb / 60 kg.',test:c=>LIFT(c,'ohp',135,60)},
+ {id:'club1k',name:'The Thousand Club',icon:'🔱',r:'l',desc:'Squat + bench + deadlift heaviest lifts total 1,000 lb / 450 kg.',p:c=>[Math.round((c.lift.squat||0)+(c.lift.bench||0)+(c.lift.deadlift||0)),c.units==='kg'?450:1000]},
+ // — Bodyweight —
+ {id:'pu50',name:'Fifty Fists',icon:'✊',r:'r',desc:'50 push-ups in one set.',p:c=>[c.reps.pushup||0,50]},
+ {id:'pl10',name:'Sky Climber',icon:'🧗',r:'c',desc:'10 pull-ups in one set.',p:c=>[c.reps.pullup||0,10]},
+ {id:'pl20',name:'Wall Crawler',icon:'🕷',r:'e',desc:'20 pull-ups in one set.',p:c=>[c.reps.pullup||0,20]},
+ {id:'plank5',name:'Unshakable',icon:'🧱',r:'r',desc:'Hold a plank for 5 minutes.',p:c=>[c.reps.plank||0,5]},
+ // — Cardio —
+ {id:'c300',name:'Pathfinder',icon:'👣',r:'c',desc:'300 minutes of cardio.',p:c=>[c.cardio,300]},
+ {id:'c1500',name:'Windrunner',icon:'🌪',r:'r',desc:'1,500 minutes of cardio.',p:c=>[c.cardio,1500]},
+ {id:'c6000',name:'The Endless Hunt',icon:'🐺',r:'e',desc:'6,000 minutes of cardio.',p:c=>[c.cardio,6000]},
+ // — Discipline —
+ {id:'disc',name:'Iron Discipline',icon:'⏳',r:'c',desc:'7-day daily quest streak.',p:c=>[c.best,7]},
+ {id:'unbroken',name:'The Unbroken',icon:'🔗',r:'r',desc:'30-day daily quest streak.',p:c=>[c.best,30]},
+ {id:'q100',name:'Iron Will',icon:'⚙',r:'e',desc:'100-day daily quest streak.',p:c=>[c.best,100]},
+ {id:'q365',name:'The Eternal',icon:'♾',r:'l',desc:'365-day daily quest streak.',p:c=>[c.best,365]},
+ {id:'qc50',name:'Dutiful',icon:'📋',r:'r',desc:'Complete 50 daily quests (any time).',p:c=>[c.claims,50]},
+ {id:'wk4',name:'Relentless',icon:'🔥',r:'r',desc:'Clear 4+ gates in one week (Mon–Sun).',p:c=>[c.maxWeek,4]},
+ {id:'wk6',name:'Berserker',icon:'😤',r:'e',desc:'Clear 6+ gates in one week.',p:c=>[c.maxWeek,6]},
+ {id:'oath',name:'Oathkeeper',icon:'📜',r:'r',desc:'Clear 20 gates on their scheduled day.',p:c=>[c.onSched,20]},
+ {id:'oath100',name:'Sworn Blade',icon:'⚜',r:'e',desc:'Clear 100 gates on their scheduled day.',p:c=>[c.onSched,100]},
+ {id:'hours',name:'Hundred Hours',icon:'⌛',r:'e',desc:'Spend 100 hours in raids.',p:c=>[Math.floor(c.mins/60),100]},
+ // — Records —
+ {id:'record',name:'Record Breaker',icon:'📈',r:'c',desc:'Set 10 personal records.',p:c=>[c.prs,10]},
+ {id:'legend',name:'Living Legend',icon:'👑',r:'r',desc:'Set 50 personal records.',p:c=>[c.prs,50]},
+ {id:'pr200',name:'Limit Breaker',icon:'⚡',r:'e',desc:'Set 200 personal records.',p:c=>[c.prs,200]},
+ {id:'triple',name:'Triple Strike',icon:'✴',r:'r',h:1,desc:'Set 3+ records in a single raid.',p:c=>[c.maxPRs,3]},
+ // — Attributes & level —
+ {id:'bal25',name:'Balanced Blade',icon:'☯',r:'r',desc:'Every attribute at 25 or higher.',p:c=>[c.minStat,25]},
+ {id:'bal50',name:'Perfect Form',icon:'💠',r:'e',desc:'Every attribute at 50 or higher.',p:c=>[c.minStat,50]},
+ {id:'stat100',name:'Transcendent',icon:'🌟',r:'l',desc:'Any attribute reaches 100.',p:c=>[c.maxStat,100]},
+ {id:'rD',name:'D-Rank Hunter',icon:'D',r:'c',desc:'Pass the D-Rank exam.',p:c=>[c.rank,1]},
+ {id:'rC',name:'C-Rank Hunter',icon:'C',r:'r',desc:'Pass the C-Rank exam.',p:c=>[c.rank,2]},
+ {id:'rB',name:'B-Rank Hunter',icon:'B',r:'r',desc:'Pass the B-Rank exam.',p:c=>[c.rank,3]},
+ {id:'rA',name:'A-Rank Hunter',icon:'A',r:'e',desc:'Pass the A-Rank exam.',p:c=>[c.rank,4]},
+ {id:'rS',name:'S-Rank Hunter',icon:'S',r:'l',desc:'Pass the S-Rank exam.',p:c=>[c.rank,5]},
+ // — Side quests —
+ {id:'side1',name:'Off the Beaten Path',icon:'🧭',r:'c',desc:'Complete your first side quest.',p:c=>[c.side,1]},
+ {id:'side25',name:'Adventurer',icon:'🎒',r:'r',desc:'Complete 25 side quests.',p:c=>[c.side,25]},
+ {id:'side100',name:'Legend of the Wilds',icon:'🏔️',r:'e',desc:'Complete 100 side quests.',p:c=>[c.side,100]},
+ {id:'sidevar',name:'Renaissance Hunter',icon:'🎨',r:'r',desc:'Complete side quests in 5 different activities.',p:c=>[c.sideVar,5]},
+ // — Tower —
+ {id:'tw10',name:'Tower Initiate',icon:'🏯',r:'c',desc:'Reach floor 10 of the Tower.',p:c=>[c.floor,10]},
+ {id:'tw25',name:'Stairwalker',icon:'🪜',r:'r',desc:'Reach floor 25.',p:c=>[c.floor,25]},
+ {id:'tw50',name:'Halfway to Heaven',icon:'☁️',r:'e',desc:'Reach floor 50.',p:c=>[c.floor,50]},
+ {id:'tw100',name:'Conqueror of the Tower',icon:'🏆',r:'l',desc:'Defeat the guardian of floor 100.',p:c=>[c.floor,101]},
+ {id:'boss1',name:'Guardian Slayer',icon:'☠️',r:'r',desc:'Defeat your first boss.',p:c=>[c.kills,1]},
+ {id:'boss5',name:'Bane of Guardians',icon:'⚔️',r:'e',desc:'Defeat 5 bosses.',p:c=>[c.kills,5]},
+ {id:'boss15',name:'The Unstoppable',icon:'🌋',r:'l',desc:'Defeat 15 bosses.',p:c=>[c.kills,15]},
+ {id:'loot10',name:'Treasure Hunter',icon:'💰',r:'c',desc:'Collect 10 pieces of gear.',p:c=>[c.items,10]},
+ {id:'lootL',name:'Legendary Find',icon:'🌠',r:'e',desc:'Obtain a legendary item.',test:c=>c.legend},
+ {id:'comp3',name:'Beastmaster',icon:'🐾',r:'r',desc:'Gain 3 companions.',p:c=>[c.comps,3]},
+ {id:'cls2',name:'Ascended',icon:'⚜️',r:'e',desc:'Advance your class to tier 2.',p:c=>[c.tier,2]},
+ {id:'cls3',name:'Pinnacle',icon:'👑',r:'l',desc:'Advance your class to its final tier.',p:c=>[c.tier,3]},
+ // — Explorer —
+ {id:'var15',name:'Jack of All Blades',icon:'🎴',r:'c',desc:'Use 15 different exercises.',p:c=>[c.variety,15]},
+ {id:'var30',name:'Master of Arms',icon:'🗃',r:'r',desc:'Use 30 different exercises.',p:c=>[c.variety,30]},
+ {id:'forge',name:'Gatesmith',icon:'🔨',r:'c',desc:'Forge your own gate.',p:c=>[c.forged,1]},
+ {id:'free10',name:'Wanderer',icon:'🧭',r:'r',desc:'Complete 10 freestyle raids.',p:c=>[c.free,10]},
+ {id:'srank',name:'Into the Abyss',icon:'🕳',r:'e',desc:'Clear an S-rank gate.',test:c=>c.sClear},
+ // — Hidden —
+ {id:'dawn',name:'Dawn Hunter',icon:'🌅',r:'c',h:1,desc:'Start a raid before 7 AM.',test:c=>c.dawn},
+ {id:'night',name:'Night Stalker',icon:'🌙',r:'c',h:1,desc:'Start a raid after 9 PM.',test:c=>c.night},
+ {id:'weekend',name:'Weekend Warrior',icon:'🎌',r:'c',h:1,desc:'Raid on both Saturday and Sunday of the same weekend.',test:c=>c.weekend},
+ {id:'return',name:'The Return',icon:'🔁',r:'r',h:1,desc:'Come back after 14+ days away.',test:c=>c.comeback},
+ {id:'speed',name:'Speedrunner',icon:'⏱',r:'r',h:1,desc:'Full-clear a 12+ set gate in 30 minutes or less.',test:c=>c.speed},
+ {id:'marathon',name:'Marathon Raid',icon:'🏰',r:'r',h:1,desc:'Spend 2+ hours in one raid.',test:c=>c.maxDur>=120},
+ {id:'holiday',name:'No Days Off',icon:'🎄',r:'e',h:1,desc:'Raid on New Year\'s Day or Christmas.',test:c=>c.holiday}
+];
+
+/* ================= STATE ================= */
+const LS='gatebreaker.v1';
+let SNAP_DIRTY=false,BOOT=false,CLOUD_FAILED=false,SANDBOX=false,SNAP=null,PEN_SND=false,S=defaults(),LOGS=[],TAB='status',RAID_VIEW=true;
+try{const raw=localStorage.getItem(LS);if(raw){const o=JSON.parse(raw);if(o&&o.s){S=Object.assign(defaults(),o.s);LOGS=Array.isArray(o.logs)?o.logs:[]}}}catch(e){}
+try{const t=localStorage.getItem(LS+'.tab');if(t)TAB=t}catch(e){}
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const today=(d=new Date())=>{const z=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())};
+const yesterday=()=>{const d=new Date();d.setDate(d.getDate()-1);return today(d)};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const fmtN=n=>Math.round(n).toLocaleString();
+const U=()=>S.hunter?.units||'lb';
+function exInfo(id){return EXM[id]||S.custom.find(c=>c.id===id)||{id,name:id,stat:'STR',type:'w'}}
+function req(L){return 100+25*L}
+function lvl(xp){let L=1,n=req(1);while(xp>=n){xp-=n;L++;n=req(L)}return{L,into:xp,need:n}}
+function rankOf(L){let r='E';RANKS.forEach(([m,k])=>{if(L>=m)r=k});return r}
+function hash(s){let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)}
+
+/* ================= PERSISTENCE ================= */
+let cloudCol=null,saveTimer=null;const wq={},wbusy={};
+function persist(months,immediateCloud){
+  if(SANDBOX)return;
+  S.updated=Date.now();
+  try{localStorage.setItem(LS,JSON.stringify({s:S,logs:LOGS}))}catch(e){}
+  if(!cloudCol)return;
+  S.build=BUILD;if(READONLY)return;
+  (months||[]).forEach(m=>writeDoc(LOGP+m,{items:LOGS.filter(l=>l.date.slice(0,7)===m)}));
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{if(SANDBOX)return;lbPublish();MINE.add(S.updated);writeDoc(SAVE_ID,{s:JSON.parse(JSON.stringify(S))})},immediateCloud?50:1500);
+}
+const MINE=new Set();let WATCH=null,DUP_WARNED=false;
+function watchSave(col){try{if(WATCH)WATCH();WATCH=col.doc(SAVE_ID).onSnapshot(sn=>{if(!sn.exists||sn.metadata.hasPendingWrites||sn.metadata.fromCache)return;const r=JSON.parse(JSON.stringify((sn.data()||{}).s||null));if(!r||!r.hunter||MINE.has(r.updated))return;if((r.build||0)>BUILD){READONLY=true;toast('A newer version of Arise is open elsewhere. Close this copy and reopen Arise.','red','[System]',true);return}
+  if((r.updated||0)>(S.updated||0)+2000){if(!DUP_WARNED){DUP_WARNED=true;toast('Arise was saved from another open copy (another tab, device or the chat preview). Keep just one copy open to avoid conflicts.','red','[System]',true)}
+    if(!S.active&&!SANDBOX&&!sheets.length&&r.hunter.created===(S.hunter&&S.hunter.created)){S=Object.assign(defaults(),r);applyPacks();rollDaily();try{localStorage.setItem(LS,JSON.stringify({s:S,logs:LOGS}))}catch(e){}render()}}},()=>{})}catch(e){}}
+const BUILD=2026111303,SAVE_ID='save2',LOGP='v2log-';let READONLY=false;
+let SYNC_ERR=null,LAST_OK=0,retryT=null;const FAILED=new Set();
+function docData(id){if(id===SAVE_ID){MINE.add(S.updated);return{s:JSON.parse(JSON.stringify(S))}}const m=id.slice(LOGP.length);return{items:JSON.parse(JSON.stringify(LOGS.filter(l=>l.date.slice(0,7)===m)))}}
+async function writeDoc(id,data){
+  wq[id]=data;if(wbusy[id])return;wbusy[id]=true;setSync('busy');
+  try{while(wq[id]){const d=wq[id];wq[id]=null;let ok=false,err=null;
+    for(let a=0;a<3&&!ok;a++){try{await cloudCol.doc(id).set(d);ok=true}catch(e){err=e;const c=e&&e.code;if(c==='unavailable'||c==='resource_exhausted'){await sleep((a+1)*1200+Math.random()*800)}else break}}
+    if(ok){FAILED.delete(id);LAST_OK=Date.now()}else{FAILED.add(id);syncErr(err)}
+  }}finally{wbusy[id]=false;if(!Object.values(wbusy).some(Boolean))setSync(FAILED.size?'err':'ok')}
+}
+function syncErr(e){SYNC_ERR={code:(e&&e.code)||'unknown',msg:(e&&e.message)||String(e||''),at:Date.now()};setSync('err');
+  if(e&&e.code==='quota_exceeded')toast('Cloud storage is full — your data is still saved on this device.','red','[System]');
+  clearTimeout(retryT);retryT=setTimeout(retrySync,20000)}
+function retrySync(){clearTimeout(retryT);if(SANDBOX){retryT=setTimeout(retrySync,20000);return}if(!cloudCol){initCloud(true);return}const ids=FAILED.size?[...FAILED]:[SAVE_ID];ids.forEach(id=>writeDoc(id,docData(id)))}
+let SYNC='local';
+function setSync(s){SYNC=s;const el=$('#sync');if(el)el.outerHTML=syncHtml()}
+function syncHtml(){const m={local:['','Device save'],busy:['busy','Syncing…'],ok:['ok','Synced'],err:['err','Sync issue · tap'],slow:['busy','Cloud slow…']}[SYNC]||['','Device save'];return `<span id="sync" class="sync ${m[0]}" data-a="syncinfo" role="button">${'<i></i>'}${m[1]}</span>`}
+const SYNC_WHY={revoked:'The app was updated or its sharing changed while it was open. Close Arise completely and reopen it.',unavailable:'The connection dropped. It will keep retrying on its own.',resource_exhausted:'Too many saves in a short time. It will retry in a moment.',quota_exceeded:'Cloud storage for this app is full.',invalid_argument:'The cloud rejected the save. Your data is safe on this device. Send this code to whoever maintains the app.',not_granted:'Cloud saving isn’t available in this view. Make sure you’re signed in, then reopen.',capability_disabled:'Cloud saving isn’t available in this view. Reopen Arise.',capability_removed:'Cloud saving isn’t available in this view. Reopen Arise.',timeout:'The cloud didn’t answer in time. It will keep retrying.',unknown:'Something interrupted the save. It will keep retrying.'};
+function openSyncInfo(){const e=SYNC_ERR;const ago=t=>{const m=Math.round((Date.now()-t)/60000);return m<1?'just now':m<60?m+' min ago':Math.round(m/60)+' h ago'};
+  openSheet(`<div class="wt">Cloud sync</div>
+   <div class="small">Status: <b style="color:${SYNC==='err'?'var(--red)':SYNC==='ok'?'var(--green)':'var(--gold)'}">${{ok:'Synced',err:'Not syncing',busy:'Syncing…',slow:'Waiting for cloud',local:'Saving on this device only'}[SYNC]||SYNC}</b></div>
+   <div class="small dim" style="margin-top:4px">Last successful cloud sync: ${LAST_OK?ago(LAST_OK):'not yet this session'}</div>
+   <div class="callout" style="margin-top:10px">Your progress is always saved on this device first, so nothing is lost while sync is down. It uploads automatically once the connection works.</div>
+   ${e&&SYNC==='err'?`<div class="win" style="margin-top:10px"><div class="wt" style="color:var(--red)">Reason</div><div class="small">${esc(SYNC_WHY[e.code]||SYNC_WHY.unknown)}</div><div class="tiny dim mono" style="margin-top:6px">Code: ${esc(e.code)}${e.msg?' · '+esc(e.msg.slice(0,140)):''}</div></div>`:''}
+   <div class="row" style="margin-top:12px"><button class="btn grow" data-a="close">Close</button><button class="btn pri grow" data-a="syncretry">Retry now</button></div>`,{center:true})}
+let CLOUD_TRY=0,CLOUD_BUSY=false;
+async function initCloud(manual){if(CLOUD_BUSY)return;CLOUD_BUSY=true;try{await initCloud_(manual)}finally{CLOUD_BUSY=false;if(BOOT){BOOT=false;CLOUD_FAILED=!cloudCol;render()}else if(cloudCol&&CLOUD_FAILED){CLOUD_FAILED=false;render()}}}
+async function initCloud_(manual){
+  let tries=0;while(!(window.claude&&window.claude.use)&&tries<20){await sleep(150);tries++}
+  if(!(window.claude&&window.claude.use))return;
+  try{
+    const [db,user]=await Promise.all([window.claude.use('db'),window.claude.use('user')]);
+    if(!db||!user)return;
+    const id=await user.id();if(!id)return;
+    const col=db.collection('data/users/'+id);
+    setSync('busy');
+    const timer=setTimeout(()=>{if(SYNC==='busy')setSync('slow')},10000);
+    const snap=await Promise.race([col.get(),sleep(25000).then(()=>{throw{code:'timeout',message:'no answer after 25s'}})]);clearTimeout(timer);
+    let rs=null;const rlogs=[];
+    let rsOld=null,hasNew=false;snap.docs.forEach(d=>{const x=JSON.parse(JSON.stringify(d.data()||{}));if(d.id===SAVE_ID){rs=x.s;hasNew=true}else if(d.id==='save')rsOld=x.s;else if(d.id.startsWith(LOGP)||d.id.startsWith('log-'))(x.items||[]).forEach(i=>rlogs.push(i))});
+    if(!hasNew&&rsOld)rs=rsOld;
+    if(rs&&(rs.build||0)>BUILD){READONLY=true;setTimeout(()=>toast('This copy of Arise is out of date and won\'t save. Close it and reopen Arise to update.','red','[System]',true),600)}
+    const map=new Map();rlogs.forEach(l=>map.set(l.id,l));
+    const pushMonths=new Set();
+    LOGS.forEach(l=>{if(!map.has(l.id)){map.set(l.id,l);pushMonths.add(l.date.slice(0,7))}});
+    if(SANDBOX&&SNAP){const sm=new Map(rlogs.map(l=>[l.id,l]));SNAP.logs.forEach(l=>{if(!sm.has(l.id)){sm.set(l.id,l);pushMonths.add(l.date.slice(0,7))}});SNAP.logs=[...sm.values()].sort((a,b)=>a.date<b.date?1:-1);
+      if(rs&&rs.hunter&&(!SNAP.s.hunter||(rs.updated||0)>(SNAP.s.updated||0)))SNAP.s=Object.assign(defaults(),rs);cloudCol=col;setSync('ok');SNAP.push=[...pushMonths];return}
+    LOGS=[...map.values()].sort((a,b)=>a.date<b.date?1:-1);
+    let pushSave=false;
+    const diff=rs&&rs.hunter&&S.hunter&&rs.hunter.created!==S.hunter.created;
+    if(rs&&rs.hunter&&(!S.hunter||(diff?(rs.xp||0)>=(S.xp||0):(rs.updated||0)>(S.updated||0)))){S=Object.assign(defaults(),rs)}else if(S.hunter)pushSave=true;
+    cloudCol=col;LAST_OK=Date.now();setSync('ok');watchSave(col);setTimeout(()=>{lbSubscribe();lbPublish()},0);
+    const allM=[...new Set(LOGS.map(l=>l.date.slice(0,7)))];
+    if(!hasNew&&S.hunter)persist(allM,true);else if(pushSave||pushMonths.size)persist([...pushMonths],true);
+    else try{localStorage.setItem(LS,JSON.stringify({s:S,logs:LOGS}))}catch(e){}
+    rollDaily();if(S.hunter&&!SANDBOX){if(applyPacks()|fixForge())persist(null,true);rollTower();const n0=S.unlocked.length;checkAch();if(S.unlocked.length>n0)persist()}render();
+  }catch(e){SYNC_ERR={code:(e&&e.code)||'unknown',msg:(e&&e.message)||'',at:Date.now()};setSync('err');CLOUD_TRY++;if(CLOUD_TRY<8||manual){clearTimeout(retryT);retryT=setTimeout(()=>initCloud(),Math.min(60000,10000*CLOUD_TRY))}}
+}
+
+/* ================= DERIVED ================= */
+function computeStats(){
+  const st={STR:10,VIT:10,AGI:10,END:10};
+  if(S.hunter)st[CLASSES[S.hunter.cls].stat]+=3;
+  const c={STR:0,VIT:0,AGI:0,END:0};
+  LOGS.forEach(l=>{if(l.side){const a=ACTM[l.side.act]||ACTM.other;a.stats.forEach(k=>c[k]+=l.side.min/5*INT[l.side.int].m/a.stats.length)}});
+  LOGS.forEach(l=>l.ex.forEach(e=>{const d=exInfo(e.id);e.sets.forEach(s=>{c[d.stat]+=d.type==='t'?Math.max(1,Math.round((+s.r||0)/5)):1})}));
+  for(const k in st)st[k]+=Math.floor(c[k]/4)+Math.floor(S.bonus[k]||0);
+  if(S.hunter){st[CLASSES[S.hunter.cls].stat]+=CLASS_BONUS.stat[ctier()];equipped().forEach(g=>st[g.stat]+=g.sv)}
+  return st;
+}
+function totals(){
+  const c={raids:LOGS.filter(l=>!l.side).length,side:LOGS.filter(l=>l.side).length,sideVar:new Set(LOGS.filter(l=>l.side).map(l=>l.side.act==='other'?'o:'+l.side.name.toLowerCase():l.side.act)).size,sets:0,maxVol:0,lifeVol:0,maxSets:0,maxPRs:0,maxDur:0,mins:0,cardio:0,dawn:false,night:false,weekend:false,comeback:false,speed:false,holiday:false,sClear:false,free:0,
+    best:S.daily.best||0,claims:S.daily.claims||0,prs:S.prCount||0,onSched:S.onSched||0,level:lvl(S.xp).L,units:U(),lift:{},reps:{},floor:S.tower.floor,kills:S.bossKills||0,items:S.gearCount||0,legend:S.gear.some(g=>g.r==='l'),comps:S.comps.length,tier:ctier(),rank:rIdx(curRank()),forged:S.gates.filter(g=>!/^g[1-5]$/.test(g.id)&&!/^gx-/.test(g.id)).length};
+  const exs=new Set(),weeks={},wkend={};const k=U()==='kg'?2.2046:1;
+  const asc=LOGS.slice().sort((a,b)=>a.date<b.date?-1:1);let prev=null;
+  asc.forEach(l=>{const d=new Date(l.date);c.sets+=l.sets||0;c.maxVol=Math.max(c.maxVol,l.vol||0);c.lifeVol+=l.vol||0;c.maxSets=Math.max(c.maxSets,l.sets||0);c.maxPRs=Math.max(c.maxPRs,(l.prs||[]).length);
+    if(!l.side){c.maxDur=Math.max(c.maxDur,l.dur||0);c.mins+=l.dur||0;}const h=d.getHours();if(h<7)c.dawn=true;if(h>=21)c.night=true;if(!l.gateId)c.free++;
+    const md=(d.getMonth()+1)+'-'+d.getDate();if(md==='1-1'||md==='12-25')c.holiday=true;
+    if(l.full&&l.dur<=30&&l.sets>=12)c.speed=true;
+    const g=S.gates.find(x=>x.id===l.gateId);if(g&&g.rank==='S')c.sClear=true;
+    const wk=weekStart(d).getTime();weeks[wk]=(weeks[wk]||0)+1;const dow=d.getDay();if(dow===6||dow===0){wkend[wk]=(wkend[wk]||0)|(dow===6?1:2)}
+    if(prev&&(d-prev)/864e5>=14)c.comeback=true;prev=d;
+    l.ex.forEach(e=>{exs.add(e.id);const x=exInfo(e.id);e.sets.forEach(st=>{const r=+st.r||0,w=+st.w||0;
+      if(x.type==='t'){if(x.stat==='AGI')c.cardio+=r}
+      if(x.type!=='w')c.reps[e.id]=Math.max(c.reps[e.id]||0,r);
+      if(x.type==='w'&&r>=1)c.lift[e.id]=Math.max(c.lift[e.id]||0,w)})})});
+  c.maxWeek=Math.max(0,...Object.values(weeks));c.weekend=Object.values(wkend).some(v=>v===3);c.variety=exs.size;
+  c.lifeVol=Math.round(c.lifeVol);const st=computeStats();c.minStat=Math.min(...Object.values(st));c.maxStat=Math.max(...Object.values(st));
+  return c}
+function achDone(a,c){return a.test?!!a.test(c):(()=>{const [v,g]=a.p(c);return v>=g})()}
+function checkAch(){const c=totals();const got=[];ACH.forEach(a=>{if(!S.unlocked.includes(a.id)&&achDone(a,c)){S.unlocked.push(a.id);got.push(a)}});
+  if(got.length)setTimeout(()=>{rollTower();},0);
+  got.forEach((a,n)=>{const R=RAR[a.r];S.xp+=R.xp;setTimeout(()=>toast(`<span style="color:${R.col}">${R.n}</span> title acquired: <b>${esc(a.name)}</b> · +${R.xp} EXP`,'gold','[Title]'),400+n*900)})}
+function bestMetric(d,sets){let b=null;sets.forEach(s=>{if(s.wu)return;const w=+s.w||0,r=+s.r||0;let m;if(d.type==='w'){if(w<=0||r<=0)return;m=r<=1?w:w*(1+r/30)}else{if(r<=0)return;m=r}if(!b||m>b.m)b={m,w,r}});return b}
+function prText(d,p){if(!p)return'—';if(d.type==='w')return`${p.w}${U()} × ${p.r}  <span class="dim">(e1RM ${fmtN(p.m)})</span>`;if(d.type==='t')return isSec(d)?`${Math.round(p.r*60)} sec`:`${p.r} min`;return`${p.r} reps`}
+function lastSets(exId){for(const l of LOGS){const e=l.ex.find(x=>x.id===exId);if(e)return e.sets}return null}
+
+function dnum(ds){const [y,m,d]=ds.split('-').map(Number);return Date.UTC(y,m-1,d)/864e5}
+function addDays(ds,n){const [y,m,d]=ds.split('-').map(Number);return today(new Date(y,m-1,d+n))}
+function planFor(ds){const P=S.plan;if(!P||!P.cycle.length)return null;const n=P.cycle.length;const sh=(P.shifts||[]).filter(x=>x<ds).length;const i=(((dnum(ds)-dnum(P.start)-sh)%n)+n)%n;const v=P.cycle[i];const g=v==='rest'?null:S.gates.find(x=>x.id===v);return{i,n,rest:!g,gate:g}}
+function logsOn(ds){return LOGS.filter(l=>today(new Date(l.date))===ds)}
+function gainXp(n){const b=lvl(S.xp);S.xp+=n;const a=lvl(S.xp);return{before:b,after:a,leveled:a.L>b.L,rankUp:rankOf(a.L)!==rankOf(b.L)}}
+
+function rollDaily(){
+  const d=S.daily,t=today();
+  if(d.date!==t){
+    if(d.streak>0&&d.lastDone&&d.lastDone<yesterday()){d.streak=0;d.penaltyNote=true;PEN_SND=true}
+    d.date=t;d.progress={};d.claimed=false;persist();
+  }
+}
+
+/* ================= TOAST / FX ================= */
+function toast(html,cls='',tag='[System]',quiet){if(!quiet)sfx(cls==='red'?'error':cls==='gold'?'title':'notif');const el=document.createElement('div');el.className='toast '+cls;el.innerHTML=`<span class="dim mono tiny">${tag}</span> ${html}`;const box=$('#toasts');box.appendChild(el);while(box.children.length>3)box.firstChild.remove();setTimeout(()=>{el.style.transition='opacity .4s';el.style.opacity='0';setTimeout(()=>el.remove(),400)},3800)}
+function flash(){const f=document.createElement('div');f.className='flash';document.body.appendChild(f);setTimeout(()=>f.remove(),800)}
+function buzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
+let actx=null;
+function audioInit(){try{if(!actx){const A=window.AudioContext||window.webkitAudioContext;if(A)actx=new A()}if(actx&&actx.state==='suspended')actx.resume()}catch(e){}}
+let master=null,noiseBuf=null;
+function out(){if(!actx)return null;if(!master){master=actx.createGain();const comp=actx.createDynamicsCompressor();master.connect(comp);comp.connect(actx.destination)}master.gain.value=(S.sfx===false?0:(S.vol??.7));return master}
+function tone(f,at,dur,{type='sine',g=.2,f2=null,a=.005}={}){const o=out();if(!o)return;const t=actx.currentTime+at,os=actx.createOscillator(),gn=actx.createGain();os.type=type;os.frequency.setValueAtTime(f,t);if(f2)os.frequency.exponentialRampToValueAtTime(f2,t+dur);gn.gain.setValueAtTime(.0001,t);gn.gain.exponentialRampToValueAtTime(g,t+a);gn.gain.exponentialRampToValueAtTime(.0001,t+dur);os.connect(gn);gn.connect(o);os.start(t);os.stop(t+dur+.05)}
+function noise(at,dur,{f=2000,f2=null,q=1,g=.2,type='bandpass'}={}){const o=out();if(!o)return;if(!noiseBuf){noiseBuf=actx.createBuffer(1,actx.sampleRate,actx.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}
+  const t=actx.currentTime+at,src=actx.createBufferSource(),fl=actx.createBiquadFilter(),gn=actx.createGain();src.buffer=noiseBuf;src.loop=true;fl.type=type;fl.Q.value=q;fl.frequency.setValueAtTime(f,t);if(f2)fl.frequency.exponentialRampToValueAtTime(f2,t+dur);gn.gain.setValueAtTime(.0001,t);gn.gain.exponentialRampToValueAtTime(g,t+.01);gn.gain.exponentialRampToValueAtTime(.0001,t+dur);src.connect(fl);fl.connect(gn);gn.connect(o);src.start(t);src.stop(t+dur+.05)}
+const SFX={
+ tick(){tone(1800,0,.03,{type:'square',g:.03})},
+ blip(){tone(1320,0,.09,{type:'triangle',g:.12});tone(1980,.06,.12,{type:'triangle',g:.08})},
+ hit(){noise(0,.16,{f:3500,f2:600,q:.8,g:.35});tone(140,0,.18,{type:'sine',g:.45,f2:45});tone(2600,0,.05,{type:'square',g:.03})},
+ slain(){noise(0,.3,{f:900,f2:150,q:.7,g:.35,type:'lowpass'});tone(110,0,.35,{type:'sawtooth',g:.12,f2:40});[523,784].forEach((f,i)=>tone(f,.12+i*.07,.2,{type:'triangle',g:.1}))},
+ portal(){noise(0,1.1,{f:200,f2:4000,q:4,g:.18});tone(55,0,1.2,{type:'sawtooth',g:.12,f2:110,a:.3});tone(220,.2,1,{type:'sine',g:.08,f2:880,a:.3});tone(1320,1,.5,{type:'triangle',g:.08})},
+ notif(){tone(880,0,.5,{g:.14});tone(1320,0,.5,{g:.09});tone(1760,.12,.6,{g:.07})},
+ quest(){[659,880,1175].forEach((f,i)=>tone(f,i*.09,.35,{type:'triangle',g:.14}));tone(1760,.3,.8,{g:.06})},
+ clear(){[523,659,784,1047].forEach((f,i)=>tone(f,i*.11,.4,{type:'triangle',g:.15}));[1047,1319,1568].forEach(f=>tone(f,.5,1.1,{g:.07,a:.02}));noise(.5,.9,{f:8000,q:.5,g:.05,type:'highpass'})},
+ levelup(){const n=[392,523,659,784];n.forEach((f,i)=>tone(f,i*.12,.3,{type:'square',g:.07}));[523,659,784,1047].forEach(f=>{tone(f,.55,1.4,{type:'sawtooth',g:.045,a:.03});tone(f*2,.55,1.4,{g:.04})});noise(.55,1.2,{f:9000,q:.5,g:.06,type:'highpass'});tone(65,.55,1,{g:.3,f2:55})},
+ record(){[880,1109,1319,1760,2217].forEach((f,i)=>tone(f,i*.06,.25,{type:'triangle',g:.09}))},
+ title(){[784,988,1175,1568].forEach((f,i)=>tone(f,i*.08,.5,{g:.09}))},
+ restEnd(){[0,.22,.44].forEach(t=>{tone(988,t,.15,{type:'square',g:.08});tone(1480,t,.15,{type:'square',g:.04})})},
+ error(){tone(180,0,.18,{type:'sawtooth',g:.12,f2:120});tone(150,.16,.25,{type:'sawtooth',g:.12,f2:90})},
+ retreat(){[659,523,392,262].forEach((f,i)=>tone(f,i*.1,.25,{type:'triangle',g:.12}));noise(0,.6,{f:2000,f2:150,q:2,g:.1})},
+ bossIntro(){tone(55,0,2,{type:'sawtooth',g:.18,a:.4});tone(58,0,2,{type:'sawtooth',g:.14,a:.4});[0,.5,1].forEach(t=>{tone(90,t,.35,{g:.5,f2:40});noise(t,.25,{f:180,q:.7,g:.3,type:'lowpass'})});tone(220,1.3,.9,{type:'square',g:.05,f2:110})},
+ bossDefeat(){noise(0,.8,{f:600,f2:60,q:.6,g:.4,type:'lowpass'});tone(80,0,.8,{g:.5,f2:30});[392,523,659,784,1047].forEach((f,i)=>tone(f,.5+i*.1,.5,{type:'square',g:.06}));[523,659,784,1047,1319].forEach(f=>tone(f,1.05,1.8,{type:'triangle',g:.06,a:.04}));noise(1.05,1.6,{f:9000,q:.4,g:.05,type:'highpass'})},
+ regen(){tone(220,0,1.2,{type:'sawtooth',g:.08,f2:110});tone(233,0,1.2,{type:'sawtooth',g:.06,f2:116});noise(0,1.2,{f:300,f2:1200,q:3,g:.08})},
+ loot(){[1319,1568,1976,2637].forEach((f,i)=>tone(f,i*.07,.35,{g:.07}));noise(0,.6,{f:7000,q:.5,g:.04,type:'highpass'})},
+ climb(){[392,494,587,784].forEach((f,i)=>tone(f,i*.08,.2,{type:'triangle',g:.1}))},
+ penalty(){tone(110,0,.9,{type:'sawtooth',g:.15,f2:70});tone(116,0,.9,{type:'sawtooth',g:.12,f2:73});[0,.3].forEach(t=>tone(440,t,.2,{type:'square',g:.05}))}
+};
+function sfx(n){try{if(actx&&SFX[n])SFX[n]()}catch(e){}}
+
+/* ================= SHEETS ================= */
+const sheets=[];
+function openSheet(html,{center=false,onClose}={}){const ov=document.createElement('div');ov.className='ov'+(center?' center':'');ov.innerHTML=`<div class="sheet">${html}</div>`;ov.addEventListener('click',e=>{if(e.target===ov)closeSheet()});document.body.appendChild(ov);sheets.push({ov,onClose});return ov.firstChild}
+function closeSheet(){const s=sheets.pop();if(s){s.ov.remove();s.onClose&&s.onClose()}if(!sheets.length)setTimeout(checkIntros,300)}
+function confirmBox(title,msg,okLabel,cb,danger){const el=openSheet(`<div class="sys"><div class="wt" style="justify-content:center">${esc(title)}</div><p>${msg}</p><div class="row" style="margin-top:14px"><button class="btn block grow" data-a="close">Cancel</button><button class="btn block grow ${danger?'red':'pri'}" id="cfOk">${esc(okLabel)}</button></div></div>`,{center:true});el.querySelector('#cfOk').onclick=()=>{closeSheet();cb()}}
+
+/* ================= RENDER ================= */
+function render(){
+  const app=$('#app');
+  if(!S.hunter&&BOOT){$('#tabs').classList.add('hide');app.innerHTML=`<div style="min-height:70vh;display:grid;place-items:center"><div class="sys"><div class="portalspin"></div><div class="h" style="color:var(--cyan);margin-top:16px;letter-spacing:.2em">Connecting to the System…</div><div class="tiny dim" style="margin-top:6px">Loading your hunter</div></div></div>`;return}
+  if(!S.hunter){$('#tabs').classList.add('hide');app.innerHTML=(CLOUD_FAILED?`<div class="callout red" style="margin-top:12px">Couldn't reach your cloud save. <b>If you already have a hunter, don't create a new one.</b> Close Arise fully and reopen it, or tap Retry.<button class="btn sm pri" style="margin-top:8px" data-a="syncretry">Retry</button></div>`:'')+renderOnboard();return}
+  $('#tabs').classList.remove('hide');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.t===TAB));
+  const top=`<div class="topbar"><span class="logo">ARISE</span>${syncHtml()}</div>`;
+  const body={status:renderStatus,quest:renderQuest,gates:renderGates,tower:renderTower,chron:renderChron}[TAB]||renderStatus;
+  app.innerHTML=top+body();
+  const dt=$('#dtoday'),sp=$('#strip');if(dt&&sp)sp.scrollLeft=dt.offsetLeft-sp.offsetLeft-70;
+  setTimeout(checkIntros,350);setTimeout(fitScreen,0);
+  if(S.active&&RAID_VIEW)renderRaid();else{$('#raid').classList.add('hide');clearInterval(raidTick)}
+}
+
+let OB={step:0,name:'',cls:'warrior',units:'lb'};
+function renderOnboard(){
+  if(OB.step===0)return`<div style="min-height:80vh;display:grid;place-items:center"><div class="win sys" style="width:100%">
+    <div class="wt" style="justify-content:center">Notification</div>
+    <div class="h1" style="margin:8px 0 14px">A GATE HAS OPENED</div>
+    <p>You have been selected by <b style="color:var(--cyan)">the System</b>.</p>
+    <p class="dim">From this day forward, every rep is experience. Every session is a dungeon. Every record is a level gained.</p>
+    <p>Do you accept the Awakening?</p>
+    <div class="row" style="margin-top:16px"><button class="btn block grow" data-a="ob-no">Decline</button><button class="btn pri block grow" data-a="ob-yes">Accept</button></div>
+  </div></div>`;
+  return`<div class="win"><div class="wt">Hunter Registration</div>
+    <label class="l">Hunter name</label><input class="f" id="obName" maxlength="24" placeholder="Enter your name" value="${esc(OB.name)}">
+    <label class="l">Choose your class</label>
+    <div class="cls">${Object.entries(CLASSES).map(([k,c])=>`<button class="clsc ${OB.cls===k?'on':''}" data-a="ob-cls" data-k="${k}"><div class="row"><span style="font-size:22px">${c.icon}</span><div class="grow"><div class="h">${c.name} <span class="statdot s${c.stat}">${c.stat}</span></div><div class="dim small">${c.desc}</div></div></div></button>`).join('')}</div>
+    <label class="l">Weight units</label>
+    <div class="seg"><button class="${OB.units==='lb'?'on':''}" data-a="ob-u" data-u="lb">LB</button><button class="${OB.units==='kg'?'on':''}" data-a="ob-u" data-u="kg">KG</button></div>
+    <button class="btn pri block" style="margin-top:18px" data-a="ob-go">Awaken</button>
+  </div>`;
+}
+
+function renderStatus(){
+  const L=lvl(S.xp),r=curRank(),st=computeStats(),c=totals(),cls=CLASSES[S.hunter.cls];const exam=S.bosses.find(b=>b.kind==='exam'),comp=S.comps.find(x=>x.id===S.comp),xb=xpBonus();
+  const streak=(S.daily.lastDone===today()||S.daily.lastDone===yesterday())?S.daily.streak:0;
+  const eq=ACH.find(a=>a.id===S.title);
+  return`<div class="win"><div class="wt">Status<span class="sp"></span><button class="btn ghost sm" data-a="settings" aria-label="Settings">⚙</button></div>
+   <div class="row" style="align-items:flex-end">
+     <div class="grow"><div class="h" style="font-size:22px;color:#fff">${esc(S.hunter.name)}</div>
+       <div class="dim small">${cls.icon} ${className()} · ${RANK_NAMES[r]} Hunter · Floor ${S.tower.floor}</div>
+       <div class="small" style="color:var(--gold);margin-top:2px">${eq?'「'+esc(eq.name)+'」':'<span class="dim">No title equipped</span>'}</div></div>
+     <div style="text-align:right"><div class="tiny dim h">Level</div><div class="big">${L.L}</div></div>
+     <span class="rank r${r}" style="margin-left:6px">${r}</span>
+   </div>
+   <div class="row between tiny dim" style="margin:12px 0 4px"><span class="h">EXP</span><span class="mono">${fmtN(L.into)} / ${fmtN(L.need)}</span></div>
+   <div class="bar"><i style="width:${(L.into/L.need*100).toFixed(1)}%"></i></div>
+   ${xb>0||comp?`<div class="row between tiny dim" style="margin-top:8px"><span>${comp?`Companion: ${comp.icon} ${esc(comp.name)}`:''}</span><span style="color:var(--gold)">${xb>0?`+${Math.round(xb*100)}% EXP bonus`:''}</span></div>`:''}
+   ${exam?`<button class="btn red block" style="margin-top:10px" data-a="boss" data-id="${exam.id}">⚠ ${exam.ref}-Rank exam available. Take it</button>`:''}
+  </div>
+  ${renderGuild()}
+  ${todayCard(true)}
+  <div class="win"><div class="wt">Attributes</div><div class="stats">
+   ${Object.keys(STATS).map(k=>`<div class="stat"><div class="row between"><span class="k s${k}">${k}</span><b>${st[k]}</b></div><div class="tiny dim">${STAT_DESC[k]}</div></div>`).join('')}
+  </div><div class="tiny dim" style="margin-top:8px">Attributes grow from completed sets (+1 per 4 sets in that category) and daily quests.</div></div>
+  <div class="win"><div class="wt">Record</div><div class="stats">
+   <div class="stat"><div class="k">Gates cleared</div><b>${c.raids}</b></div>
+   <div class="stat"><div class="k">Sets completed</div><b>${fmtN(c.sets)}</b></div>
+   <div class="stat"><div class="k">Quest streak</div><b>${streak}</b> <span class="tiny dim">best ${S.daily.best||0}</span></div>
+   <div class="stat"><div class="k">Records broken</div><b>${c.prs}</b></div>
+  </div></div>
+  ${renderTitles()}`;
+}
+
+let TF='all';
+function renderTitles(){const c=totals();const n=S.unlocked.length;
+  const list=ACH.filter(a=>TF==='all'||(TF==='got'?S.unlocked.includes(a.id):!S.unlocked.includes(a.id)));
+  return`<div class="win"><div class="wt">Titles<span class="sp"></span><span class="tiny dim">${n}/${ACH.length}</span></div>
+   <div class="bar gold" style="height:6px;margin-bottom:10px"><i style="width:${n/ACH.length*100}%"></i></div>
+   <div class="seg" style="margin-bottom:6px">${[['all','All'],['got','Earned'],['left','Locked']].map(([k,l])=>`<button class="${TF===k?'on':''}" data-a="tf" data-k="${k}">${l}</button>`).join('')}</div>
+   <div class="list">${list.map(a=>{const u=S.unlocked.includes(a.id),R=RAR[a.r],hid=a.h&&!u;let pr='';
+     if(!u&&!hid&&a.p){const [v,g]=a.p(c);pr=`<div class="row" style="gap:6px;margin-top:4px"><div class="bar grow" style="height:4px"><i style="width:${Math.min(100,v/g*100)}%"></i></div><span class="tiny mono dim">${fmtN(Math.min(v,g))}/${fmtN(g)}</span></div>`}
+     return`<div class="title ${u?'':'locked'} ${S.title===a.id?'eq':''}"><div class="tic" style="border-color:${R.col};color:${R.col};${u?`box-shadow:0 0 10px ${R.col}66`:''}">${u?a.icon:hid?'?':'🔒'}</div>
+      <div class="grow"><div>${hid?'??? <span class="tiny dim">hidden title</span>':esc(a.name)} <span class="tiny" style="color:${R.col}">${R.n}</span></div><div class="tiny dim">${hid?'Keep hunting to discover this one.':esc(a.desc)}</div>${pr}</div>
+      ${u?`<button class="btn sm ${S.title===a.id?'gold':''}" data-a="equip" data-id="${a.id}">${S.title===a.id?'Equipped':'Equip'}</button>`:''}</div>`}).join('')||'<div class="empty small">Nothing here yet.</div>'}</div>
+   <div class="tiny dim" style="margin-top:8px">Titles award bonus EXP: Common +25 · Rare +50 · Epic +100 · Legendary +250.</div></div>`}
+function msToMidnight(){const n=new Date(),m=new Date(n);m.setHours(24,0,0,0);const s=Math.floor((m-n)/1000);return`${String(Math.floor(s/3600)).padStart(2,'0')}:${String(Math.floor(s%3600/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
+function renderQuest(){
+  const d=S.daily;const streak=(d.lastDone===today()||d.lastDone===yesterday())?d.streak:0;
+  const all=d.tasks.length>0&&d.tasks.every(t=>(d.progress[t.id]||0)>=t.target);
+  const reward=40+5*Math.min(streak+1,10);
+  let pen='';
+  if(d.penaltyNote)pen=`<div class="win" style="border-color:rgba(255,77,109,.6)"><div class="wt" style="color:var(--red)">Penalty</div><p style="margin:0">Yesterday's daily quest was not completed. <b style="color:var(--red)">Your streak has been reset.</b></p><button class="btn sm" style="margin-top:10px" data-a="penok">Acknowledge</button></div>`;
+  return pen+`<div class="win"><div class="wt">Daily Quest<span class="sp"></span><span class="tiny mono dim" id="qclock">${msToMidnight()}</span></div>
+    <div class="sys"><div class="h" style="color:#fff;font-size:18px;margin-bottom:4px">Hunter's Regimen</div><div class="tiny dim">Goals</div></div>
+    <div class="list" style="margin-top:6px">
+    ${d.tasks.map(t=>{const p=d.progress[t.id]||0,dn=p>=t.target,step=t.unit==='min'?5:10;return`<div class="qrow ${dn?'done':''}">
+      <div class="nm"><div>${esc(t.name)} <span class="statdot s${t.stat}">${t.stat}</span></div><div class="bar" style="height:5px;margin-top:5px"><i style="width:${Math.min(100,p/t.target*100)}%"></i></div></div>
+      <div class="cnt">[${p}/${t.target}${t.unit==='min'?' min':''}]</div>
+      <button class="btn sm ico" data-a="dq" data-id="${t.id}" data-d="-${step}" ${d.claimed?'disabled':''}>−</button>
+      <button class="btn sm ico" data-a="dq" data-id="${t.id}" data-d="${step}" ${d.claimed?'disabled':''}>+</button>
+      <button class="btn sm ico ${dn?'':'pri'}" data-a="dqmax" data-id="${t.id}" ${d.claimed?'disabled':''}>✓</button></div>`}).join('')}
+    </div>
+    ${d.claimed?`<div class="sys" style="margin-top:12px;color:var(--green)" class="h">✓ QUEST COMPLETE — Rewards claimed</div>`
+      :`<button class="btn ${all?'gold':''} block" style="margin-top:12px" data-a="claim" ${all?'':'disabled'}>Claim reward · +${reward} EXP</button>`}
+    ${d.claimed?'':`<div class="warn">WARNING: Failure to complete the daily quest by midnight will reset your streak.</div>`}
+  </div>
+  <div class="win"><div class="wt">Streak</div><div class="row"><div class="big" style="font-size:38px">${streak}</div><div class="grow dim small">day${streak===1?'':'s'} in a row<br>Best: ${d.best||0} · Streak bonus: +${5*Math.min(streak+1,10)} EXP (max +50)</div></div></div>
+  <div class="win"><div class="wt" style="color:var(--green)">Side quests</div><div class="small dim">Hiking, pickleball, volleyball, any active day outside the gym. Log it so it counts as training and your progress stays safe.</div><button class="btn green block" style="margin-top:10px" data-a="side">+ Log side quest</button>
+   ${LOGS.filter(l=>l.side).slice(0,3).map(l=>`<div class="row small" style="margin-top:8px"><span class="grow">${esc(l.gateName)}</span><span class="tiny dim">${new Date(l.date).toLocaleDateString(undefined,{month:'short',day:'numeric'})} · ${l.side.min} min</span></div>`).join('')}</div>
+  <button class="btn block ghost" data-a="settings" style="margin-top:4px">Edit daily quest goals</button>`;
+}
+
+function renderGates(){
+  const act=S.active?`<div class="win" style="border-color:rgba(255,77,109,.6)"><div class="wt" style="color:#ff8aa0">Raid in progress</div><div class="row"><div class="grow h">${esc(S.active.name)}</div><button class="btn pri" data-a="resume">Return</button></div></div>`:'';
+  return act+renderPlan()+`<div class="sys dim small" style="margin:8px 0 2px">Choose a gate to enter. Each gate is a workout plan.</div>
+  ${S.gates.map(g=>{const sets=g.ex.reduce((a,e)=>a+(+e.sets||0),0);const last=LOGS.find(l=>l.gateId===g.id);const ago=last?Math.floor((Date.now()-new Date(last.date))/864e5):null;
+   return`<div class="win gate r${g.rank}"><div class="portal"></div>
+    <div class="row"><span class="rank r${g.rank}">${g.rank}</span><div class="grow"><div class="h" style="color:#fff;font-size:17px">${esc(g.name)}</div><div class="tiny dim">${g.ex.length} monsters · ${sets} sets${ago!==null?` · cleared ${ago===0?'today':ago+'d ago'}`:''}</div></div></div>
+    ${g.lore?`<div class="small dim" style="margin:8px 0">${esc(g.lore)}</div>`:''}
+    <div class="tiny" style="margin:6px 0 10px;color:var(--txt);opacity:.85">${g.ex.map(e=>esc(exInfo(e.id).name)).join(' · ')}</div>
+    <div class="row"><button class="btn sm" data-a="editgate" data-id="${g.id}">Edit</button><span class="grow"></span><button class="btn pri" data-a="enter" data-id="${g.id}" ${S.active?'disabled':''}>Enter gate</button></div>
+   </div>`}).join('')}
+  <div class="row" style="gap:8px;margin-top:4px"><button class="btn block grow" data-a="newgate">+ Forge new gate</button><button class="btn block grow" data-a="quickraid" ${S.active?'disabled':''}>Freestyle raid</button></div>
+  <button class="btn green block" style="margin-top:8px" data-a="side">+ Log side quest (hiking, sports…)</button>`;
+}
+
+function renderPlan(){
+  if(!S.plan)return`<div class="win"><div class="wt">Training cycle</div><div class="small dim">Set which days you train and which you rest (e.g. 3 on / 1 off). The System will tell you which gate opens each day, and gates cleared on schedule earn <b style="color:var(--cyan)">+20 EXP</b>.</div><button class="btn pri block" style="margin-top:10px" data-a="plan">Set up training cycle</button></div>`;
+  const t=today();const days=[];for(let k=-3;k<=10;k++){const ds=addDays(t,k);const pre=ds<S.plan.start;const p=pre?{rest:true}:planFor(ds);const lg=logsOn(ds);
+    const [y,m,d]=ds.split('-').map(Number);const dt=new Date(y,m-1,d);
+    let st='';if(lg.length)st='<span style="color:var(--green)">✓</span>';else if(k<0&&!p.rest)st='<span style="color:var(--red)">✗</span>';else if(k===0&&!p.rest)st='<span style="color:var(--gold)">◆</span>';
+    days.push(`<div class="day ${k===0?'today':''} ${p.rest?'rest':''}" ${k===0?'id="dtoday"':''}><div class="dw">${k===0?'TODAY':dt.toLocaleDateString(undefined,{weekday:'short'}).toUpperCase()}</div><div class="dn">${d}</div><div class="dg">${pre?'—':p.rest?'Rest':esc(p.gate.name)}</div><div class="st">${st}</div></div>`)}
+  const on=S.plan.cycle.filter(x=>x!=='rest').length,off=S.plan.cycle.length-on;
+  return`<div class="win"><div class="wt">Training cycle<span class="sp"></span><span class="tiny dim">${on} on · ${off} off</span></div><div class="strip" id="strip">${days.join('')}</div>${todayCard(false)}<button class="btn sm ghost block" style="margin-top:8px" data-a="plan">Edit cycle</button></div>`;
+}
+function todayCard(wrap){const p=planFor(today());if(!p)return'';const done=logsOn(today()).length>0;
+  let next='';if(p.rest){for(let k=1;k<=14;k++){const q=planFor(addDays(today(),k));if(!q.rest){next=`Next gate: <b>${esc(q.gate.name)}</b> ${k===1?'tomorrow':'in '+k+' days'}.`;break}}}
+  const inner=p.rest?`<div class="row"><div class="grow"><div class="h" style="color:#fff">Rest day</div><div class="small dim">Recovery is part of the System. ${next}</div></div></div>`
+   :`<div class="row"><span class="rank r${p.gate.rank}">${p.gate.rank}</span><div class="grow"><div class="tiny dim h">Today's gate${done?' · cleared':''}</div><div class="h" style="color:#fff">${esc(p.gate.name)}</div></div>${done?'<span style="color:var(--green)" class="h">✓</span>':`<button class="btn pri sm" data-a="enter" data-id="${p.gate.id}" ${S.active?'disabled':''}>Enter</button>`}</div>${done?(logsOn(today()).some(l=>l.side)&&!logsOn(today()).some(l=>!l.side)?`<div class="tiny" style="color:var(--green);margin-top:6px">Covered by a side quest</div>`:''):`<button class="btn sm ghost" style="margin-top:6px;padding-left:0;color:var(--green)" data-a="side">Doing something else today? Log a side quest →</button>`}`;
+  return wrap?`<div class="win"><div class="wt">Today</div>${inner}</div>`:`<div style="margin-top:8px">${inner}</div>`}
+let PE=null;
+function openPlanEditor(){PE=S.plan?JSON.parse(JSON.stringify(S.plan)):{start:today(),cycle:[]};if(!PE.cycle.length)applyPreset(3,1);openSheet('<div id="pe"></div>',{onClose:()=>{PE=null}});drawPlanEditor()}
+function applyPreset(on,off){const pref=['g2','g3','g4'].filter(id=>S.gates.some(g=>g.id===id));const order=[...pref,...S.gates.map(g=>g.id).filter(id=>!pref.includes(id))];
+  const c=[];for(let i=0;i<on;i++)c.push(order.length?order[i%Math.min(order.length,on>=4&&pref.length===3?3:order.length)]:'rest');for(let i=0;i<off;i++)c.push('rest');PE.cycle=c}
+function drawPlanEditor(){const el=$('#pe');if(!el||!PE)return;
+  el.innerHTML=`<div class="wt">Training cycle</div>
+  <div class="small dim">Pick a pattern, then choose the gate for each training day. The cycle repeats forever, so change it any time (your history stays).</div>
+  <label class="l">Quick patterns</label><div class="presets">${[[3,1],[4,1],[5,2],[6,1],[2,1]].map(([a,b])=>`<button class="btn sm" data-a="pe-pre" data-on="${a}" data-off="${b}">${a} on / ${b} off</button>`).join('')}</div>
+  <label class="l">Day 1 of the cycle starts on</label><input class="f" type="date" id="peStart" value="${PE.start}">
+  <label class="l">Cycle (${PE.cycle.length} days)</label>
+  ${PE.cycle.map((v,i)=>`<div class="slot"><span class="tiny h dim">Day ${i+1}</span><select class="f" data-pe="${i}"><option value="rest" ${v==='rest'?'selected':''}>— Rest day —</option>${S.gates.map(g=>`<option value="${g.id}" ${v===g.id?'selected':''}>[${g.rank}] ${esc(g.name)}</option>`).join('')}</select></div>`).join('')}
+  <div class="row" style="margin-top:6px"><button class="btn sm" data-a="pe-add" ${PE.cycle.length>=14?'disabled':''}>+ Day</button><button class="btn sm ghost" data-a="pe-rm" ${PE.cycle.length<=1?'disabled':''}>− Day</button></div>
+  <div class="row" style="margin-top:16px">${S.plan?'<button class="btn red sm" data-a="pe-clear">Turn off</button>':''}<span class="grow"></span><button class="btn" data-a="close">Cancel</button><button class="btn pri" data-a="pe-save">Save cycle</button></div>`}
+function weekStart(d){const x=new Date(d);x.setHours(0,0,0,0);const wd=(x.getDay()+6)%7;x.setDate(x.getDate()-wd);return x}
+function renderChron(){
+  const ws=weekStart(new Date());const weeks=[];for(let i=7;i>=0;i--){const s=new Date(ws);s.setDate(s.getDate()-7*i);weeks.push({s,sets:0,raids:0})}
+  LOGS.forEach(l=>{const w=weekStart(new Date(l.date)).getTime();const k=weeks.find(x=>x.s.getTime()===w);if(k){k.sets+=l.sets||0;k.raids++}});
+  const max=Math.max(10,...weeks.map(w=>w.sets));const W=320,H=120,bw=W/8;
+  const chart=`<svg class="chart" viewBox="0 0 ${W} ${H+18}" width="100%">${weeks.map((w,i)=>{const h=w.sets/max*H;const x=i*bw+6;return`<rect x="${x}" y="${H-h}" width="${bw-12}" height="${Math.max(h,1)}" rx="2" fill="${i===7?'#7fe6ff':'#2f6fd6'}" opacity="${i===7?1:.75}"/>${w.sets?`<text x="${x+(bw-12)/2}" y="${H-h-4}" text-anchor="middle" style="fill:#dbe9ff">${w.sets}</text>`:''}<text x="${x+(bw-12)/2}" y="${H+14}" text-anchor="middle">${i===7?'NOW':(w.s.getMonth()+1)+'/'+w.s.getDate()}</text>`}).join('')}</svg>`;
+  const prs=Object.entries(S.prs).map(([id,p])=>({d:exInfo(id),p})).sort((a,b)=>a.d.name.localeCompare(b.d.name));
+  return`<div class="win"><div class="wt">Sets per week</div>${chart}</div>
+  <div class="win"><div class="wt">Skill records<span class="sp"></span><span class="tiny dim">tap for progress chart</span></div>
+   ${prs.length?`<div class="list">${prs.map(({d,p})=>`<div class="item row pick" data-a="exchart" data-id="${esc(d.id)}"><span class="statdot s${d.stat}">${d.stat}</span><div class="grow">${esc(d.name)}</div><div class="small mono">${prText(d,p)}</div></div>`).join('')}</div>`:`<div class="empty">Clear a gate to start recording skills.</div>`}
+  </div>
+  <div class="win"><div class="wt">Raid log</div>
+   ${LOGS.length?`<div class="list">${LOGS.slice(0,60).map(l=>{const dt=new Date(l.date);if(l.side)return`<details class="item"><summary><div class="row"><div class="grow"><div>${esc(l.gateName)} <span class="tiny" style="color:var(--green)">SIDE QUEST</span></div><div class="tiny dim">${dt.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})} · ${l.side.min} min · ${INT[l.side.int].n}</div></div><div class="mono small" style="color:var(--cyan)">+${l.xp} EXP</div></div></summary><button class="btn sm red" style="margin-top:8px" data-a="dellog" data-id="${l.id}">Delete entry</button></details>`;return`<details class="item"><summary><div class="row"><div class="grow"><div>${esc(l.gateName)}</div><div class="tiny dim">${dt.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})} · ${l.dur} min · ${l.sets} sets${l.prs&&l.prs.length?` · <span style="color:var(--gold)">${l.prs.length} PR</span>`:''}</div></div><div class="mono small" style="color:var(--cyan)">+${l.xp} EXP</div></div></summary>
+     <div class="small" style="margin-top:8px">${l.ex.map(e=>{const d=exInfo(e.id);return`<div style="margin:4px 0"><span class="statdot s${d.stat}">${d.stat}</span> ${esc(d.name)}${(l.prs||[]).includes(e.id)?' <span style="color:var(--gold)">★</span>':''}<div class="dim mono tiny" style="margin-left:4px">${e.sets.map(s=>setFmt(d,s)).join('  ·  ')}</div></div>`}).join('')}
+     <div class="row" style="margin-top:8px"><button class="btn sm" data-a="logedit" data-id="${l.id}">Edit</button><button class="btn sm red" data-a="dellog" data-id="${l.id}">Delete entry</button></div></div></details>`}).join('')}</div>`:`<div class="empty">No raids yet. The gates await.</div>`}
+  </div>`;
+}
+
+/* ================= RAID ================= */
+function startRaid(g){
+  audioInit();
+  RAID_VIEW=true;S.active={gateId:g?g.id:null,name:g?g.name:'Freestyle Raid',start:Date.now(),ex:(g?g.ex:[]).map(e=>newRaidEx(e.id,(+e.sets||0),e.reps,e.wu,e.ss,e.rmax))};
+  persist();flash();buzz(40);render();
+  sfx('portal');toast(`You have entered <b>${esc(S.active.name)}</b>.`,'', '[Gate]',true);
+}
+function newRaidEx(id,sets,reps,wu,ss,rmax){const d=exInfo(id);const last=lastSets(id);const out=[];const n=Math.max(1,+sets||3);
+  for(let i=0;i<n;i++){const ls=last?(last[i]||last[last.length-1]):null;out.push({w:d.type==='w'?(ls?ls.w:''):'',r:reps!==undefined&&reps!==''?reps:(ls?ls.r:''),done:false,wu:i<(+wu||0)?1:0})}
+  const o={id,sets:out,target:(+rmax>+reps?+rmax:+reps)||null};if(+rmax>+reps)o.rr=reps+'–'+rmax;if(ss)o.ss=ss;return o}
+let raidTick=null;
+function tickElapsed(){const el=$('#elapsed');if(!el||!S.active){clearInterval(raidTick);return}const s=Math.floor((Date.now()-S.active.start)/1000);el.textContent=(s>=3600?Math.floor(s/3600)+':':'')+String(Math.floor(s%3600/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+
+let restEnd=0,restTotal=0,restTimer=null;
+function startRest(sec){restTotal=sec;restEnd=Date.now()+sec*1000;$('#rest').classList.add('on');clearInterval(restTimer);restTimer=setInterval(tickRest,250);tickRest()}
+function tickRest(){const left=Math.max(0,Math.ceil((restEnd-Date.now())/1000));$('#restT').textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');$('#restB').style.width=(restTotal?left/restTotal*100:0)+'%';
+  if(left<=0){clearInterval(restTimer);sfx('restEnd');buzz([120,80,120]);$('#restT').textContent='GO';setTimeout(()=>{if(restEnd<=Date.now())$('#rest').classList.remove('on')},2500)}}
+function stopRest(){clearInterval(restTimer);restEnd=0;$('#rest').classList.remove('on')}
+
+function finishRaid(){
+  const a=S.active;const doneCount=a.ex.reduce((s,e)=>s+e.sets.filter(x=>x.done).length,0);
+  if(!doneCount){toast('No sets completed. Tap ✓ on a set to log it, or Retreat to leave.','red');return}
+  const planned=a.ex.reduce((s,e)=>s+e.sets.length,0);
+  const log={id:uid(),date:new Date(a.start).toISOString(),gateId:a.gateId,gateName:a.name,dur:Math.max(1,Math.round((Date.now()-a.start)/60000)),ex:[],sets:0,vol:0,xp:0,prs:[]};
+  const newPRs=[];const k=U()==='kg'?2.2046:1;
+  a.ex.forEach(e=>{const d=exInfo(e.id);const done=e.sets.filter(s=>s.done);if(!done.length)return;
+    log.ex.push({id:e.id,sets:done.map(s=>s.wu?{w:+s.w||0,r:+s.r||0,wu:1}:{w:+s.w||0,r:+s.r||0})});log.sets+=done.length;
+    done.forEach(s=>{if(d.type==='w')log.vol+=(+s.w||0)*(+s.r||0)*k});
+    const b=bestMetric(d,done),prev=S.prs[e.id];
+    if(b&&(!prev||b.m>prev.m+1e-9)){if(prev){newPRs.push({d,b});log.prs.push(e.id);S.prCount=(S.prCount||0)+1}S.prs[e.id]={...b,date:log.date}}});
+  log.vol=Math.round(log.vol);
+  const fullClear=doneCount>=planned;
+  const parts=[[`${log.sets} sets defeated`,log.sets*10],['Gate cleared',50]];
+  if(fullClear)parts.push(['Full clear bonus',25]);
+  {const ds=today(new Date(a.start)),p=planFor(ds);if(p&&!p.rest&&p.gate.id===a.gateId&&!logsOn(ds).some(l=>l.gateId===a.gateId)){parts.push(['On schedule',20]);S.onSched=(S.onSched||0)+1}}
+  if(newPRs.length)parts.push([`${newPRs.length} new record${newPRs.length>1?'s':''}`,newPRs.length*30]);
+  const base=parts.reduce((s,p)=>s+p[1],0),xb=xpBonus();if(xb>0)parts.push([`Gear & class bonus (+${Math.round(xb*100)}%)`,Math.round(base*xb)]);
+  const fl0=S.tower.floor;const climb=awardSteps(log);
+  LOGS.unshift(log);
+  const fights=bossesOnRaid(log);const wins=fights.filter(f=>f.win).map(f=>f.win);
+  wins.forEach(w=>parts.push([`Defeated ${w.boss.name}`,w.xp]));
+  const drop=rollDrop(log);
+  log.xp=parts.reduce((s,p)=>s+p[1],0);log.full=fullClear;
+  S.active=null;stopRest();stopCirc();clearInterval(raidTick);
+  const res=gainXp(log.xp);rollTower();
+  checkAch();persist([log.date.slice(0,7)],true);
+  $('#raid').classList.add('hide');TAB='gates';
+  const L=res.after;const T=S.tower;
+  flash();buzz([60,40,60,40,160]);
+  let t=0;sfx(wins.length?'bossDefeat':'clear');t+=wins.length?2000:1200;
+  if(climb.floors&&climb.floors.length){setTimeout(()=>sfx('climb'),t);t+=600}
+  if(newPRs.length){setTimeout(()=>sfx('record'),t);t+=700}
+  if(drop){setTimeout(()=>sfx('loot'),t);t+=700}
+  if(res.leveled)setTimeout(()=>sfx('levelup'),t);
+  const towerLine=climb.amt?`<div class="row between small"><span>▲ +${climb.amt===1?'1 step':'½ step'} <span class="dim">(${esc(climb.reason)})</span></span><span class="mono">${T.steps}/4</span></div>`:`<div class="small dim">${esc(climb.reason)}</div>`;
+  const fightLines=fights.filter(f=>!f.win).map(f=>f.b.type==='siege'?`<div class="small" style="margin-top:4px">⚔ ${fmtN(f.dmg)} damage to <b>${esc(f.b.name)}</b> <span class="dim">(${fmtN(f.b.hp)} HP left)</span></div>`:`<div class="small" style="margin-top:4px">☠ Struck <b>${esc(f.b.name)}</b>'s weak point: <span class="mono">${f.b.type==='str'?fmtN(f.hit)+' / '+fmtN(f.b.target)+U():f.hit+' / '+f.b.target+' reps'}</span>. Not enough yet</div>`).join('');
+  render();
+  openSheet(`<div class="sys gold">
+    <div class="wt" style="justify-content:center;color:var(--gold)">Notification</div>
+    <div class="h1">GATE CLEARED</div><div class="dim small" style="margin:4px 0 12px">${esc(log.gateName)} · ${log.dur} min${log.vol?` · ${fmtN(U()==='kg'?log.vol/2.2046:log.vol)} ${U()} moved`:''}</div>
+    ${res.leveled?`<div class="lvlup">LEVEL UP!</div><div class="h" style="margin-bottom:6px">Level ${res.before.L} → <span style="color:var(--gold)">${L.L}</span></div>`:''}
+    ${wins.map(victoryBlock).join('')}
+    <div class="win" style="text-align:left;margin-top:12px"><div class="wt">Rewards</div>
+     ${parts.map(p=>`<div class="row between small" style="padding:3px 0"><span>${esc(p[0])}</span><span class="mono" style="color:var(--cyan)">+${fmtN(p[1])} EXP</span></div>`).join('')}
+     <div class="row between" style="border-top:1px solid rgba(110,200,255,.2);margin-top:6px;padding-top:6px"><b>Total</b><b class="mono" style="color:var(--gold)">+${fmtN(log.xp)} EXP</b></div>
+    </div>
+    <div class="win" style="text-align:left;--zc:${zoneOf(T.floor).c}"><div class="wt" style="color:${zoneOf(T.floor).c}">Tower · Floor ${T.floor}</div>${towerLine}
+     ${T.floor>fl0&&!wins.some(w=>w.boss.kind==='tower')?`<div class="small" style="color:var(--green);margin-top:4px">▲ Ascended to floor ${T.floor}</div>`:''}
+     ${climb.spawned?`<div class="small" style="color:var(--red);margin-top:4px">⚠ A guardian awaits on floor ${climb.spawned}</div>`:''}${fightLines}</div>
+    ${drop?`<div class="win" style="text-align:left"><div class="wt" style="color:var(--gold)">Loot</div><div class="small">🎁 ${itemHtml(drop)}</div></div>`:''}
+    ${newPRs.length?`<div class="win" style="text-align:left"><div class="wt" style="color:var(--gold)">Skill level up</div>${newPRs.map(({d,b})=>`<div class="small" style="padding:3px 0">★ ${esc(d.name)} — <span class="mono">${prText(d,b)}</span></div>`).join('')}</div>`:''}
+    <div class="tiny dim" style="margin:4px 0 10px">EXP ${fmtN(L.into)} / ${fmtN(L.need)} to level ${L.L+1}</div>
+    <div class="bar"><i style="width:${L.into/L.need*100}%"></i></div>
+    <button class="btn gold block" style="margin-top:16px" data-a="close">Continue</button></div>`,{center:true});
+}
+
+/* ================= TOWER · BOSSES · LOOT · CLASSES ================= */
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const RANK_ORDER=['E','D','C','B','A','S'];
+const rIdx=r=>RANK_ORDER.indexOf(r);
+function curRank(){return S.rankPassed||'E'}
+function lvlRank(){return rankOf(lvl(S.xp).L)}
+function examReady(){return S.bosses.some(b=>b.kind==='exam')}
+const ZONES=[{n:'Goblin Catacombs',c:'#9fd36b'},{n:'Sunken Halls',c:'#4fb8ff'},{n:'Ashen Forge',c:'#ff8a5c'},{n:'Frost Spire',c:'#9fe7ff'},{n:'Thorn Gardens',c:'#4ef0a0'},{n:'Storm Bastion',c:'#ffd166'},{n:'Bone Cathedral',c:'#e3dccb'},{n:'Void Library',c:'#b388ff'},{n:'Crimson Throne',c:'#ff4d6d'},{n:'The Summit Path',c:'#ffffff'}];
+function zoneOf(f){return f>100?{n:'The Abyss Beyond',c:'#ff2d95'}:ZONES[Math.min(9,Math.floor((f-1)/10))]}
+const GUARDIANS={10:['Grak','the Goblin Warlord','👺'],20:['Thessaly','the Drowned Knight','🔱'],30:['Ignarok','the Forge Titan','🔥'],40:['Hrimfang','the Frost Wyrm','🐉'],50:['Vyssa','Queen of Thorns','🥀'],60:['Kaal','the Storm Colossus','⛈️'],70:['The Ossuary King','Lord of Bones','💀'],80:['Nyx','Archivist of the Void','📕'],90:['Varr','the Crimson Executioner','🪓'],100:['The Apex Tyrant','Master of the Tower','👁️']};
+function guardian(f){if(GUARDIANS[f])return GUARDIANS[f];return[['Abyssal Horror','Nameless Wraith','Hollow Seraph','Eclipse Beast'][(f/10)%4],`of Floor ${f}`,'🌑']}
+const TOWER_TYPES={10:['trial','gauntlet'],20:['str'],30:['siege'],40:['trial','burpee'],50:['str'],60:['siege'],70:['trial','run'],80:['str'],90:['siege'],100:['siege']};
+const TRIALS={
+ gauntlet:{name:'The Gauntlet',desc:'50 push-ups, 50 squats, 50 sit-ups, then 25 burpees, as fast as you can.',better:'low',par:t=>14*60-(t-1)*30},
+ burpee:{name:'Hundred Burpees',desc:'Complete 100 burpees as fast as you can.',better:'low',par:t=>15*60-(t-1)*30},
+ run:{name:'Two-Mile Run',desc:'Run 2 miles (3.2 km) as fast as you can.',better:'low',par:t=>24*60-(t-1)*45},
+ plank:{name:'Stone Vigil',desc:'Hold a plank as long as you can.',better:'high',par:t=>90+(t-1)*15}
+};
+const EXAMS={D:{type:'trial',trial:'gauntlet',tier:2},C:{type:'str',tier:3},B:{type:'siege',tier:5},A:{type:'str',tier:7},S:{type:'trial',trial:'run',tier:9}};
+const CLASS_TIERS={warrior:['Warrior','Berserker','Warlord'],juggernaut:['Juggernaut','Ironclad','Colossus'],assassin:['Assassin','Shadowblade','Phantom'],monk:['Monk','Ascetic','Grandmaster']};
+const CLASS_TRIAL={warrior:[{type:'str',ex:['bench','ohp']},{type:'str',ex:['ohp','bench']}],juggernaut:[{type:'str',ex:['squat','deadlift']},{type:'str',ex:['deadlift','squat']}],assassin:[{type:'trial',trial:'run'},{type:'trial',trial:'burpee'}],monk:[{type:'trial',trial:'plank'},{type:'trial',trial:'gauntlet'}]};
+const CLASS_REQ={2:{floor:30,rank:'C'},3:{floor:70,rank:'A'}};
+const CLASS_BONUS={stat:[0,0,5,12],xp:[0,0,.05,.10]};
+function ctier(){return S.hunter?.tier||1}
+function className(){return CLASS_TIERS[S.hunter.cls][ctier()-1]}
+const fmtT=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+function endOfDay(n){const d=new Date();d.setDate(d.getDate()+n);d.setHours(23,59,59,999);return d.getTime()}
+function cardioMin(l){return l.ex.reduce((s,e)=>{const d=exInfo(e.id);return s+(d.type==='t'&&d.stat==='AGI'?e.sets.reduce((a,x)=>a+(+x.r||0),0):0)},0)}
+
+/* ---------- loot ---------- */
+const SLOTS={weapon:['Blade','Greatsword','Dagger','Warhammer','Spear','Longbow','Axe'],helm:['Helm','Hood','Crown','Visor'],armor:['Plate','Mail','Cloak','Cuirass'],gloves:['Gauntlets','Grips','Handwraps'],boots:['Greaves','Boots','Striders'],relic:['Amulet','Ring','Sigil','Orb']};
+const SLOT_ICON={weapon:'🗡️',helm:'⛑️',armor:'🛡️',gloves:'🧤',boots:'🥾',relic:'💍'};
+const PREFIX={c:['Worn','Iron','Sturdy','Plain'],r:['Tempered','Runed',"Hunter's",'Keen'],e:['Shadowforged','Stormbound','Abyssal','Starfall'],l:['Apex','Godslayer','Eternal','Sovereign']};
+const RXP={c:.01,r:.02,e:.03,l:.05},RSTAT={c:1,r:2,e:3,l:5},SALV={c:5,r:10,e:25,l:50};
+function dropItem(r,src={}){
+  const slot=src.emblem?'relic':src.cls?'weapon':pick(Object.keys(SLOTS));const base=pick(SLOTS[slot]);
+  const name=src.boss?`${src.boss.name.replace(/^The /,'')}'s ${base}`:src.emblem?`${src.emblem}-Rank Emblem`:src.cls?`${className()}'s ${base}`:`${pick(PREFIX[r])} ${base}${Math.random()<.5?' of the '+zoneOf(S.tower.floor).n.replace(/^The /,''):''}`;
+  const stat=src.cls?CLASSES[S.hunter.cls].stat:pick(Object.keys(STATS));
+  const it={id:'i'+uid(),name,slot,r,stat,sv:RSTAT[r],xp:RXP[r],src:src.boss?`Floor ${src.boss.ref} guardian`:src.emblem?'Rank exam':src.cls?'Class trial':'Gate drop',t:Date.now()};
+  S.gear.push(it);S.gearCount=(S.gearCount||0)+1;
+  const cur=S.gear.find(x=>x.id===S.equip[slot]);if(!cur||RXP[cur.r]<RXP[r])S.equip[slot]=it.id;
+  if(S.gear.length>60){const eq=new Set(Object.values(S.equip));const order='crel';const victim=S.gear.filter(g=>!eq.has(g.id)).sort((a,b)=>order.indexOf(a.r)-order.indexOf(b.r)||a.t-b.t)[0];if(victim)S.gear=S.gear.filter(g=>g!==victim)}
+  return it}
+function rollDrop(log){if(log.sets<5||Math.random()>0.15)return null;const y=Math.random();return dropItem(y<.05&&S.tower.floor>20?'e':y<.3?'r':'c')}
+function equipped(){return Object.values(S.equip).map(id=>S.gear.find(g=>g.id===id)).filter(Boolean)}
+function xpBonus(){return equipped().reduce((s,g)=>s+g.xp,0)+CLASS_BONUS.xp[ctier()]+(S.comp?.02:0)}
+function itemHtml(it,small){const R=RAR[it.r==='c'?'c':it.r];return`<span style="color:${R.col}">${SLOT_ICON[it.slot]} ${esc(it.name)}</span>${small?'':` <span class="tiny dim">+${Math.round(it.xp*100)}% EXP · +${it.sv} ${it.stat}</span>`}`}
+
+/* ---------- bosses ---------- */
+function pickStrength(prefer,tier){
+  let id=null;for(const p of prefer||[]){if(S.prs[p]&&S.prs[p].m>0&&exInfo(p).type==='w'){id=p;break}}
+  if(!id){const big=['bench','squat','deadlift','ohp'].filter(x=>S.prs[x]&&S.prs[x].m>0);
+    if(big.length)id=big[tier%big.length];else{const ws=Object.entries(S.prs).filter(([x,p])=>exInfo(x).type==='w'&&p.m>0).sort((a,b)=>b[1].m-a[1].m);if(ws.length)id=ws[0][0]}}
+  if(id){const p=S.prs[id];let r=Math.round(p.r)||1;if(r>10)r=5;const goal=p.m*(1.02+0.004*tier);const inc=U()==='kg'?2.5:5;
+    const w=Math.ceil((r<=1?goal:goal/(1+r/30))/inc)*inc;return{type:'str',ex:id,w,r,target:r<=1?w:w*(1+r/30),start:p.m,best:0}}
+  const bw=Object.entries(S.prs).filter(([x,p])=>exInfo(x).type==='bw'&&p.m>0).sort((a,b)=>b[1].m-a[1].m)[0];
+  if(bw){const r0=bw[1].m;return{type:'bw',ex:bw[0],target:r0+Math.max(2,Math.ceil(r0*.1)),start:r0,best:0}}
+  return null}
+function makeSiege(tier,mult=1){const since=Date.now()-28*864e5;const sets=LOGS.filter(l=>new Date(l.date).getTime()>=since).reduce((s,l)=>s+(l.sets||0),0);
+  const max=Math.max(20,Math.round(sets/4*1.2*(1+.02*tier)*mult))*100;return{type:'siege',hp:max,max,deadline:endOfDay(7)}}
+function makeTrial(tid,tier){return{type:'trial',trial:tid,par:TRIALS[tid].par(tier),tries:0}}
+function buildBoss(spec,tier){let b=null;
+  if(spec.type==='str'){b=pickStrength(spec.ex,tier);if(!b)b=makeTrial(spec.fallback||'gauntlet',tier)}
+  else if(spec.type==='siege')b=makeSiege(tier,spec.mult);else b=makeTrial(spec.trial,tier);
+  return Object.assign(b,{id:'b'+uid(),tier,spawned:Date.now(),seen:false})}
+function spawnTower(f){if(S.bosses.some(b=>b.kind==='tower'))return;const t=TOWER_TYPES[f]||[['str'],['siege'],['trial','plank']][(f/10)%3];const [n,ep,ic]=guardian(f);
+  S.bosses.push(Object.assign(buildBoss({type:t[0],trial:t[1],mult:f===100?1.5:1,fallback:'gauntlet'},Math.min(10,f/10)),{kind:'tower',ref:f,name:n,ep,icon:ic}))}
+function spawnExam(r){const e=EXAMS[r];S.bosses.push(Object.assign(buildBoss({...e,fallback:'burpee'},e.tier),{kind:'exam',ref:r,name:`${r}-Rank Examiner`,ep:'Prove you belong in the next rank',icon:r}))}
+function spawnClass(t){const spec=CLASS_TRIAL[S.hunter.cls][t-2];S.bosses.push(Object.assign(buildBoss({...spec,fallback:'gauntlet'},t===2?4:8),{kind:'class',ref:t,name:`${CLASS_TIERS[S.hunter.cls][t-1]} Ascension`,ep:'Class advancement trial',icon:'⚜️'}))}
+const KIND_LABEL=b=>b.kind==='tower'?`Floor ${b.ref} Guardian`:b.kind==='exam'?`Rank-up exam · ${b.ref}`:'Class advancement';
+const TYPE_LABEL={str:'Strength',bw:'Strength',siege:'Siege',trial:'Trial'};
+function bossGoal(b){const d=b.ex?exInfo(b.ex):null;
+  if(b.type==='str')return`Complete a set of <b>${esc(d.name)}</b> at <b>${b.w}${U()} × ${b.r}</b> or better (any set with an estimated 1-rep max of ${fmtN(b.target)}${U()}+) in any workout.`;
+  if(b.type==='bw')return`Complete a single set of <b>${b.target}+ ${esc(d.name)}</b> in any workout.`;
+  if(b.type==='siege')return`Deal <b>${fmtN(b.max)}</b> damage before time runs out. Every set you complete in any workout deals 100 damage.`;
+  const T=TRIALS[b.trial],best=S.trialBests[b.trial];
+  return`<b>${esc(T.name)}:</b> ${esc(T.desc)} ${T.better==='low'?'Finish within':'Hold for at least'} the par of <b>${fmtT(b.par)}</b>${best!=null?`, or beat your best of <b>${fmtT(best)}</b>`:''}.`}
+function bossHP(b){if(b.type==='siege')return b.hp/b.max;if(b.type==='str'||b.type==='bw'){const base=b.start*.9;return Math.max(0,Math.min(1,1-(b.best-base)/(b.target-base)))}return 1}
+function bossReward(b){if(b.kind==='tower')return{xp:150+50*b.tier,r:b.tier>=6?'l':b.tier>=3?'e':'r'};if(b.kind==='exam')return{xp:300+60*rIdx(b.ref),r:rIdx(b.ref)>=4?'l':rIdx(b.ref)>=2?'e':'r'};return{xp:500,r:b.ref>=3?'l':'e'}}
+function defeatBoss(b){S.bosses=S.bosses.filter(x=>x.id!==b.id);const R=bossReward(b);const rw={boss:b,xp:Math.round(R.xp*(1+xpBonus())),items:[],lines:[]};
+  if(b.kind==='tower'){S.tower.beaten.push(b.ref);S.tower.floor=b.ref+1;S.tower.steps=0;S.tower.misses=0;rw.items.push(dropItem(R.r,{boss:b}));
+    if(!S.comps.some(c=>c.id===b.ref)){S.comps.push({id:b.ref,name:b.name,icon:b.icon});rw.comp=b;if(!S.comp)S.comp=b.ref}
+    rw.lines.push(`The stairs to floor ${b.ref+1} are open`)}
+  else if(b.kind==='exam'){S.rankPassed=b.ref;rw.items.push(dropItem(R.r,{emblem:b.ref}));rw.lines.push(`You are now ${/^[AE]/.test(b.ref)?'an':'a'} ${b.ref}-Rank Hunter`)}
+  else{S.hunter.tier=b.ref;rw.items.push(dropItem(R.r,{cls:true}));rw.lines.push(`Class advanced to ${className()} (+${CLASS_BONUS.stat[b.ref]} ${CLASSES[S.hunter.cls].stat}, +${Math.round(CLASS_BONUS.xp[b.ref]*100)}% EXP)`)}
+  S.bossKills=(S.bossKills||0)+1;return rw}
+function bossesOnRaid(log){const out=[];
+  for(const b of S.bosses.slice()){if(b.type==='trial')continue;
+    if(b.type==='siege'){const dmg=log.sets*100;b.hp=Math.max(0,b.hp-dmg);const o={b,dmg};if(b.hp<=0)o.win=defeatBoss(b);out.push(o);continue}
+    const e=log.ex.find(x=>x.id===b.ex);if(!e)continue;let best=0;
+    e.sets.forEach(s=>{if(s.wu)return;const w=+s.w||0,r=+s.r||0;if(b.type==='str'){if(w>0&&r>0)best=Math.max(best,r<=1?w:w*(1+r/30))}else best=Math.max(best,r)});
+    if(best>b.best)b.best=best;const o={b,hit:best};if(best>=b.target-1e-6)o.win=defeatBoss(b);out.push(o)}
+  return out}
+
+/* ---------- climbing ---------- */
+function awardSteps(log){const T=S.tower,ds=today(new Date(log.date));
+  if(log.sets<5&&cardioMin(log)<20)return{amt:0,reason:'Too short to climb: needs 5+ sets or 20+ cardio minutes'};
+  if(S.bosses.some(b=>b.kind==='tower')){const g=S.bosses.find(b=>b.kind==='tower');return{amt:0,reason:`${g.name} blocks the stairs. Defeat the guardian to keep climbing`}}
+  if(T.dayD!==ds){T.dayD=ds;T.dayAmt=0}
+  const p=planFor(ds);let amt=.5,reason=S.plan?'Off-plan workout':'No training cycle set';
+  if(p&&!p.rest&&p.gate.id===log.gateId&&!logsOn(ds).some(l=>l.gateId===log.gateId)){amt=1;reason='Planned workout'}
+  else if(S.plan){const y=addDays(ds,-1),py=planFor(y);if(py&&!py.rest&&y>=S.plan.start&&!logsOn(y).length)reason='Make-up for yesterday'}
+  amt=Math.min(amt,1-T.dayAmt);if(amt<=0)return{amt:0,reason:'Daily climb limit reached (1 step per day)'};
+  T.dayAmt+=amt;T.misses=0;T.steps+=amt;const floors=[];let spawned=null;
+  while(T.steps>=4){T.steps-=4;T.floor++;floors.push(T.floor);if(T.floor%10===0&&!T.beaten.includes(T.floor)){T.steps=0;spawnTower(T.floor);spawned=T.floor;break}}
+  return{amt,reason,floors,spawned}}
+function rollTower(){if(!S.hunter)return;const T=S.tower,t=today(),yd=addDays(t,-1);let changed=false;
+  if(S.plan){if(!T.lastEval||T.lastEval>yd)T.lastEval=yd;
+    let d=addDays(T.lastEval,1),guard=0;if(d<S.plan.start)d=S.plan.start;
+    while(d<=yd&&guard++<400){const p=planFor(d);if(p&&!p.rest){if(logsOn(d).length)T.misses=0;else{T.misses++;if(T.misses>=3){if(T.steps>0){T.steps=0;T.regen=true}T.misses=0}}}d=addDays(d,1)}
+    if(T.lastEval!==yd){T.lastEval=yd;changed=true}}
+  S.bosses.forEach(b=>{if(b.type==='siege'&&Date.now()>b.deadline&&b.hp>0){const nb=makeSiege(b.tier,b.ref===100?1.5:1);b.hp=nb.max;b.max=nb.max;b.deadline=nb.deadline;b.escaped=(b.escaped||0)+1;b.notice=true;changed=true}});
+  if(T.floor%10===0&&!T.beaten.includes(T.floor)&&!S.bosses.some(b=>b.kind==='tower')){spawnTower(T.floor);changed=true}
+  if(rIdx(lvlRank())>rIdx(curRank())&&!S.bosses.some(b=>b.kind==='exam')){spawnExam(RANK_ORDER[rIdx(curRank())+1]);changed=true}
+  if(changed)persist()}
+
+/* ---------- notices / intros ---------- */
+function checkIntros(){if(!S.hunter||sheets.length||(S.active&&RAID_VIEW))return;
+  if(S.tower.regen){S.tower.regen=false;persist();sfx('regen');toast('You missed 3 planned workouts in a row. The monsters on this floor regenerated and your step progress was reset. <b>Floors are never lost.</b>','red','[Tower]',true);return}
+  const esc_=S.bosses.find(b=>b.notice);if(esc_){esc_.notice=false;persist();sfx('regen');toast(`<b>${esc(esc_.name)}</b> survived the siege and regenerated. A new 7-day siege has begun.`,'red','[Boss]',true);return}
+  const b=S.bosses.find(x=>!x.seen);if(!b)return;b.seen=true;persist();sfx('bossIntro');buzz([200,100,300]);
+  const el=openSheet(`<div class="sys boss-in"><div class="wt" style="justify-content:center;color:var(--red)">Warning</div>
+    <div class="bicon">${b.kind==='exam'?`<span class="rank r${b.ref}" style="font-size:34px;min-width:64px;height:64px">${b.ref}</span>`:b.icon}</div>
+    <div class="tiny h" style="color:#ff8aa0">${esc(KIND_LABEL(b))}</div>
+    <div class="h1" style="text-shadow:0 0 16px var(--red)">${esc(b.name)}</div><div class="dim small" style="margin-bottom:10px">${esc(b.ep)}</div>
+    <div class="win" style="text-align:left;border-color:rgba(255,77,109,.6)"><div class="wt" style="color:#ff8aa0">${TYPE_LABEL[b.type]} encounter</div><div class="small">${bossGoal(b)}</div></div>
+    <button class="btn red block" data-a="boss" data-id="${b.id}">Face the challenge</button></div>`,{center:true});}
+
+/* ---------- views ---------- */
+function bossCard(b){const hp=bossHP(b);let sub='';
+  if(b.type==='siege'){const left=b.deadline-Date.now();sub=`${fmtN(b.hp)} / ${fmtN(b.max)} HP · ${Math.max(0,Math.floor(left/864e5))}d ${Math.max(0,Math.floor(left%864e5/36e5))}h left`}
+  else if(b.type==='trial')sub=`${TRIALS[b.trial].name} · par ${fmtT(b.par)}`;
+  else sub=`${esc(exInfo(b.ex).name)} · ${b.type==='str'?`${b.w}${U()} × ${b.r}`:`${b.target} reps`}`;
+  return`<div class="item"><div class="row"><div class="bmini">${b.kind==='exam'?`<span class="rank r${b.ref}">${b.ref}</span>`:b.icon}</div><div class="grow"><div class="tiny h" style="color:#ff8aa0">${esc(KIND_LABEL(b))} · ${TYPE_LABEL[b.type]}</div><div class="h" style="color:#fff">${esc(b.name)}</div><div class="tiny dim">${sub}</div></div><button class="btn sm red" data-a="boss" data-id="${b.id}">Face</button></div>
+   <div class="bar hp" style="margin-top:8px;height:7px"><i style="width:${hp*100}%"></i></div></div>`}
+function renderTower(){const T=S.tower,f=T.floor,z=zoneOf(f);const tb=S.bosses.find(b=>b.kind==='tower');const nextG=f%10===0?f:Math.ceil(f/10)*10;
+  let floors='';for(let k=f+3;k>=Math.max(1,f-2);k--){const boss=k%10===0,cur=k===f,done=k<f;const g=guardian(k);
+    floors+=`<div class="fl ${cur?'cur':''} ${done?'done':''} ${boss?'bossf':''}" style="--zc:${zoneOf(k).c}"><span class="mono fn">${k}</span><span class="grow">${boss?(T.beaten.includes(k)?`☠ ${esc(g[0])} — slain`:`${g[2]} ${esc(g[0])}`):cur?'◆ You are here':done?'Cleared':'· · ·'}</span>${cur&&!boss?`<span class="tiny">${T.steps}/4</span>`:''}</div>`}
+  const pips=[0,1,2,3].map(i=>`<span class="pip"><i style="width:${Math.max(0,Math.min(1,T.steps-i))*100}%"></i></span>`).join('');
+  const rank=curRank(),tierN=ctier(),req=CLASS_REQ[tierN+1];const clsB=S.bosses.find(b=>b.kind==='class');
+  let clsHtml;if(!req)clsHtml=`<div class="small" style="color:var(--gold)">Final class reached. You stand at the pinnacle of your path.</div>`;
+  else{const okF=f>req.floor,okR=rIdx(rank)>=rIdx(req.rank);clsHtml=`<div class="small">Next: <b style="color:var(--gold)">${CLASS_TIERS[S.hunter.cls][tierN]}</b> (+${CLASS_BONUS.stat[tierN+1]} ${CLASSES[S.hunter.cls].stat}, +${Math.round(CLASS_BONUS.xp[tierN+1]*100)}% EXP)</div>
+    <div class="tiny" style="margin-top:4px">${okF?'✅':'⬜'} Clear tower floor ${req.floor} &nbsp; ${okR?'✅':'⬜'} Reach ${req.rank}-Rank</div>
+    ${clsB?`<button class="btn sm red" style="margin-top:8px" data-a="boss" data-id="${clsB.id}">Trial in progress — face it</button>`:`<button class="btn sm ${okF&&okR?'gold':''}" style="margin-top:8px" data-a="cls-trial" ${okF&&okR?'':'disabled'}>Begin advancement trial</button>`}`}
+  const eqItems=Object.keys(SLOTS).map(sl=>{const it=S.gear.find(g=>g.id===S.equip[sl]);return`<button class="slotb" data-a="${it?'item':'noop'}" data-id="${it?it.id:''}" style="${it?`border-color:${RAR[it.r].col}`:''}"><div style="font-size:20px">${SLOT_ICON[sl]}</div><div class="tiny" style="color:${it?RAR[it.r].col:'var(--dim)'}">${it?esc(it.name):sl}</div></button>`}).join('');
+  const bag=S.gear.filter(g=>!Object.values(S.equip).includes(g.id)).sort((a,b)=>'lerc'.indexOf(a.r)-'lerc'.indexOf(b.r)||b.t-a.t);
+  return`<div class="win tower" style="--zc:${z.c}"><div class="wt" style="color:${z.c}">The Tower<span class="sp"></span><span class="tiny" style="color:${z.c}">${esc(z.n)}</span></div>
+    <div class="row" style="align-items:flex-end"><div class="grow"><div class="tiny dim h">Floor</div><div class="big" style="color:${z.c};text-shadow:0 0 16px ${z.c}">${f}</div></div>
+     <div style="text-align:right" class="small dim">${tb?`<span style="color:var(--red)">Guardian blocks the stairs</span>`:`Next guardian: floor ${nextG}`}<br>${T.beaten.length} guardian${T.beaten.length===1?'':'s'} slain</div></div>
+    <div class="pips">${pips}</div><div class="tiny dim">${tb?'Defeat the guardian to continue climbing.':`${T.steps} / 4 steps to floor ${f+1}`}</div>
+    <div class="floors">${floors}</div>
+    ${!S.plan?`<div class="callout">Set a training cycle so each planned workout climbs a full step (other workouts climb ½).<button class="btn sm pri" style="margin-top:8px" data-a="plan">Set training cycle</button></div>`:''}
+    ${T.misses>0&&!tb?`<div class="callout red">⚠ ${T.misses} planned workout${T.misses>1?'s':''} missed in a row. ${3-T.misses} more and this floor's monsters regenerate (you'd lose your steps on this floor, never the floor itself).</div>`:''}
+    <details style="margin-top:10px"><summary class="tiny h" style="color:var(--cyan)">How climbing works ▾</summary><div class="small dim" style="margin-top:6px;line-height:1.35">
+     • A planned workout done on its planned day = <b>1 step</b>. Any other workout (rest day, different gate, make-up) = <b>½ step</b>. Max 1 step per day.<br>
+     • A workout must have 5+ sets or 20+ cardio minutes to count. 4 steps = 1 floor.<br>
+     • Every 10th floor has a guardian. Climbing pauses until you defeat it.<br>
+     • Missing 3 planned workouts in a row resets your steps on the current floor. You never lose a floor.</div></details>
+  </div>
+  <div class="win"><div class="wt" style="color:#ff8aa0">Encounters</div>${S.bosses.length?`<div class="list">${S.bosses.map(bossCard).join('')}</div>`:`<div class="empty small">No active bosses. The next guardian waits on floor ${nextG}.${rIdx(lvlRank())<=rIdx(rank)&&rank!=='S'?` Your ${RANK_ORDER[rIdx(rank)+1]}-Rank exam unlocks at level ${RANKS[rIdx(rank)+1][0]}.`:''}</div>`}</div>
+  <div class="win"><div class="wt">Class advancement<span class="sp"></span><span class="tiny dim">Tier ${tierN}/3</span></div>
+    <div class="row"><span style="font-size:26px">${CLASSES[S.hunter.cls].icon}</span><div class="grow"><div class="h" style="color:#fff">${className()}</div><div class="tiny dim">${CLASS_TIERS[S.hunter.cls].join(' → ')}</div></div></div>
+    <div style="margin-top:8px">${clsHtml}</div></div>
+  <div class="win"><div class="wt">Companions<span class="sp"></span><span class="tiny dim">${S.comps.length}/10</span></div>
+    ${S.comps.length?`<div class="tiny dim" style="margin-bottom:6px">Defeated guardians swear loyalty. Your active companion grants +2% EXP.</div><div class="comps">${S.comps.map(c=>`<button class="comp ${S.comp===c.id?'on':''}" data-a="comp" data-id="${c.id}"><div style="font-size:24px">${c.icon}</div><div class="tiny">${esc(c.name)}</div></button>`).join('')}</div>`:`<div class="empty small">Defeat a tower guardian and it will join you as a companion.</div>`}</div>
+  <div class="win"><div class="wt">Armory<span class="sp"></span><span class="tiny" style="color:var(--gold)">+${Math.round(xpBonus()*100)}% EXP total</span></div>
+    <div class="slots">${eqItems}</div>
+    <div class="tiny dim" style="margin:8px 0 4px">Bag (${bag.length})</div>
+    ${bag.length?`<div class="list">${bag.map(it=>`<div class="item pick" data-a="item" data-id="${it.id}">${itemHtml(it)}</div>`).join('')}</div>`:`<div class="empty small">Gates have a 15% chance to drop gear. Bosses always do.</div>`}
+    <div class="tiny dim" style="margin-top:8px">EXP bonus from gear ${Math.round(equipped().reduce((s,g)=>s+g.xp,0)*100)}% · class ${Math.round(CLASS_BONUS.xp[tierN]*100)}% · companion ${S.comp?2:0}%</div></div>`}
+
+let SW={on:false,t0:0,acc:0,timer:null};
+function openBoss(id){const b=S.bosses.find(x=>x.id===id);if(!b)return;const R=bossReward(b);
+  SW={on:false,t0:0,acc:0,timer:null};
+  const extra=b.type==='trial'?`<div class="win" style="text-align:center"><div class="wt" style="justify-content:center">Stopwatch</div><div class="big" id="swT" style="font-size:48px">0:00</div>
+     <div class="row" style="margin-top:10px"><button class="btn grow" data-a="sw-reset">Reset</button><button class="btn pri grow" data-a="sw-go" id="swGo">Start</button></div>
+     <label class="l" style="text-align:left">Your result (min:sec)</label><input class="f mono" id="trialIn" inputmode="numeric" placeholder="e.g. 12:45" style="text-align:center;font-size:20px">
+     <button class="btn red block" style="margin-top:10px" data-a="trial-submit" data-id="${b.id}">Submit result</button>
+     ${S.trialBests[b.trial]!=null?`<div class="tiny dim" style="margin-top:6px">Your best: ${fmtT(S.trialBests[b.trial])} · Attempts on this boss: ${b.tries||0}</div>`:''}</div>`
+   :b.type==='siege'?`<div class="small dim">Time left: <b style="color:#fff">${Math.max(0,Math.floor((b.deadline-Date.now())/864e5))}d ${Math.max(0,Math.floor((b.deadline-Date.now())%864e5/36e5))}h</b>${b.escaped?` · regenerated ${b.escaped}×`:''}</div><button class="btn block" style="margin-top:10px" data-a="goto-gates">Go to gates</button>`
+   :`<div class="small dim">Best attempt so far: <b style="color:#fff">${b.best?(b.type==='str'?fmtN(b.best)+U()+' e1RM':b.best+' reps'):'none yet'}</b> · Target ${b.type==='str'?fmtN(b.target)+U():b.target+' reps'}</div><div class="tiny dim" style="margin-top:4px">Add ${esc(exInfo(b.ex).name)} to any workout. The weak point is marked during raids.</div><button class="btn block" style="margin-top:10px" data-a="goto-gates">Go to gates</button>`;
+  openSheet(`<div class="sys"><div class="bicon">${b.kind==='exam'?`<span class="rank r${b.ref}" style="font-size:34px;min-width:64px;height:64px">${b.ref}</span>`:b.icon}</div>
+   <div class="tiny h" style="color:#ff8aa0">${esc(KIND_LABEL(b))} · ${TYPE_LABEL[b.type]}</div><div class="h1">${esc(b.name)}</div><div class="dim small">${esc(b.ep)}</div>
+   <div class="bar hp" style="margin:12px 0 4px"><i style="width:${bossHP(b)*100}%"></i></div></div>
+   <div class="win"><div class="wt" style="color:#ff8aa0">Victory condition</div><div class="small">${bossGoal(b)}</div></div>
+   ${extra}
+   <div class="win"><div class="wt" style="color:var(--gold)">Spoils</div><div class="small">+${fmtN(Math.round(R.xp*(1+xpBonus())))} EXP · <span style="color:${RAR[R.r].col}">${RAR[R.r].n} gear</span>${b.kind==='tower'?' · Companion':b.kind==='exam'?` · ${b.ref}-Rank`:` · ${CLASS_TIERS[S.hunter.cls][b.ref-1]} class`}</div></div>
+   <button class="btn block ghost" data-a="close">Close</button>`,{onClose:()=>{clearInterval(SW.timer)}})}
+function swTick(){const el=$('#swT');if(!el){clearInterval(SW.timer);return}const s=(SW.acc+(SW.on?Date.now()-SW.t0:0))/1000;el.textContent=fmtT(Math.floor(s));const inp=$('#trialIn');if(inp&&SW.on)inp.value=fmtT(Math.floor(s))}
+function parseT(v){v=String(v).trim();if(!v)return null;let m=v.match(/^(\d+):(\d{1,2})$/);if(m)return(+m[1])*60+(+m[2]);m=v.match(/^\d+(\.\d+)?$/);if(m)return Math.round(parseFloat(v)*60);return null}
+function submitTrial(id){const b=S.bosses.find(x=>x.id===id);if(!b)return;const v=parseT($('#trialIn').value);if(v==null||v<=0){toast('Enter a time like 12:45.','red');return}
+  const T=TRIALS[b.trial],prev=S.trialBests[b.trial];const better=x=>T.better==='low'?x<prev:x>prev;
+  const win=(T.better==='low'?v<=b.par:v>=b.par)||(prev!=null&&better(v));
+  if(prev==null||better(v))S.trialBests[b.trial]=v;b.tries=(b.tries||0)+1;clearInterval(SW.timer);
+  if(!win){persist();closeSheet();sfx('error');toast(`${fmtT(v)}: <b>${esc(b.name)}</b> endures. Rest up and try again.`,'red','[Boss]',true);render();return}
+  const rw=defeatBoss(b);const res=gainXp(rw.xp);rollTower();checkAch();persist(null,true);closeSheet();render();showVictory([rw],res)}
+function victoryBlock(rw){const b=rw.boss;return`<div class="win" style="border-color:var(--gold);text-align:left"><div class="wt" style="color:var(--gold)">Boss defeated</div>
+   <div class="row"><div class="bmini">${b.kind==='exam'?`<span class="rank r${b.ref}">${b.ref}</span>`:b.icon}</div><div class="grow"><div class="h" style="color:#fff">${esc(b.name)}</div><div class="tiny dim">${esc(KIND_LABEL(b))}</div></div><b class="mono" style="color:var(--gold)">+${fmtN(rw.xp)}</b></div>
+   ${rw.lines.map(l=>`<div class="small" style="margin-top:6px;color:var(--green)">▲ ${esc(l)}</div>`).join('')}
+   ${rw.items.map(it=>`<div class="small" style="margin-top:6px">🎁 ${itemHtml(it)}</div>`).join('')}
+   ${rw.comp?`<div class="small" style="margin-top:6px">🤝 ${esc(rw.comp.name)} joins you as a companion</div>`:''}</div>`}
+function showVictory(wins,res){flash();buzz([80,50,80,50,300]);sfx('bossDefeat');if(res&&res.leveled)setTimeout(()=>sfx('levelup'),2200);
+  openSheet(`<div class="sys gold"><div class="wt" style="justify-content:center;color:var(--gold)">Notification</div><div class="lvlup" style="font-size:34px">VICTORY</div>
+   ${res&&res.leveled?`<div class="h" style="margin:6px 0">Level ${res.before.L} → <span style="color:var(--gold)">${res.after.L}</span></div>`:''}
+   ${wins.map(victoryBlock).join('')}<button class="btn gold block" style="margin-top:12px" data-a="close">Claim spoils</button></div>`,{center:true})}
+function openItem(id){const it=S.gear.find(g=>g.id===id);if(!it)return;const eq=S.equip[it.slot]===it.id;
+  openSheet(`<div class="sys"><div style="font-size:44px">${SLOT_ICON[it.slot]}</div><div class="h1" style="font-size:20px;color:${RAR[it.r].col};text-shadow:0 0 12px ${RAR[it.r].col}">${esc(it.name)}</div>
+   <div class="tiny h dim" style="margin:4px 0 10px">${RAR[it.r].n} ${it.slot} · ${esc(it.src)}</div>
+   <div class="small">+${Math.round(it.xp*100)}% EXP gain · +${it.sv} ${it.stat}</div>
+   <div class="row" style="margin-top:14px"><button class="btn red sm" data-a="salvage" data-id="${it.id}" ${eq?'disabled':''}>Salvage +${SALV[it.r]} EXP</button><span class="grow"></span>
+   <button class="btn ${eq?'':'pri'}" data-a="${eq?'unequip':'equip-item'}" data-id="${it.id}">${eq?'Unequip':'Equip'}</button></div></div>`,{center:true})}
+
+/* ================= SIDE QUESTS ================= */
+const ACTS=[
+ ['hike','Hiking','🥾',['VIT','END']],['pickle','Pickleball','🏓',['AGI']],['volley','Volleyball','🏐',['AGI','VIT']],['bball','Basketball','🏀',['AGI','VIT']],
+ ['soccer','Soccer','⚽',['AGI','END']],['tennis','Tennis','🎾',['AGI','STR']],['swim','Swimming','🏊',['END','AGI']],['bike','Bike ride','🚴',['AGI','VIT']],
+ ['climb','Climbing','🧗',['STR','END']],['yoga','Yoga / mobility','🧘',['END']],['golf','Golf (walking)','⛳',['END']],['ski','Skiing / boarding','🎿',['VIT','AGI']],
+ ['paddle','Kayak / paddle','🛶',['STR','END']],['martial','Martial arts','🥋',['STR','AGI']],['dance','Dancing','💃',['AGI']],['labor','Physical work','🪓',['STR','VIT']],
+ ['other','Other','✨',['AGI']]
+].map(([id,name,icon,stats])=>({id,name,icon,stats}));
+const ACTM={};ACTS.forEach(a=>ACTM[a.id]=a);
+const INT={light:{n:'Light',m:.6},mod:{n:'Moderate',m:1},hard:{n:'Hard',m:1.4}};
+const SQ_MIN=30;
+function sideEq(l){return l.side?Math.round(l.side.min/6*INT[l.side.int].m):0}
+let SQ=null;
+function openSideQuest(){SQ={act:null,name:'',min:60,int:'mod',when:'today',move:'skip'};openSheet('<div id="sq"></div>',{onClose:()=>{SQ=null}});drawSQ()}
+function drawSQ(){const el=$('#sq');if(!el||!SQ)return;
+  const ds=SQ.when==='today'?today():yesterday();const p=planFor(ds);const gymDone=logsOn(ds).some(l=>!l.side);
+  const planned=p&&!p.rest&&!gymDone;
+  const a=SQ.act?ACTM[SQ.act]:null;
+  const xp=Math.round((Math.min(200,SQ.min*INT[SQ.int].m)+25)*(1+xpBonus()));
+  el.innerHTML=`<div class="wt" style="color:var(--green)">Side quest</div>
+   <div class="small dim" style="margin-bottom:8px">Did something active outside the gym? Log it and it counts as training for that day, so your tower progress and schedule stay safe.</div>
+   <label class="l">Activity</label>
+   <div class="acts">${ACTS.map(x=>`<button class="actb ${SQ.act===x.id?'on':''}" data-a="sq-act" data-id="${x.id}"><div style="font-size:22px">${x.icon}</div><div class="tiny">${esc(x.name)}</div></button>`).join('')}</div>
+   ${SQ.act==='other'?`<input class="f" style="margin-top:8px" id="sqName" maxlength="30" placeholder="What did you do?" value="${esc(SQ.name)}">`:''}
+   <label class="l">When</label><div class="seg">${[['today','Today'],['yday','Yesterday']].map(([k,l])=>`<button class="${SQ.when===k?'on':''}" data-a="sq-when" data-k="${k}">${l}</button>`).join('')}</div>
+   <label class="l">Duration (minutes)</label>
+   <div class="row" style="gap:6px;flex-wrap:wrap">${[30,45,60,90,120,180].map(m=>`<button class="btn sm ${SQ.min===m?'pri':''}" data-a="sq-min" data-m="${m}">${m}</button>`).join('')}<input class="f" style="width:80px" type="number" inputmode="numeric" min="1" id="sqMin" value="${SQ.min}"></div>
+   <label class="l">Intensity</label><div class="seg">${Object.entries(INT).map(([k,v])=>`<button class="${SQ.int===k?'on':''}" data-a="sq-int" data-k="${k}">${v.n}</button>`).join('')}</div>
+   ${planned?`<label class="l">${SQ.when==='today'?"Today's":"Yesterday's"} planned gate: ${esc(p.gate.name)}</label>
+    <div class="cls">
+     <button class="clsc ${SQ.move==='skip'?'on':''}" data-a="sq-move" data-k="skip"><div class="h small">Replace it</div><div class="tiny dim">The side quest counts as ${SQ.when==='today'?"today's":"that day's"} workout. Schedule continues as normal.</div></button>
+     <button class="clsc ${SQ.move==='push'?'on':''}" data-a="sq-move" data-k="push"><div class="h small">Push it back a day</div><div class="tiny dim">${esc(p.gate.name)} moves to ${SQ.when==='today'?'tomorrow':'today'} and the whole cycle shifts by one day.</div></button>
+    </div>`:''}
+   <div class="callout" style="margin-top:12px"><div class="row between small"><span>Reward</span><b class="mono" style="color:var(--gold)">~${xp} EXP</b></div>
+    <div class="tiny dim" style="margin-top:4px">${SQ.min>=SQ_MIN?`${planned?'Covers a planned training day: <b style="color:#fff">1 tower step</b>, no missed day.':'Extra activity: <b style="color:#fff">½ tower step</b>.'}`:`Needs ${SQ_MIN}+ minutes to climb the tower (still earns EXP).`}${a?` · Trains ${a.stats.join(' + ')}`:''}</div></div>
+   <div class="row" style="margin-top:14px"><button class="btn grow" data-a="close">Cancel</button><button class="btn gold grow" data-a="sq-go" ${SQ.act?'':'disabled'}>Complete side quest</button></div>`;
+  const mi=el.querySelector('#sqMin');mi.addEventListener('change',()=>{SQ.min=Math.max(1,Math.min(600,Math.round(+mi.value||0)));drawSQ()});
+  const nm=el.querySelector('#sqName');if(nm)nm.addEventListener('input',()=>{SQ.name=nm.value})}
+function completeSideQuest(){const q=SQ;if(!q||!q.act)return;const mi=$('#sqMin');if(mi)q.min=Math.max(1,Math.min(600,Math.round(+mi.value||q.min)));
+  const a=ACTM[q.act];const label=q.act==='other'&&q.name.trim()?q.name.trim():a.name;
+  const ds=q.when==='today'?today():yesterday();const d=new Date();if(q.when!=='today'){d.setDate(d.getDate()-1);d.setHours(18,0,0,0)}
+  const p=planFor(ds);const gymDone=logsOn(ds).some(l=>!l.side);const covers=p&&!p.rest&&!gymDone&&!logsOn(ds).length;
+  if(covers&&q.move==='push'&&S.plan){S.plan.shifts=S.plan.shifts||[];S.plan.shifts.push(ds)}
+  const log={id:uid(),date:d.toISOString(),gateId:null,gateName:`${a.icon} ${label}`,side:{act:q.act,name:label,min:q.min,int:q.int},dur:q.min,ex:[],sets:0,vol:0,xp:0,prs:[]};
+  const parts=[[`${label} · ${q.min} min (${INT[q.int].n})`,Math.round(Math.min(200,q.min*INT[q.int].m))],['Side quest complete',25]];
+  const base=parts.reduce((s,x)=>s+x[1],0),xb=xpBonus();if(xb>0)parts.push([`Gear & class bonus (+${Math.round(xb*100)}%)`,Math.round(base*xb)]);
+  // tower
+  const T=S.tower;let climb={amt:0,reason:`Needs ${SQ_MIN}+ minutes to climb`};
+  const tb=S.bosses.find(b=>b.kind==='tower');
+  if(q.min>=SQ_MIN){if(tb)climb={amt:0,reason:`${tb.name} blocks the stairs`};
+    else{if(T.dayD!==ds){T.dayD=ds;T.dayAmt=0}let amt=Math.min(covers?1:.5,1-T.dayAmt);
+      if(amt<=0)climb={amt:0,reason:'Daily climb limit reached (1 step per day)'};
+      else{T.dayAmt+=amt;T.steps+=amt;climb={amt,reason:covers?(q.move==='push'?'Training day covered, gate pushed back':'Side quest replaced planned workout'):'Extra activity',floors:[]};
+        while(T.steps>=4){T.steps-=4;T.floor++;climb.floors.push(T.floor);if(T.floor%10===0&&!T.beaten.includes(T.floor)){T.steps=0;spawnTower(T.floor);climb.spawned=T.floor;break}}}}
+    T.misses=0}
+  // daily quest minutes
+  let dqLine='';if(q.when==='today'&&!S.daily.claimed){const mt=S.daily.tasks.filter(t=>t.unit==='min');mt.forEach(t=>{S.daily.progress[t.id]=Math.min(t.target*3,(S.daily.progress[t.id]||0)+q.min)});if(mt.length)dqLine=`+${q.min} min added to your daily quest`}
+  LOGS.unshift(log);LOGS.sort((x,y)=>x.date<y.date?1:-1);
+  const fights=bossesOnRaid(Object.assign({},log,{sets:sideEq(log)}));const wins=fights.filter(f=>f.win).map(f=>f.win);wins.forEach(w=>parts.push([`Defeated ${w.boss.name}`,w.xp]));
+  const drop=rollDrop({sets:sideEq(log)});
+  log.xp=parts.reduce((s,x)=>s+x[1],0);
+  S.sideCount=(S.sideCount||0)+1;
+  const res=gainXp(log.xp);rollTower();checkAch();persist([log.date.slice(0,7)],true);
+  while(sheets.length)closeSheet();render();
+  flash();buzz([40,30,80]);sfx(wins.length?'bossDefeat':'quest');let t=wins.length?2000:900;if(climb.floors&&climb.floors.length){setTimeout(()=>sfx('climb'),t);t+=600}if(drop){setTimeout(()=>sfx('loot'),t);t+=700}if(res.leveled)setTimeout(()=>sfx('levelup'),t);
+  const L=res.after;
+  openSheet(`<div class="sys gold"><div class="wt" style="justify-content:center;color:var(--green)">Side quest</div><div style="font-size:44px">${a.icon}</div><div class="h1">QUEST COMPLETE</div>
+   <div class="dim small" style="margin:4px 0 12px">${esc(label)} · ${q.min} min · ${INT[q.int].n}${q.when!=='today'?' · yesterday':''}</div>
+   ${res.leveled?`<div class="lvlup">LEVEL UP!</div><div class="h" style="margin-bottom:6px">Level ${res.before.L} → <span style="color:var(--gold)">${L.L}</span></div>`:''}
+   ${wins.map(victoryBlock).join('')}
+   <div class="win" style="text-align:left"><div class="wt">Rewards</div>${parts.map(x=>`<div class="row between small" style="padding:3px 0"><span>${esc(x[0])}</span><span class="mono" style="color:var(--cyan)">+${fmtN(x[1])} EXP</span></div>`).join('')}
+    <div class="row between" style="border-top:1px solid rgba(110,200,255,.2);margin-top:6px;padding-top:6px"><b>Total</b><b class="mono" style="color:var(--gold)">+${fmtN(log.xp)} EXP</b></div></div>
+   <div class="win" style="text-align:left"><div class="wt" style="color:${zoneOf(T.floor).c}">Tower · Floor ${T.floor}</div>
+    ${climb.amt?`<div class="row between small"><span>▲ +${climb.amt===1?'1 step':'½ step'} <span class="dim">(${esc(climb.reason)})</span></span><span class="mono">${T.steps}/4</span></div>`:`<div class="small dim">${esc(climb.reason)}</div>`}
+    ${covers?`<div class="small" style="color:var(--green);margin-top:4px">✓ Planned training day covered. No miss recorded</div>`:''}
+    ${covers&&q.move==='push'?`<div class="small" style="margin-top:4px">↻ ${esc(p.gate.name)} moved to ${q.when==='today'?'tomorrow':'today'}</div>`:''}
+    ${climb.floors&&climb.floors.length&&!climb.spawned?`<div class="small" style="color:var(--green);margin-top:4px">▲ Ascended to floor ${T.floor}</div>`:''}
+    ${climb.spawned?`<div class="small" style="color:var(--red);margin-top:4px">⚠ A guardian awaits on floor ${climb.spawned}</div>`:''}
+    ${fights.filter(f=>!f.win&&f.dmg).map(f=>`<div class="small" style="margin-top:4px">⚔ ${fmtN(f.dmg)} damage to <b>${esc(f.b.name)}</b> <span class="dim">(${fmtN(f.b.hp)} HP left)</span></div>`).join('')}
+    ${dqLine?`<div class="small" style="margin-top:4px">📋 ${dqLine}</div>`:''}</div>
+   ${drop?`<div class="win" style="text-align:left"><div class="wt" style="color:var(--gold)">Loot</div><div class="small">🎁 ${itemHtml(drop)}</div></div>`:''}
+   <button class="btn gold block" style="margin-top:8px" data-a="close">Continue</button></div>`,{center:true})}
+
+/* ================= EFFICIENCY: seconds, circuit, steppers, suggestions, editing, charts ================= */
+const isSec=d=>d.type==='t'&&d.stat!=='AGI';
+const tUnit=d=>isSec(d)?'sec':'min';
+const tDisp=(d,r)=>r===''||r==null?'':(isSec(d)?Math.round(+r*60):r);
+const tFrom=(isS,v)=>v===''?'':(isS?(+v)/60:v);
+const wInc=()=>U()==='kg'?2.5:5;
+function setFmt(d,s){return(s.wu?'W ':'')+(d.type==='w'?`${s.w}×${s.r}`:d.type==='t'?(isSec(d)?`${Math.round(s.r*60)}s`:`${s.r}min`):`${s.r}`)}
+function setWeight(ei,si,val){const sets=S.active.ex[ei].sets,s=sets[si];const prev=s.w;s.w=val;
+  for(let j=si+1;j<sets.length;j++){const o=sets[j];if(!o.done&&!o.wu&&(o.w===''||String(o.w)===String(prev))){o.w=val;const inp=document.querySelector(`input[data-ei="${ei}"][data-si="${j}"][data-k="w"]`);if(inp)inp.value=val}}}
+function suggestFor(e,d){if(d.type!=='w'||!e.target||e.noSug)return null;const last=lastSets(e.id);if(!last)return null;const work=last.filter(s=>!s.wu&&+s.w>0);if(!work.length)return null;
+  const lw=Math.max(...work.map(s=>+s.w));const top=work.filter(s=>+s.w===lw);if(!top.every(s=>+s.r>=e.target))return null;
+  const w=Math.round((lw+wInc())*10)/10;if(!e.sets.some(s=>!s.done&&!s.wu&&(+s.w||0)<w))return null;return{w,lw}}
+function raidRerender(){const y=$('#raid').scrollTop;renderRaid();$('#raid').scrollTop=y}
+function circuitRuns(a){const runs=[];let i=0;while(i<a.ex.length){if(isSec(exInfo(a.ex[i].id))){let j=i;while(j<a.ex.length&&isSec(exInfo(a.ex[j].id)))j++;if(j-i>=3)runs.push([i,j-i]);i=j}else i++}return runs}
+const CEV=()=>S.circEvery??2,CRS=()=>S.circRest??30;
+function raidGroups(a){const g=[];let i=0;while(i<a.ex.length){const e=a.ex[i];if(e.ss){let j=i+1;while(j<a.ex.length&&a.ex[j].ss===e.ss)j++;if(j-i>=2){g.push([...Array(j-i).keys()].map(k=>i+k));i=j;continue}}g.push([i]);i++}return g}
+function setRowHtml(a,ei,si,lbl){const e=a.ex[ei],d=exInfo(e.id),t=d.type,s=e.sets[si];
+  const num=lbl?`${lbl}${s.wu?'·W':''}`:(s.wu?'W':si+1-e.sets.filter((x,j)=>j<si&&x.wu).length);
+  return`<div class="setrow ${t==='w'?'':'t'} ${s.done?'done':''} ${CIRC&&CIRC.on&&CIRC.q[CIRC.i]&&CIRC.q[CIRC.i][0]===ei&&CIRC.q[CIRC.i][1]===si?'live':''}"><span class="n ${lbl?'sslbl':''}" ${s.wu?'style="color:var(--gold)"':''}>${num}</span>
+    ${t==='w'?`<div class="wgrp"><button class="stp" data-a="wstep" data-ei="${ei}" data-si="${si}" data-d="-1" aria-label="Less weight">−</button><input class="f" type="number" inputmode="decimal" step="any" min="0" data-ei="${ei}" data-si="${si}" data-k="w" value="${esc(s.w)}" placeholder="0"><button class="stp" data-a="wstep" data-ei="${ei}" data-si="${si}" data-d="1" aria-label="More weight">+</button></div><span class="n">×</span>`:''}
+    <input class="f" type="number" inputmode="${t==='t'&&!isSec(d)?'decimal':'numeric'}" step="any" min="0" data-ei="${ei}" data-si="${si}" data-k="r" ${isSec(d)?'data-u="sec"':''} value="${esc(t==='t'?tDisp(d,s.r):s.r)}" placeholder="0">
+    <button class="chk" data-a="done" data-ei="${ei}" data-si="${si}" aria-label="Complete set">✓</button></div>`}
+function exInfoBlock(a,ei,lbl){const e=a.ex[ei],d=exInfo(e.id),pr=S.prs[e.id],last=lastSets(e.id),sug=suggestFor(e,d);
+  return`<div class="row" style="align-items:flex-start"><div class="grow"><div class="h" style="color:#fff;font-size:17px;margin-top:2px">${lbl?`<span class="sslbl">${lbl}</span> `:''}${esc(d.name)} <span class="statdot s${d.stat}">${d.stat}</span></div>
+    ${e.rr?`<div class="tiny" style="color:var(--cyan)">Goal: ${e.sets.filter(x=>!x.wu).length} × ${e.rr} reps · go up when you hit ${e.target} on every set</div>`:''}<div class="tiny dim">Best: ${prText(d,pr)}</div>${last?`<div class="tiny dim">Last time: <span class="mono">${last.map(s=>setFmt(d,s)).join(' · ')}</span></div>`:''}
+    ${S.bosses.filter(b=>b.ex===e.id&&(b.type==='str'||b.type==='bw')).map(b=>`<div class="weak">☠ Weak point of <b>${esc(b.name)}</b>: ${b.type==='str'?`${b.w}${U()} × ${b.r}`:`${b.target} reps`} in one set</div>`).join('')}
+    ${sug?`<div class="sug"><span class="grow">⬆ The System recommends <b>${sug.w}${U()}</b>. You hit all ${e.target} reps at ${sug.lw}${U()} last time.</span><button class="btn sm gold" data-a="sug-apply" data-ei="${ei}" data-w="${sug.w}">Apply</button><button class="btn sm ghost" data-a="sug-no" data-ei="${ei}" aria-label="Dismiss">✕</button></div>`:''}</div>
+    <div style="display:flex;flex-direction:column;gap:4px"><button class="btn sm ghost" data-a="rmex" data-ei="${ei}" aria-label="Remove">✕</button>${last||pr?`<button class="btn sm ghost" data-a="exchart" data-id="${esc(e.id)}" aria-label="Progress chart">📈</button>`:''}</div></div>`}
+function colHead(d){const t=d.type;return`<div class="setrow ${t==='w'?'':'t'} tiny dim h" style="padding-top:8px"><span class="n">#</span>${t==='w'?`<span style="text-align:center">${U()}</span><span></span><span style="text-align:center">reps</span>`:`<span style="text-align:center">${t==='t'?(isSec(d)?'seconds':'minutes'):'reps'}</span>`}<span></span></div>`}
+function renderRaid(){
+  const a=S.active,el=$('#raid');el.classList.remove('hide');
+  const planned=a.ex.reduce((s,e)=>s+e.sets.length,0),done=a.ex.reduce((s,e)=>s+e.sets.filter(x=>x.done).length,0);
+  const hp=planned?Math.max(0,100-done/planned*100):100;const runs=circuitRuns(a);const groups=raidGroups(a);
+  const cards=groups.map((grp,gi)=>{const ei=grp[0];const e=a.ex[ei],d=exInfo(e.id);const isBoss=gi===groups.length-1&&groups.length>1;
+    const monOf=k=>{const dd=exInfo(a.ex[k].id);const pool=MONSTERS[dd.stat]||MONSTERS.STR;return pool[hash(a.ex[k].id+k)%pool.length]};
+    const mon=isBoss?BOSSES[hash((a.gateId||'x')+e.id)%BOSSES.length]:grp.map(monOf).join(' & ');
+    const allDone=grp.every(k=>a.ex[k].sets.length&&a.ex[k].sets.every(s=>s.done));
+    const run=runs.find(r=>r[0]===ei);let circ='';
+    if(run){const moves=a.ex.slice(run[0],run[0]+run[1]);const rounds=Math.max(...moves.map(m=>m.sets.length));const secs=moves[0].sets[0]?Math.round((+moves[0].sets[0].r||0.5)*60):30;const left=moves.reduce((s,m)=>s+m.sets.filter(x=>!x.done).length,0);
+      circ=`<div class="win circbox"><div class="wt" style="color:var(--purple)">Core circuit<span class="sp"></span><span class="tiny dim">${run[1]} moves · ${secs}s each${rounds>1?` · ${rounds} rounds`:''}</span></div>
+       <div class="small dim">One tap runs it all: a countdown for each move, ${CEV()?`<b style="color:#fff">${CRS()}s rest after every ${CEV()} moves</b>, `:''}beeps to switch, and sets checked off automatically.</div>
+       <div class="row" style="margin-top:10px"><span class="tiny dim" style="min-width:74px">Rest after every</span><div class="seg grow">${[0,2,3,4].map(v=>`<button class="${CEV()===v?'on':''}" data-a="circ-ev" data-v="${v}">${v?v:'Off'}</button>`).join('')}</div></div>
+       ${CEV()?`<div class="row" style="margin-top:6px"><span class="tiny dim" style="min-width:74px">Rest length</span><div class="seg grow">${[15,30,45,60].map(v=>`<button class="${CRS()===v?'on':''}" data-a="circ-rs" data-v="${v}">${v}s</button>`).join('')}</div></div>`:''}
+       <div class="row" style="margin-top:6px"><span class="tiny dim" style="min-width:74px">Switch time</span><div class="seg grow">${[0,5,10].map(v=>`<button class="${(S.circPrep??5)===v?'on':''}" data-a="circ-prep" data-v="${v}">${v?v+'s':'None'}</button>`).join('')}</div></div>
+       <button class="btn block" style="margin-top:10px;border-color:var(--purple);box-shadow:0 0 14px rgba(179,136,255,.35)" data-a="circ-go" data-s="${run[0]}" data-n="${run[1]}" ${left?'':'disabled'}>${CIRC&&CIRC.on?'Circuit running…':left?`▶ Start circuit (${left} left)`:'✓ Circuit complete'}</button></div>`}
+    const head=`<div class="mon ${isBoss?'boss':''}">${isBoss?'Boss · ':'Wave '+(gi+1)+' · '}${grp.length>1?`<span class="sstag" style="margin:0 4px 0 0">Superset ${esc(e.ss)}</span>`:''}${mon}</div>`;
+    if(grp.length===1){const t=d.type;
+      return circ+`<div class="win ${allDone?'slain':''}">${head}${exInfoBlock(a,ei)}${colHead(d)}${e.sets.map((s,si)=>setRowHtml(a,ei,si)).join('')}
+       <div class="row" style="margin-top:6px"><button class="btn sm" data-a="addset" data-ei="${ei}">+ Set (copy last)</button>${e.sets.length>1?`<button class="btn sm ghost" data-a="rmset" data-ei="${ei}">− Set</button>`:''}</div></div>`}
+    const L=e.ss||'A';const rounds=Math.max(...grp.map(k=>a.ex[k].sets.length));let rows='';
+    for(let r=0;r<rounds;r++){const rdone=grp.every(k=>!a.ex[k].sets[r]||a.ex[k].sets[r].done);
+      rows+=`<div class="ssround ${rdone?'rdone':''}"><div class="tiny h dim">Round ${r+1}${grp.some(k=>a.ex[k].sets[r]&&a.ex[k].sets[r].wu)?' · warm-up':''}</div>${grp.map((k,m)=>a.ex[k].sets[r]?setRowHtml(a,k,r,L+(m+1)):'').join('')}</div>`}
+    return circ+`<div class="win sscard ${allDone?'slain':''}">${head}
+      ${grp.map((k,m)=>`<div class="ssmember">${exInfoBlock(a,k,L+(m+1))}</div>`).join('')}
+      <div class="tiny dim" style="margin:8px 0 2px">Do ${grp.map((k,m)=>L+(m+1)).join(' → ')} back to back, then rest. Rest starts when the round is done.</div>
+      ${rows}
+      <div class="row" style="margin-top:6px"><button class="btn sm" data-a="addround" data-eis="${grp.join(',')}">+ Round</button>${rounds>1?`<button class="btn sm ghost" data-a="rmround" data-eis="${grp.join(',')}">− Round</button>`:''}</div></div>`});
+  el.innerHTML=`<div class="wrap">
+   <div class="row between" style="margin-bottom:6px"><button class="btn sm ghost" data-a="minraid">‹ Back</button><span class="mono" id="elapsed" style="color:#ff8aa0">00:00</span></div>
+   <div class="win" style="border-color:rgba(255,77,109,.55)"><div class="wt" style="color:#ff8aa0">Dungeon</div>
+    <div class="h" style="font-size:20px;color:#fff">${esc(a.name)}</div>
+    <div class="row between tiny dim" style="margin:10px 0 4px"><span class="h">Gate HP</span><span class="mono">${planned-done} / ${planned}</span></div>
+    <div class="bar hp"><i style="width:${hp}%"></i></div>
+    ${S.bosses.filter(b=>b.type==='siege').map(b=>`<div class="weak">⚔ Siege vs <b>${esc(b.name)}</b>: every set deals 100 damage (${fmtN(b.hp)} HP left)</div>`).join('')}</div>
+   ${cards.join('')}
+   <button class="btn block" data-a="raidadd">+ Summon another monster (add exercise)</button>
+   <div class="row" style="margin-top:10px"><span class="tiny dim grow">Rest timer: ${S.rest}s after each set</span><button class="btn sm ghost" data-a="restset">Change</button></div>
+  </div>
+  <div class="raidfoot"><div class="in"><button class="btn red" data-a="retreat">Retreat</button><button class="btn gold grow" data-a="finish">Clear gate</button></div></div>`;
+  tickElapsed();clearInterval(raidTick);raidTick=setInterval(tickElapsed,1000);setTimeout(fitScreen,0);
+}
+
+/* ---------- circuit runner ---------- */
+let CIRC=null;
+function startCircuit(start,n){const a=S.active;if(!a)return;stopRest();const moves=[];for(let k=start;k<start+n;k++)moves.push(k);
+  const rounds=Math.max(...moves.map(k=>a.ex[k].sets.length));const q=[];for(let r=0;r<rounds;r++)moves.forEach((k,p)=>{const s=a.ex[k].sets[r];if(s&&!s.done)q.push([k,r,CEV()>0&&(p+1)%CEV()===0])});
+  if(!q.length)return;CIRC={on:true,q,i:0,phase:'prep',end:Date.now()+3000,paused:false,left:0,lastBeep:null};
+  $('#circ').classList.add('on');clearInterval(CIRC.timer);CIRC.timer=setInterval(tickCirc,200);sfx('blip');raidRerender();tickCirc()}
+function circMove(){const c=CIRC,a=S.active;if(!c||!a)return null;const [ei,si]=c.q[c.i]||[];if(ei==null||!a.ex[ei])return null;return{ei,si,d:exInfo(a.ex[ei].id),s:a.ex[ei].sets[si]}}
+function tickCirc(){const c=CIRC;if(!c||!c.on)return;if(!S.active){stopCirc();return}const m=circMove();if(!m){finishCirc();return}
+  const left=c.paused?c.left:Math.max(0,(c.end-Date.now())/1000);const sec=Math.ceil(left);
+  const nx=c.q[c.i+1]?exInfo(S.active.ex[c.q[c.i+1][0]].id).name:'Finish';
+  $('#circPh').textContent=c.phase==='rest'?'Rest · up next':c.phase==='prep'?'Get ready':'Go';$('#circPh').style.color=c.phase==='rest'?'var(--cyan)':c.phase==='prep'?'var(--gold)':'var(--green)';
+  $('#circName').textContent=m.d.name;$('#circT').textContent=sec;$('#circNext').textContent=c.phase!=='work'?`${c.i+1} / ${c.q.length}`:`Next: ${nx} · ${c.i+1} / ${c.q.length}`;
+  const total=c.phase!=='work'?Math.max(1,c.prepLen||3):Math.max(1,(+m.s.r||0.5)*60);$('#circB').style.width=(left/total*100)+'%';
+  $('#circPause').textContent=c.paused?'Resume':'Pause';
+  if(c.paused)return;
+  if(sec<=3&&sec>0&&c.lastBeep!==c.phase+sec+c.i){c.lastBeep=c.phase+sec+c.i;beepTick(c.phase==='work'?880:660)}
+  if(left<=0){
+    if(c.phase==='prep'||c.phase==='rest'){c.phase='work';const dur=Math.max(1,(+m.s.r||0.5)*60);c.end=Date.now()+dur*1000;sfx('hit');buzz(60)}
+    else{m.s.done=true;if(!m.s.r)m.s.r=0.5;sfx(S.active.ex[m.ei].sets.every(x=>x.done)?'slain':'hit');buzz([60,40,60]);persist();c.i++;
+      if(c.i>=c.q.length){finishCirc();return}
+      if(c.q[c.i-1][2]){c.phase='rest';c.prepLen=CRS();c.end=Date.now()+CRS()*1000;sfx('blip')}else{const p=S.circPrep??5;if(p>0){c.phase='prep';c.prepLen=p;c.end=Date.now()+p*1000}else{const nm=circMove();c.phase='work';c.end=Date.now()+Math.max(1,(+nm.s.r||0.5)*60)*1000}}
+      raidRerender()}}}
+function skipCirc(){const c=CIRC;if(!c)return;c.paused=false;
+  if(c.phase==='prep'||c.phase==='rest'){c.end=Date.now();tickCirc();return}
+  c.i++;if(c.i>=c.q.length){finishCirc();return}if(c.q[c.i-1][2]){c.phase='rest';c.prepLen=CRS();c.end=Date.now()+CRS()*1000;raidRerender();tickCirc();return}const p=S.circPrep??5;if(p>0){c.phase='prep';c.prepLen=p;c.end=Date.now()+p*1000}else{const nm=circMove();c.phase='work';c.end=Date.now()+Math.max(1,(+nm.s.r||0.5)*60)*1000}raidRerender();tickCirc()}
+function beepTick(f){try{tone(f,0,.08,{type:'square',g:.06})}catch(e){}}
+function stopCirc(){if(CIRC){clearInterval(CIRC.timer);CIRC.on=false}CIRC=null;const el=$('#circ');if(el)el.classList.remove('on')}
+function finishCirc(){stopCirc();sfx('quest');buzz([80,50,160]);toast('Core circuit complete.','gold','[System]',true);if(S.active&&RAID_VIEW)raidRerender()}
+
+/* ---------- PR rebuild ---------- */
+function rebuildPRs(){const prs={};LOGS.slice().sort((a,b)=>a.date<b.date?-1:1).forEach(l=>l.ex.forEach(e=>{const d=exInfo(e.id);const b=bestMetric(d,e.sets);if(b&&(!prs[e.id]||b.m>prs[e.id].m))prs[e.id]={...b,date:l.date}}));S.prs=prs}
+
+/* ---------- edit past workout ---------- */
+let LED=null;
+function openLogEdit(id){const l=LOGS.find(x=>x.id===id);if(!l||l.side)return;LED={id,ex:JSON.parse(JSON.stringify(l.ex)),dur:l.dur};openSheet('<div id="led"></div>',{onClose:()=>{LED=null}});drawLogEdit()}
+function drawLogEdit(){const el=$('#led');if(!el||!LED)return;const l=LOGS.find(x=>x.id===LED.id);
+  el.innerHTML=`<div class="wt">Edit raid</div><div class="h" style="color:#fff">${esc(l.gateName)}</div><div class="tiny dim" style="margin-bottom:8px">${new Date(l.date).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})}</div>
+   <label class="l">Duration (minutes)</label><input class="f" style="width:100px" type="number" inputmode="numeric" min="1" data-led="dur" value="${LED.dur}">
+   ${LED.ex.map((e,ei)=>{const d=exInfo(e.id);return`<div class="win" style="padding:10px"><div class="row"><span class="statdot s${d.stat}">${d.stat}</span><div class="grow h small" style="color:#fff">${esc(d.name)}</div><button class="btn sm ghost" data-a="led-rmex" data-ei="${ei}">✕</button></div>
+     ${e.sets.map((s,si)=>`<div class="setrow ${d.type==='w'?'':'t'}"><span class="n" ${s.wu?'style="color:var(--gold)"':''}>${s.wu?'W':si+1}</span>
+       ${d.type==='w'?`<input class="f" type="number" inputmode="decimal" step="any" min="0" data-lei="${ei}" data-lsi="${si}" data-lk="w" value="${esc(s.w)}"><span class="n">×</span>`:''}
+       <input class="f" type="number" inputmode="decimal" step="any" min="0" data-lei="${ei}" data-lsi="${si}" data-lk="r" ${isSec(d)?'data-u="sec"':''} value="${esc(d.type==='t'?tDisp(d,s.r):s.r)}">
+       <button class="chk" style="color:var(--red)" data-a="led-rmset" data-ei="${ei}" data-si="${si}" aria-label="Remove set">✕</button></div>`).join('')}
+     <button class="btn sm" style="margin-top:6px" data-a="led-addset" data-ei="${ei}">+ Set</button></div>`}).join('')}
+   <div class="tiny dim">Records are recalculated when you save. EXP already earned doesn't change.</div>
+   <div class="row" style="margin-top:12px"><span class="grow"></span><button class="btn" data-a="close">Cancel</button><button class="btn pri" data-a="led-save">Save changes</button></div>`}
+function saveLogEdit(){const l=LOGS.find(x=>x.id===LED.id);if(!l)return;const k=U()==='kg'?2.2046:1;
+  l.ex=LED.ex.map(e=>({id:e.id,sets:e.sets.filter(s=>(+s.r||0)>0).map(s=>{const o={w:+s.w||0,r:+s.r||0};if(s.wu)o.wu=1;return o})})).filter(e=>e.sets.length);
+  l.sets=l.ex.reduce((s,e)=>s+e.sets.length,0);l.vol=Math.round(l.ex.reduce((s,e)=>s+(exInfo(e.id).type==='w'?e.sets.reduce((a,x)=>a+x.w*x.r*k,0):0),0));
+  l.dur=Math.max(1,Math.round(+LED.dur||l.dur));l.prs=(l.prs||[]).filter(id=>l.ex.some(e=>e.id===id));
+  rebuildPRs();checkAch();persist([l.date.slice(0,7)],true);closeSheet();render();toast('Raid updated. Records recalculated.')}
+
+/* ---------- per-exercise progress chart ---------- */
+let CH={id:null,m:'e1rm'};
+function chartSeries(id,m){const d=exInfo(id);const out=[];
+  LOGS.slice().sort((a,b)=>a.date<b.date?-1:1).forEach(l=>{const e=l.ex.find(x=>x.id===id);if(!e)return;const ws=e.sets.filter(s=>!s.wu);if(!ws.length)return;let v;
+    if(d.type==='w'){if(m==='top')v=Math.max(...ws.map(s=>+s.w||0));else if(m==='vol')v=ws.reduce((a,s)=>a+(+s.w||0)*(+s.r||0),0);else{const b=bestMetric(d,ws);v=b?b.m:0}}
+    else if(d.type==='t')v=Math.max(...ws.map(s=>+s.r||0))*(isSec(d)?60:1);else v=Math.max(...ws.map(s=>+s.r||0));
+    if(v>0)out.push({date:l.date,v,sets:e.sets})});return out}
+function openChart(id){CH={id,m:'e1rm'};openSheet('<div id="chs"></div>');drawChart()}
+function drawChart(){const el=$('#chs');if(!el)return;const d=exInfo(CH.id);const m=d.type==='w'?CH.m:'val';const ser=chartSeries(CH.id,m);
+  const unit=d.type==='w'?(m==='vol'?U()+' moved':U()):d.type==='t'?(isSec(d)?'sec':'min'):'reps';
+  const label=d.type==='w'?{e1rm:'Estimated 1-rep max',top:'Heaviest set',vol:'Total volume'}[m]:d.type==='t'?'Longest set':'Most reps in a set';
+  let svg='<div class="empty small">Log this exercise in a few raids to see your progress.</div>';
+  if(ser.length){const W=320,H=150,P=28;const vs=ser.map(x=>x.v);let lo=Math.min(...vs),hi=Math.max(...vs);if(hi===lo){hi+=1;lo=Math.max(0,lo-1)}
+    const X=i=>ser.length===1?W/2:P+i*(W-P-8)/(ser.length-1),Y=v=>8+(H-24)*(1-(v-lo)/(hi-lo));
+    const pts=ser.map((x,i)=>`${X(i).toFixed(1)},${Y(x.v).toFixed(1)}`).join(' ');const fd=s=>{const t=new Date(s);return(t.getMonth()+1)+'/'+t.getDate()};
+    svg=`<svg class="chart" viewBox="0 0 ${W} ${H}" width="100%"><line x1="${P}" y1="${Y(hi)}" x2="${W}" y2="${Y(hi)}" stroke="rgba(110,200,255,.15)"/><line x1="${P}" y1="${Y(lo)}" x2="${W}" y2="${Y(lo)}" stroke="rgba(110,200,255,.15)"/>
+      <text x="0" y="${Y(hi)+3}">${fmtN(hi)}</text><text x="0" y="${Y(lo)+3}">${fmtN(lo)}</text>
+      <polyline points="${pts}" fill="none" stroke="#7fe6ff" stroke-width="2" style="filter:drop-shadow(0 0 4px #7fe6ff)"/>
+      ${ser.map((x,i)=>`<circle cx="${X(i)}" cy="${Y(x.v)}" r="3.5" fill="${i===ser.length-1?'#ffd166':'#7fe6ff'}"/>`).join('')}
+      <text x="${X(0)}" y="${H-2}" text-anchor="${ser.length===1?'middle':'start'}">${fd(ser[0].date)}</text>${ser.length>1?`<text x="${W-2}" y="${H-2}" text-anchor="end">${fd(ser[ser.length-1].date)}</text>`:''}</svg>`}
+  const first=ser[0],lastS=ser[ser.length-1];const ch=ser.length>1&&first.v?((lastS.v-first.v)/first.v*100):null;
+  el.innerHTML=`<div class="wt">Progress<span class="sp"></span><span class="statdot s${d.stat}">${d.stat}</span></div><div class="h" style="color:#fff;font-size:18px">${esc(d.name)}</div>
+   ${d.type==='w'?`<div class="seg" style="margin:10px 0">${[['e1rm','e1RM'],['top','Heaviest'],['vol','Volume']].map(([k,l])=>`<button class="${CH.m===k?'on':''}" data-a="ch-m" data-k="${k}">${l}</button>`).join('')}</div>`:''}
+   <div class="tiny dim h" style="margin:6px 0">${label} (${unit})</div>${svg}
+   ${ser.length?`<div class="stats" style="margin-top:10px"><div class="stat"><div class="k">Latest</div><b>${fmtN(lastS.v)}</b> <span class="tiny dim">${unit}</span></div><div class="stat"><div class="k">${ch==null?'Sessions':'Since first'}</div><b style="color:${ch==null?'#fff':ch>=0?'var(--green)':'var(--red)'}">${ch==null?ser.length:(ch>=0?'+':'')+ch.toFixed(1)+'%'}</b></div></div>
+   <div class="tiny dim h" style="margin:12px 0 4px">Recent sessions</div><div class="list">${ser.slice(-8).reverse().map(x=>`<div class="item row small"><span class="dim" style="min-width:64px">${new Date(x.date).toLocaleDateString(undefined,{month:'short',day:'numeric'})}</span><span class="grow mono tiny">${x.sets.map(s=>setFmt(d,s)).join(' · ')}</span></div>`).join('')}</div>`:''}
+   <button class="btn block ghost" style="margin-top:10px" data-a="close">Close</button>`}
+
+/* ================= SYSTEM MANUAL ================= */
+const MANUAL=[
+ ['🧭','Getting started',`<p>Every workout is a <b>gate</b> (a dungeon). Clear gates to earn EXP, level up, grow attributes and climb the Tower.</p>
+  <p><b>Status</b>: your level, rank, attributes and titles. <b>Quest</b>: daily goals and side quests. <b>Gates</b>: your workout plans and training cycle. <b>Tower</b>: long-term progress, bosses, class, companions and gear. <b>Chronicle</b>: history, records and charts.</p>`],
+ ['⚔️','Raids (logging a workout)',`<p>Tap <b>Enter gate</b>, then tap <b>✓</b> on each set as you finish it. Only checked sets are logged. Each exercise is a "wave"; the last one is the boss wave.</p>
+  <ul><li><b>− / +</b> change weight by 5 lb (2.5 kg). Changing a set also updates the unchecked sets below it.</li>
+  <li><b>Last time</b> shows your previous session. <b>+ Set</b> copies your last set.</li>
+  <li><b>W</b> = warm-up set. Counts for EXP, not for records or suggestions.</li>
+  <li><b>Gold banner</b>: if you hit every rep at your top weight last time, the System recommends going up. Tap Apply.</li>
+  <li><b>Supersets</b> show as one wave with rounds (A1 → A2). Rest starts after the round.</li>
+  <li><b>Core circuit</b>: 3+ timed core moves in a row get a Start circuit button that runs the countdowns, rests and check-offs for you.</li>
+  <li><b>📈</b> opens that exercise's progress chart. <b>‹ Back</b> leaves the raid open in the background.</li>
+  <li>Tap <b>Clear gate</b> when done, or <b>Retreat</b> to discard the session.</li></ul>
+  <p class="dim">Keep your screen on during rests; timers can't beep while the phone is locked.</p>`],
+ ['✨','EXP and levels',`<ul><li>10 EXP per completed set, +50 for clearing the gate, +25 if every set was checked.</li>
+  <li>+20 for clearing your planned gate on its day. +30 per new personal record.</li>
+  <li>Gear, class tier and companion add a % bonus on top.</li>
+  <li>Each level needs 100 + 25 × your level in EXP.</li></ul>`],
+ ['📊','Attributes',`<p><b>STR</b> upper body, <b>VIT</b> legs, <b>AGI</b> cardio, <b>END</b> core. Every exercise belongs to one.</p>
+  <ul><li>+1 point for every 4 sets in that attribute (cardio: every 5 minutes counts as a set).</li>
+  <li>Your class gives +3 to its main attribute. Daily quests, side quests and gear add more.</li></ul>`],
+ ['📋','Daily quest and streak',`<ul><li>Finish every goal, then tap <b>Claim</b> for 40 EXP + 5 per streak day (up to +50).</li>
+  <li>Miss a day and your streak resets to 0. Goals are editable in Settings.</li>
+  <li>Side quest minutes count toward any goal measured in minutes.</li></ul>`],
+ ['🥾','Side quests',`<p>Hiking, pickleball, volleyball or any active day outside the gym. Log it from the Quest or Gates tab (today or yesterday).</p>
+  <ul><li>EXP = minutes × intensity (Light 0.6, Moderate 1, Hard 1.4), max 200, +25 bonus.</li>
+  <li>30+ minutes on a planned training day counts as that day's workout: <b>1 tower step</b>, no miss. On other days: ½ step.</li>
+  <li>On a planned day you can <b>Replace</b> the gate or <b>Push it back</b> a day (shifts your cycle).</li></ul>`],
+ ['📅','Training cycle',`<p>Set it on the Gates tab: pick a pattern (3 on / 1 off, 6 on / 1 off…), choose a gate for each day, and a start date. It repeats forever and can be changed any time without losing history.</p>
+  <p>The strip shows ✓ trained, ✗ missed, ◆ today.</p>`],
+ ['🏯','The Tower',`<ul><li>A planned gate cleared on its day = <b>1 step</b>. Any other workout = ½ step. Max 1 step per day.</li>
+  <li>A workout needs 5+ sets or 20+ cardio minutes to count. <b>4 steps = 1 floor.</b></li>
+  <li>Every 10th floor has a guardian. Climbing pauses until you beat it.</li>
+  <li>Missing 3 planned workouts in a row resets your steps on the current floor. You never lose a floor.</li></ul>`],
+ ['☠️','Bosses',`<ul><li><b>Strength</b>: lift a target just above your best (e.g. 195 lb × 8). The exercise shows a ☠ weak point during raids.</li>
+  <li><b>Siege</b>: 7 days to deal its HP. Every set in any workout deals 100 damage. If it survives, it heals and the siege restarts.</li>
+  <li><b>Trial</b>: a timed challenge (burpees, run, plank…). Use the built-in stopwatch; beat the par or your own best.</li></ul>
+  <p>Find active bosses under <b>Tower → Encounters</b>.</p>`],
+ ['🎖️','Ranks and exams',`<p>E → D → C → B → A → S. Reaching level 10, 20, 35, 50 or 70 unlocks a <b>rank-up exam</b> boss. Pass it to rank up.</p>`],
+ ['⚜️','Class advancement',`<p>Each class has 3 tiers (e.g. Warrior → Berserker → Warlord).</p>
+  <ul><li>Tier 2: clear tower floor 30 and reach C-Rank. Tier 3: floor 70 and A-Rank.</li>
+  <li>Start the trial from <b>Tower → Class advancement</b>. Each tier adds main-attribute points and a % EXP bonus.</li></ul>`],
+ ['🎁','Loot, armory and companions',`<ul><li>Gates with 5+ sets have a 15% gear drop chance. Bosses always drop gear.</li>
+  <li>Rarity: Common +1% EXP / +1 stat, Rare +2/+2, Epic +3/+3, Legendary +5/+5. Better items equip automatically.</li>
+  <li>Manage gear in <b>Tower → Armory</b>. Salvage spare items for 5 / 10 / 25 / 50 EXP.</li>
+  <li>Defeated guardians become companions. Your active companion adds +2% EXP.</li></ul>`],
+ ['🏆','Titles',`<p>78+ titles for milestones. Locked ones show progress bars; some are hidden until earned. Earning one gives Common +25, Rare +50, Epic +100, Legendary +250 EXP. Equip one to show it under your name.</p>`],
+ ['📜','Chronicle',`<ul><li>Sets per week, skill records (tap one for its chart) and your raid log.</li>
+  <li>Open a past raid to <b>Edit</b> weights and reps or delete it. Records recalculate automatically; earned EXP stays.</li></ul>`],
+ ['🛠️','Building your own gates',`<p>Gates → <b>Forge new gate</b> or <b>Edit</b>. Add exercises, sets and reps (seconds for core holds). Check <b>1st set is warm-up</b> or <b>Superset with next</b> per exercise. Create custom exercises from the exercise picker.</p>`],
+ ['🧪','Test mode and backups',`<ul><li><b>Test mode</b> (Settings): try anything without saving. Exit to get your real progress back.</li>
+  <li>Progress syncs to your Google/Arise account. <b>Copy backup</b> saves everything as text; <b>Restore</b> brings it back.</li></ul>`]
+];
+function openManual(){openSheet(`<div class="wt">System manual</div><div class="small dim" style="margin-bottom:8px">How the System works. Tap a section.</div>
+  <div class="list manual">${MANUAL.map(([ic,t,b],i)=>`<details class="item"${i===0?' open':''}><summary class="row"><span style="font-size:20px;width:28px;text-align:center">${ic}</span><span class="grow h" style="color:#fff;font-size:15px">${t}</span><span class="dim tiny">▾</span></summary><div class="small" style="padding:6px 2px 2px 36px;line-height:1.4">${b}</div></details>`).join('')}</div>
+  <button class="btn block" style="margin-top:12px" data-a="close">Close</button>`)}
+
+/* ================= GUILD LEADERBOARD (Google version) ================= */
+let LB={},LB_KEY='',LB_SORT='level';
+const weekKeyNow=()=>today(weekStart(new Date()));
+function myCard(){const L=lvl(S.xp),c=totals(),wk=weekKeyNow(),ws=weekStart(new Date()).getTime();
+  const week=LOGS.filter(l=>new Date(l.date).getTime()>=ws).reduce((a,l)=>a+(l.sets||0),0);
+  const k=U()==='kg'?2.2046:1;const lift=id=>S.prs[id]&&exInfo(id).type==='w'?Math.round(S.prs[id].m*k):0;
+  const eq=ACH.find(a=>a.id===S.title);
+  return{name:S.hunter.name,cls:S.hunter.cls,clsName:className(),icon:CLASSES[S.hunter.cls].icon,level:L.L,xp:S.xp,rank:curRank(),floor:S.tower.floor,
+    gates:c.raids,side:c.side,week,weekKey:wk,streak:(S.daily.lastDone===today()||S.daily.lastDone===yesterday())?S.daily.streak:0,best:S.daily.best||0,
+    titles:S.unlocked.length,title:eq?eq.name:'',bench:lift('bench'),squat:lift('squat'),deadlift:lift('deadlift'),bosses:S.bossKills||0}}
+function lbPublish(){const C=window.ARISE_CLOUD;if(C&&C.ready&&S.hunter&&!SANDBOX){try{C.publishCard(myCard())}catch(e){}}}
+function lbSubscribe(){const C=window.ARISE_CLOUD;if(!C||!C.ready||!S.hunter)return;const uids=[C.uid,...(S.friends||[]).map(f=>f.uid)];const key=uids.join(',');
+  if(key===LB_KEY)return;LB_KEY=key;C.watchCards(uids,cards=>{LB=cards;const el=$('#lb');if(el)el.innerHTML=lbInner()})}
+const big3=c=>(c.bench||0)+(c.squat||0)+(c.deadlift||0);
+const showLb=lb=>U()==='kg'?Math.round(lb/2.2046)+' kg':fmtN(lb)+' lb';
+const LB_SORTS={
+  level:['Level',c=>c.xp||0,c=>`Lv ${c.level||1} · ${fmtN(c.xp||0)} EXP`],
+  floor:['Tower',c=>(c.floor||1)*1e7+(c.xp||0),c=>`Floor ${c.floor||1}`],
+  week:['Week',c=>c.weekKey===weekKeyNow()?(c.week||0):0,c=>`${c.weekKey===weekKeyNow()?(c.week||0):0} sets`],
+  streak:['Streak',c=>c.streak||0,c=>`${c.streak||0} day${c.streak===1?'':'s'}`],
+  lifts:['Lifts',c=>big3(c),c=>big3(c)?showLb(big3(c)):'—']};
+function agoTxt(t){if(!t)return'';const m=Math.round((Date.now()-t)/60000);return m<2?'live':m<60?m+'m ago':m<1440?Math.round(m/60)+'h ago':Math.round(m/1440)+'d ago'}
+function lbInner(){const C=window.ARISE_CLOUD;const me=C&&C.uid;const cards={...LB};if(me&&S.hunter)cards[me]={...(cards[me]||{}),...myCard(),updated:Date.now()};
+  const [,score,fmt]=LB_SORTS[LB_SORT];const rows=Object.entries(cards).filter(([,c])=>c&&c.name).sort((a,b)=>score(b[1])-score(a[1]));
+  if(rows.length<2)return`<div class="empty small">Add friends with their 6-character code to see who's climbing fastest. Share your code above.</div>`;
+  return`<div class="list">${rows.map(([uid,c],i)=>`<div class="item row lbrow ${uid===me?'me':''}"><div class="lbpos">${['🥇','🥈','🥉'][i]||i+1}</div>
+    <div class="grow"><div><span class="rank r${c.rank||'E'}" style="min-width:22px;height:22px;font-size:12px;margin-right:6px">${esc(c.rank||'E')}</span>${esc(c.name)}${uid===me?' <span class="tiny" style="color:var(--cyan)">(you)</span>':''}</div>
+    <div class="tiny dim">${esc(c.icon||'')} ${esc(c.clsName||'')}${c.title?` · 「${esc(c.title)}」`:''} · ${uid===me?'now':agoTxt(c.updated)}</div></div>
+    <div class="mono small" style="text-align:right;color:#fff">${fmt(c)}</div></div>`).join('')}</div>`}
+function renderGuild(){const C=window.ARISE_CLOUD;if(!C)return'';
+  return`<div class="win"><div class="wt" style="color:var(--gold)">Guild leaderboard<span class="sp"></span><span class="tiny dim">${(S.friends||[]).length} friend${(S.friends||[]).length===1?'':'s'}</span></div>
+   <div class="row" style="margin-bottom:8px"><div class="grow small">Your code: <b class="mono" style="color:var(--gold);letter-spacing:.15em">${C.code||'…'}</b></div><button class="btn sm" data-a="lb-share" ${C.code?'':'disabled'}>Share</button><button class="btn sm pri" data-a="lb-add">+ Friend</button></div>
+   <div class="seg" style="margin-bottom:6px">${Object.entries(LB_SORTS).map(([k,v])=>`<button class="${LB_SORT===k?'on':''}" data-a="lb-sort" data-k="${k}">${v[0]}</button>`).join('')}</div>
+   <div id="lb">${lbInner()}</div>
+   ${(S.friends||[]).length?`<button class="btn sm ghost" style="margin-top:6px" data-a="lb-manage">Manage friends</button>`:''}</div>`}
+function openAddFriend(){const el=openSheet(`<div class="wt" style="color:var(--gold)">Add friend</div><div class="small dim" style="margin-bottom:8px">Ask your friend for their 6-character code (Status › Guild leaderboard). They add yours too, so you both see each other.</div>
+  <input class="f mono" id="frCode" maxlength="8" placeholder="e.g. K7M2QX" autocapitalize="characters" autocomplete="off" style="text-align:center;font-size:22px;letter-spacing:.25em">
+  <div class="row" style="margin-top:12px"><button class="btn grow" data-a="close">Cancel</button><button class="btn pri grow" id="frGo">Add</button></div>`,{center:true});
+  el.querySelector('#frGo').onclick=async()=>{const b=el.querySelector('#frGo');b.disabled=true;b.textContent='Searching…';
+    try{const f=await window.ARISE_CLOUD.addFriend(el.querySelector('#frCode').value);S.friends=S.friends||[];
+      if(S.friends.some(x=>x.uid===f.uid)){toast(`${esc(f.name)} is already on your list.`);}else{S.friends.push(f);persist(null,true);sfx('title');toast(`<b>${esc(f.name)}</b> joined your guild leaderboard.`,'gold','[Guild]',true)}
+      LB_KEY='';lbSubscribe();closeSheet();render()}catch(e){b.disabled=false;b.textContent='Add';toast(esc(e.message||'Could not add friend.'),'red')}}}
+function openManageFriends(){openSheet(`<div class="wt">Friends</div><div class="list">${(S.friends||[]).map(f=>`<div class="item row"><div class="grow">${esc((LB[f.uid]&&LB[f.uid].name)||f.name)} <span class="tiny dim mono">${esc(f.code||'')}</span></div><button class="btn sm red" data-a="lb-rm" data-id="${esc(f.uid)}">Remove</button></div>`).join('')||'<div class="empty small">No friends yet.</div>'}</div><button class="btn block" style="margin-top:12px" data-a="close">Done</button>`)}
+window.addEventListener('arise-cloud',()=>{lbSubscribe();lbPublish();if(TAB==='status'&&!sheets.length&&S.hunter&&!(S.active&&RAID_VIEW))render()});
+
+/* ================= GATE EDITOR / PICKER ================= */
+let EDIT=null;
+function openGateEditor(g){
+  EDIT=g?JSON.parse(JSON.stringify(g)):{id:'g'+uid(),name:'',rank:'E',lore:'',ex:[],_new:true};
+  EDIT.ex.forEach((e,i)=>{e.ssn=!!(e.ss&&EDIT.ex[i+1]&&EDIT.ex[i+1].ss===e.ss)});
+  openSheet('<div id="ge"></div>',{onClose:()=>{EDIT=null}});drawGateEditor();
+}
+function drawGateEditor(){const el=$('#ge');if(!el||!EDIT)return;
+  el.innerHTML=`<div class="wt">${EDIT._new?'Forge gate':'Edit gate'}</div>
+   <label class="l">Gate name</label><input class="f" data-ge="name" maxlength="40" value="${esc(EDIT.name)}" placeholder="e.g. Frost Cavern (Upper A)">
+   <label class="l">Rank</label><div class="seg">${['E','D','C','B','A','S'].map(r=>`<button class="${EDIT.rank===r?'on':''}" data-a="ge-rank" data-r="${r}">${r}</button>`).join('')}</div>
+   <label class="l">Lore / notes</label><textarea class="f" data-ge="lore" rows="2" maxlength="200">${esc(EDIT.lore)}</textarea>
+   <label class="l">Monsters (exercises)</label>
+   <div class="list">${EDIT.ex.map((e,i)=>{const d=exInfo(e.id);return`<div class="item"><div class="row"><span class="statdot s${d.stat}">${d.stat}</span><div class="grow">${esc(d.name)}</div>
+     <button class="btn sm ghost" data-a="ge-up" data-i="${i}" ${i===0?'disabled':''}>▲</button><button class="btn sm ghost" data-a="ge-rm" data-i="${i}">✕</button></div>
+     <div class="row" style="margin-top:6px"><span class="tiny dim">Sets</span><input class="f" style="width:70px" type="number" inputmode="numeric" min="1" data-gi="${i}" data-gk="sets" value="${e.sets}"><span class="tiny dim">${d.type==='t'?(isSec(d)?'Seconds':'Minutes'):'Reps'}</span><input class="f" style="width:80px" type="number" inputmode="decimal" min="0" step="any" data-gi="${i}" data-gk="reps" ${isSec(d)?'data-u="sec"':''} value="${d.type==='t'?tDisp(d,e.reps):e.reps}">${d.type==='w'||d.type==='bw'?`<span class="tiny dim">to</span><input class="f" style="width:64px" type="number" inputmode="numeric" min="0" placeholder="max" data-gi="${i}" data-gk="rmax" value="${e.rmax||''}">`:''}</div>
+     <div class="row tiny dim" style="margin-top:6px;gap:14px"><label><input type="checkbox" data-gi="${i}" data-gk="wu" ${+e.wu?'checked':''}> 1st set is warm-up</label>${i<EDIT.ex.length-1?`<label><input type="checkbox" data-gi="${i}" data-gk="ssn" ${e.ssn?'checked':''}> Superset with next</label>`:''}</div></div>`}).join('')||'<div class="empty small">No monsters yet.</div>'}</div>
+   <button class="btn block" style="margin-top:8px" data-a="ge-add">+ Add exercise</button>
+   <div class="row" style="margin-top:14px">${EDIT._new?'':'<button class="btn red" data-a="ge-del">Delete</button>'}<span class="grow"></span><button class="btn" data-a="close">Cancel</button><button class="btn pri" data-a="ge-save">Save gate</button></div>`;
+}
+let PICK_CB=null;
+function openPicker(cb){PICK_CB=cb;const el=openSheet(`<div class="wt">Choose exercise</div><input class="f" id="pq" placeholder="Search…" autocomplete="off"><div id="pl" style="margin-top:6px"></div>
+  <details style="margin-top:10px"><summary class="btn block ghost">+ Create custom exercise</summary><div style="padding-top:6px">
+   <input class="f" id="cxn" placeholder="Exercise name" maxlength="40">
+   <div class="row" style="margin-top:8px"><select class="f" id="cxs">${Object.keys(STATS).map(k=>`<option value="${k}">${k} · ${STATS[k]}</option>`).join('')}</select>
+   <select class="f" id="cxt"><option value="w">Weight × reps</option><option value="bw">Reps only</option><option value="t">Timed (sec for STR/VIT/END, min for AGI)</option></select></div>
+   <button class="btn pri block" style="margin-top:8px" data-a="cx-add">Create & add</button></div></details>`,{onClose:()=>{PICK_CB=null}});
+  const draw=()=>{const q=($('#pq').value||'').toLowerCase();const all=[...EX_LIST.map(x=>EXM[x[0]]),...S.custom];
+    $('#pl').innerHTML=Object.keys(STATS).map(k=>{const items=all.filter(x=>x.stat===k&&x.name.toLowerCase().includes(q));if(!items.length)return'';return`<div class="tiny h s${k}" style="margin-top:10px">${STATS[k]}</div><div class="list">${items.map(x=>`<div class="pick" data-a="pick" data-id="${esc(x.id)}"><span class="grow">${esc(x.name)}</span><span class="tiny dim">${x.type==='w'?'weight':x.type==='t'?'time':'reps'}</span></div>`).join('')}</div>`}).join('')||'<div class="empty">No match — create a custom exercise below.</div>'};
+  el.querySelector('#pq').addEventListener('input',draw);draw();
+}
+function pickDone(id){const cb=PICK_CB;closeSheet();cb&&cb(id)}
+
+/* ================= SETTINGS ================= */
+function openSettings(){openSheet('<div id="st"></div>');drawSettings()}
+function drawSettings(){const el=$('#st');if(!el)return;const d=S.daily;
+  const AC=window.ARISE_CLOUD;
+  el.innerHTML=`<div class="wt">System settings</div>
+  ${AC&&AC.ready?`<div class="callout" style="margin-bottom:8px"><div class="row"><div class="grow small">Signed in as <b>${esc(AC.email||'your account')}</b><br><span class="tiny dim">Friend code: <b class="mono" style="color:var(--gold)">${AC.code||'…'}</b></span></div><button class="btn sm" data-a="signout">Sign out</button></div></div>`:''}
+  <button class="btn block pri" style="margin-bottom:6px" data-a="manual">📖 System manual</button>
+  <label class="l">Hunter name</label><input class="f" data-st="name" maxlength="24" value="${esc(S.hunter.name)}">
+  <label class="l">Class</label><select class="f" data-st="cls">${Object.entries(CLASSES).map(([k,c])=>`<option value="${k}" ${S.hunter.cls===k?'selected':''}>${c.name} (+3 ${c.stat})</option>`).join('')}</select>
+  <label class="l">Weight units</label><div class="seg"><button class="${U()==='lb'?'on':''}" data-a="units" data-u="lb">LB</button><button class="${U()==='kg'?'on':''}" data-a="units" data-u="kg">KG</button></div>
+  <div class="tiny dim" style="margin-top:4px">Switching converts every logged weight.</div>
+  <label class="l">Sound effects</label>
+  <div class="row"><div class="seg" style="width:120px"><button class="${S.sfx!==false?'on':''}" data-a="sfx" data-v="1">On</button><button class="${S.sfx===false?'on':''}" data-a="sfx" data-v="0">Off</button></div>
+  <input type="range" class="grow" min="0" max="1" step="0.05" data-st="vol" value="${S.vol??.7}" ${S.sfx===false?'disabled':''}><button class="btn sm" data-a="sfxtest">Test</button></div>
+  <div class="tiny dim" style="margin-top:4px">On iPhone, the silent switch also mutes these.</div>
+  <label class="l">Default rest timer (seconds)</label><input class="f" type="number" inputmode="numeric" min="0" data-st="rest" value="${S.rest}">
+  <label class="l">Daily quest goals</label>
+  <div class="list">${d.tasks.map((t,i)=>`<div class="item"><div class="row"><input class="f grow" data-dq="${i}" data-k="name" value="${esc(t.name)}" maxlength="30"><button class="btn sm ghost" data-a="dq-rm" data-i="${i}">✕</button></div>
+   <div class="row" style="margin-top:6px"><input class="f" style="width:80px" type="number" inputmode="numeric" min="1" data-dq="${i}" data-k="target" value="${t.target}">
+   <select class="f" data-dq="${i}" data-k="unit"><option value="reps" ${t.unit==='reps'?'selected':''}>reps</option><option value="min" ${t.unit==='min'?'selected':''}>min</option></select>
+   <select class="f" data-dq="${i}" data-k="stat">${Object.keys(STATS).map(k=>`<option ${t.stat===k?'selected':''}>${k}</option>`).join('')}</select></div></div>`).join('')}</div>
+  <button class="btn sm" style="margin-top:6px" data-a="dq-add" ${d.tasks.length>=8?'disabled':''}>+ Add goal</button>
+  <label class="l">Test mode</label>
+  <div class="tiny dim" style="margin-bottom:6px">Try anything — log fake workouts, level up, change schedules. Nothing is saved, and your real progress comes back when you exit.</div>
+  <div class="row"><button class="btn sm grow" data-a="sbx-in" data-k="fresh">New test hunter</button><button class="btn sm grow" data-a="sbx-in" data-k="copy">Copy of my progress</button></div>
+  <label class="l">Backup</label>
+  <div class="row"><button class="btn sm grow" data-a="export">Copy backup</button><button class="btn sm grow" data-a="import">Restore backup</button></div>
+  <div class="row" style="margin-top:18px"><button class="btn red sm" data-a="reset">Reset hunter</button><span class="grow"></span><button class="btn pri" data-a="close">Done</button></div>
+  <div class="tiny dim" style="margin-top:12px">${cloudCol?'Your progress syncs to your account. Sign in on any device to pick it up.':'Progress is saved on this device.'}</div>`;
+}
+function convertUnits(to){if(U()===to)return;const f=to==='kg'?1/2.2046:2.2046;const r=v=>v===''||v==null?v:Math.round((+v)*f*2)/2;
+  LOGS.forEach(l=>l.ex.forEach(e=>{if(exInfo(e.id).type==='w')e.sets.forEach(s=>s.w=r(s.w))}));
+  for(const id in S.prs){const p=S.prs[id];if(exInfo(id).type==='w'){p.w=r(p.w);p.m=p.m*f}}
+  if(S.active)S.active.ex.forEach(e=>{if(exInfo(e.id).type==='w')e.sets.forEach(s=>s.w=r(s.w))});
+  S.bosses.forEach(b=>{if(b.type==='str'){b.w=r(b.w);b.target*=f;b.start*=f;b.best*=f}});
+  S.hunter.units=to;persist([...new Set(LOGS.map(l=>l.date.slice(0,7)))]);}
+
+/* ================= EVENTS ================= */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-a]');if(!b||b.disabled)return;
+  const a=b.dataset.a,ds=b.dataset;audioInit();if(PEN_SND){PEN_SND=false;setTimeout(()=>sfx('penalty'),150)}
+  switch(a){
+  case'tab':sfx('tick');TAB=ds.t;try{localStorage.setItem(LS+'.tab',TAB)}catch(_){}render();window.scrollTo(0,0);{const ap=document.getElementById('app');if(ap)ap.scrollTop=0}break;
+  case'close':closeSheet();break;
+  case'ob-no':toast('The System does not accept refusal. Try again.','red');break;
+  case'ob-yes':sfx('notif');OB.step=1;render();break;
+  case'ob-cls':OB.name=$('#obName').value;OB.cls=ds.k;render();break;
+  case'ob-u':OB.name=$('#obName').value;OB.units=ds.u;render();break;
+  case'ob-go':{const n=$('#obName').value.trim();if(!n){toast('Enter your hunter name.','red');return}
+    S.hunter={name:n,cls:OB.cls,units:OB.units,created:Date.now(),tier:1};applyPacks();rollDaily();rollTower();persist(null,true);flash();sfx('portal');render();
+    toast(`Welcome, <b>${esc(n)}</b>. Your daily quest has arrived.`);break}
+  case'settings':openSettings();break;
+  case'tf':TF=ds.k;render();break;
+  case'noop':break;
+  case'lb-sort':LB_SORT=ds.k;render();break;
+  case'lb-add':openAddFriend();break;
+  case'lb-manage':openManageFriends();break;
+  case'lb-rm':S.friends=(S.friends||[]).filter(f=>f.uid!==ds.id);delete LB[ds.id];persist(null,true);LB_KEY='';lbSubscribe();closeSheet();render();break;
+  case'lb-share':{const C=window.ARISE_CLOUD;const txt=`Add me on Arise! My hunter code: ${C.code}\n${location.origin+location.pathname}`;
+    if(navigator.share){navigator.share({text:txt}).catch(()=>{})}else if(navigator.clipboard){navigator.clipboard.writeText(txt).then(()=>toast('Code copied. Send it to a friend.'),()=>showText(txt))}else showText(txt);break}
+  case'signout':confirmBox('Sign out','Sign out of Arise on this device? Your progress stays saved in your account.','Sign out',()=>window.ARISE_CLOUD&&window.ARISE_CLOUD.signOut());break;
+  case'syncinfo':openSyncInfo();break;
+  case'syncretry':closeSheet();setSync('busy');retrySync();toast('Retrying sync…','','[System]',true);break;
+  case'manual':openManual();break;
+  case'wstep':{const ei=+ds.ei,si=+ds.si,st=S.active.ex[ei].sets[si];const v=Math.max(0,Math.round(((+st.w||0)+(+ds.d)*wInc())*10)/10);setWeight(ei,si,v);persist();raidRerender();sfx('tick');break}
+  case'sug-apply':{const e=S.active.ex[+ds.ei];const w=+ds.w;e.sets.forEach(x=>{if(!x.done&&!x.wu)x.w=w});persist();raidRerender();sfx('blip');break}
+  case'sug-no':S.active.ex[+ds.ei].noSug=true;persist();raidRerender();break;
+  case'circ-ev':S.circEvery=+ds.v;persist();raidRerender();break;
+  case'circ-rs':S.circRest=+ds.v;persist();raidRerender();break;
+  case'addround':ds.eis.split(',').forEach(k=>{const e=S.active.ex[+k];const l=e.sets[e.sets.length-1]||{w:'',r:''};e.sets.push({w:l.w,r:l.r,done:false})});persist();raidRerender();break;
+  case'rmround':ds.eis.split(',').forEach(k=>{const e=S.active.ex[+k];if(e.sets.length>1)e.sets.pop()});persist();raidRerender();break;
+  case'circ-prep':S.circPrep=+ds.v;persist();raidRerender();break;
+  case'circ-go':if(!CIRC)startCircuit(+ds.s,+ds.n);break;
+  case'circ-pause':if(CIRC){if(CIRC.paused){CIRC.paused=false;CIRC.end=Date.now()+CIRC.left*1000}else{CIRC.left=Math.max(0,(CIRC.end-Date.now())/1000);CIRC.paused=true}tickCirc()}break;
+  case'circ-skip':skipCirc();break;
+  case'circ-stop':stopCirc();if(S.active&&RAID_VIEW)raidRerender();break;
+  case'exchart':openChart(ds.id);break;
+  case'ch-m':CH.m=ds.k;drawChart();break;
+  case'logedit':openLogEdit(ds.id);break;
+  case'led-rmset':LED.ex[+ds.ei].sets.splice(+ds.si,1);drawLogEdit();break;
+  case'led-addset':{const e=LED.ex[+ds.ei];const l=e.sets[e.sets.length-1]||{w:0,r:0};e.sets.push({w:l.w,r:l.r});drawLogEdit();break}
+  case'led-rmex':LED.ex.splice(+ds.ei,1);drawLogEdit();break;
+  case'led-save':saveLogEdit();break;
+  case'side':while(sheets.length)closeSheet();openSideQuest();break;
+  case'sq-act':SQ.act=ds.id;sfx('tick');drawSQ();break;
+  case'sq-when':SQ.when=ds.k;drawSQ();break;
+  case'sq-min':SQ.min=+ds.m;drawSQ();break;
+  case'sq-int':SQ.int=ds.k;drawSQ();break;
+  case'sq-move':SQ.move=ds.k;drawSQ();break;
+  case'sq-go':completeSideQuest();break;
+  case'boss':while(sheets.length)closeSheet();openBoss(ds.id);break;
+  case'goto-gates':while(sheets.length)closeSheet();TAB='gates';render();window.scrollTo(0,0);{const ap=document.getElementById('app');if(ap)ap.scrollTop=0}break;
+  case'sw-go':if(SW.on){SW.acc+=Date.now()-SW.t0;SW.on=false;b.textContent='Resume';clearInterval(SW.timer);swTick()}else{SW.t0=Date.now();SW.on=true;b.textContent='Pause';clearInterval(SW.timer);SW.timer=setInterval(swTick,250);sfx('blip')}break;
+  case'sw-reset':SW.on=false;SW.acc=0;clearInterval(SW.timer);{const g=$('#swGo');if(g)g.textContent='Start'}swTick();{const i=$('#trialIn');if(i)i.value=''}break;
+  case'trial-submit':submitTrial(ds.id);break;
+  case'cls-trial':{const t=ctier()+1,req=CLASS_REQ[t];if(!req||S.tower.floor<=req.floor||rIdx(curRank())<rIdx(req.rank)||S.bosses.some(x=>x.kind==='class'))return;spawnClass(t);persist();render();break}
+  case'comp':S.comp=S.comp===+ds.id?null:+ds.id;sfx('blip');persist();render();break;
+  case'item':openItem(ds.id);break;
+  case'equip-item':{const it=S.gear.find(g=>g.id===ds.id);if(it){S.equip[it.slot]=it.id;sfx('loot');persist();closeSheet();render()}break}
+  case'unequip':{const it=S.gear.find(g=>g.id===ds.id);if(it){delete S.equip[it.slot];persist();closeSheet();render()}break}
+  case'salvage':{const it=S.gear.find(g=>g.id===ds.id);if(!it||S.equip[it.slot]===it.id)return;closeSheet();confirmBox('Salvage',`Break down ${esc(it.name)} for +${SALV[it.r]} EXP?`,'Salvage',()=>{S.gear=S.gear.filter(g=>g.id!==it.id);const r=gainXp(SALV[it.r]);persist();render();toast(`Salvaged for <b>+${SALV[it.r]} EXP</b>.`);if(r.leveled)sfx('levelup')},true);break}
+  case'equip':S.title=S.title===ds.id?'':ds.id;persist();render();break;
+  case'penok':sfx('tick');S.daily.penaltyNote=false;persist();render();break;
+  case'tab-q-pen':break;
+  case'dq':case'dqmax':{const t=S.daily.tasks.find(x=>x.id===ds.id);if(!t)return;const p=S.daily.progress[t.id]||0;
+    S.daily.progress[t.id]=a==='dqmax'?Math.max(p,t.target):Math.max(0,Math.min(t.target*3,p+(+ds.d)));
+    if(S.daily.progress[t.id]>=t.target&&p<t.target){buzz(30);sfx('blip')}else sfx('tick');
+    persist();render();break}
+  case'claim':{const d=S.daily;if(d.claimed)return;const t=today();
+    d.streak=(d.lastDone===yesterday())?d.streak+1:(d.lastDone===t?d.streak:1);d.lastDone=t;d.best=Math.max(d.best||0,d.streak);d.claimed=true;d.claims=(d.claims||0)+1;
+    d.tasks.forEach(x=>{S.bonus[x.stat]=(S.bonus[x.stat]||0)+0.25});
+    const xp=Math.round((40+5*Math.min(d.streak,10))*(1+xpBonus()));const res=gainXp(xp);rollTower();checkAch();persist(null,true);render();flash();buzz([50,30,90]);sfx('quest');
+    toast(`Daily quest complete. <b>+${xp} EXP</b> · Streak ${d.streak}`,'gold','[Quest]',true);
+    if(res.leveled)setTimeout(()=>{toast(`<b>LEVEL UP!</b> You are now level ${res.after.L}.`,'gold','[System]',true);sfx('levelup')},700);break}
+  case'enter':{const g=S.gates.find(x=>x.id===ds.id);if(g)startRaid(g);break}
+  case'quickraid':startRaid(null);break;
+  case'resume':RAID_VIEW=true;renderRaid();break;
+  case'minraid':RAID_VIEW=false;render();break;
+  case'done':{const es=S.active.ex[+ds.ei].sets,s=es[+ds.si];const pv=es[+ds.si-1];if(!s.done&&pv){if(s.w===''&&pv.w!=='')s.w=pv.w;if(s.r===''&&pv.r!=='')s.r=pv.r}s.done=!s.done;if(s.done){buzz(25);sfx(es.every(x=>x.done)?'slain':'hit');const ce=S.active.ex[+ds.ei];let skip=false;let restLen=S.rest;{const run=circuitRuns(S.active).find(r=>+ds.ei>=r[0]&&+ds.ei<r[0]+r[1]);if(run){const pos=+ds.ei-run[0];if(CEV()&&(pos+1)%CEV()===0)restLen=CRS();else{restLen=0}}}if(ce.ss){const grp=S.active.ex.filter(x=>x.ss===ce.ss);const k=+ds.si;skip=grp.some(x=>x!==ce&&x.sets[k]&&!x.sets[k].done)}if(skip){stopRest();toast('Superset: go straight to the next exercise.','','[System]',true)}else if(restLen>0)startRest(restLen)}persist();const y=$('#raid').scrollTop;renderRaid();$('#raid').scrollTop=y;break}
+  case'addset':{const e=S.active.ex[+ds.ei];const l=e.sets[e.sets.length-1]||{w:'',r:''};e.sets.push({w:l.w,r:l.r,done:false});persist();const y=$('#raid').scrollTop;renderRaid();$('#raid').scrollTop=y;break}
+  case'rmset':{const e=S.active.ex[+ds.ei];if(e.sets.length>1)e.sets.pop();persist();const y=$('#raid').scrollTop;renderRaid();$('#raid').scrollTop=y;break}
+  case'rmex':confirmBox('Banish monster','Remove this exercise from the current raid?','Remove',()=>{S.active.ex.splice(+ds.ei,1);persist();renderRaid()});break;
+  case'raidadd':openPicker(id=>{const d=exInfo(id);S.active.ex.push(newRaidEx(id,3,d.type==='t'?20:''));persist();renderRaid();setTimeout(()=>{$('#raid').scrollTop=$('#raid').scrollHeight},30)});break;
+  case'restset':{const el=openSheet(`<div class="wt">Rest timer</div><div class="seg">${[0,45,60,90,120,180,240].map(s=>`<button class="${S.rest===s?'on':''}" data-a="restpick" data-s="${s}">${s?s+'s':'Off'}</button>`).join('')}</div>`,{center:true});break}
+  case'restpick':S.rest=+ds.s;persist();closeSheet();renderRaid();break;
+  case'rest':restEnd+=(+ds.d)*1000;restTotal=Math.max(restTotal,(restEnd-Date.now())/1000);if(restEnd<=Date.now())stopRest();else tickRest();break;
+  case'restskip':stopRest();break;
+  case'retreat':confirmBox('Retreat','Abandon this raid? Nothing from this session will be logged.','Retreat',()=>{S.active=null;stopRest();stopCirc();clearInterval(raidTick);persist();$('#raid').classList.add('hide');render();sfx('retreat');toast('You escaped the gate.','red','[System]',true)},true);break;
+  case'finish':{const a2=S.active;const open=a2.ex.reduce((s,e)=>s+e.sets.filter(x=>!x.done).length,0);const dn=a2.ex.reduce((s,e)=>s+e.sets.filter(x=>x.done).length,0);
+    if(open&&dn)confirmBox('Clear gate',`${open} set${open>1?'s are':' is'} still unchecked and won't be logged. Finish anyway?`,'Finish',finishRaid);else finishRaid();break}
+  case'plan':openPlanEditor();break;
+  case'pe-pre':PE.start=$('#peStart').value||PE.start;applyPreset(+ds.on,+ds.off);drawPlanEditor();break;
+  case'pe-add':PE.start=$('#peStart').value||PE.start;PE.cycle.push('rest');drawPlanEditor();break;
+  case'pe-rm':PE.start=$('#peStart').value||PE.start;PE.cycle.pop();drawPlanEditor();break;
+  case'pe-save':{const st=$('#peStart').value;if(!/^\d{4}-\d{2}-\d{2}$/.test(st)){toast('Pick a start date.','red');return}PE.start=st;if(!PE.cycle.some(x=>x!=='rest')){toast('Add at least one training day.','red');return}
+    S.plan={start:PE.start,cycle:PE.cycle.slice()};persist();closeSheet();render();const p=planFor(today());toast(p.rest?'Cycle set. Today is a rest day.':`Cycle set. Today's gate: <b>${esc(p.gate.name)}</b>.`,'','[System]');break}
+  case'pe-clear':confirmBox('Turn off cycle','Remove your training schedule? Gates and history are kept.','Turn off',()=>{S.plan=null;persist();closeSheet();render()},true);break;
+  case'newgate':openGateEditor(null);break;
+  case'editgate':openGateEditor(S.gates.find(x=>x.id===ds.id));break;
+  case'ge-rank':EDIT.rank=ds.r;drawGateEditor();break;
+  case'ge-up':{const i=+ds.i;[EDIT.ex[i-1],EDIT.ex[i]]=[EDIT.ex[i],EDIT.ex[i-1]];drawGateEditor();break}
+  case'ge-rm':EDIT.ex.splice(+ds.i,1);drawGateEditor();break;
+  case'ge-add':openPicker(id=>{const d=exInfo(id);EDIT.ex.push({id,sets:d.type==='t'?1:3,reps:d.type==='t'?20:10});drawGateEditor()});break;
+  case'ge-save':{if(!EDIT.name.trim()){toast('Name your gate.','red');return}if(!EDIT.ex.length){toast('Add at least one exercise.','red');return}
+    const L='ABCDEFGHIJ';let li=0;const exs=EDIT.ex.map(e=>{const o={id:e.id,sets:e.sets,reps:e.reps};if(+e.rmax>+e.reps)o.rmax=+e.rmax;if(e.wu)o.wu=1;return o});
+    for(let q=0;q<EDIT.ex.length;q++){if(EDIT.ex[q].ssn&&exs[q+1]){const tag=exs[q].ss||L[li++%10];exs[q].ss=tag;exs[q+1].ss=tag}}
+    const g={id:EDIT.id,name:EDIT.name.trim(),rank:EDIT.rank,lore:EDIT.lore,ex:exs};const i=S.gates.findIndex(x=>x.id===g.id);if(i>=0)S.gates[i]=g;else S.gates.push(g);
+    checkAch();persist();closeSheet();render();toast(`Gate <b>${esc(g.name)}</b> ${i>=0?'updated':'forged'}.`);break}
+  case'ge-del':{const id=EDIT.id;confirmBox('Delete gate',`Delete <b>${esc(EDIT.name)}</b>? Your raid history is kept.`,'Delete',()=>{S.gates=S.gates.filter(x=>x.id!==id);if(S.plan)S.plan.cycle=S.plan.cycle.map(v=>v===id?'rest':v);persist();closeSheet();render()},true);break}
+  case'pick':pickDone(ds.id);break;
+  case'cx-add':{const n=$('#cxn').value.trim();if(!n){toast('Name the exercise.','red');return}const x={id:'c'+uid(),name:n,stat:$('#cxs').value,type:$('#cxt').value};S.custom.push(x);persist();pickDone(x.id);break}
+  case'dellog':confirmBox('Delete entry','Remove this raid from your chronicle? EXP already earned is kept.','Delete',()=>{const l=LOGS.find(x=>x.id===ds.id);LOGS=LOGS.filter(x=>x.id!==ds.id);rebuildPRs();persist(l?[l.date.slice(0,7)]:[]);render()},true);break;
+  case'sfx':S.sfx=ds.v==='1';persist();drawSettings();if(S.sfx)sfx('blip');break;
+  case'sfxtest':{const seq=['hit','slain','quest','clear','levelup'];seq.forEach((n,i)=>setTimeout(()=>sfx(n),i*1100));break}
+  case'sbx-in':{if(SANDBOX)return;if(saveTimer&&cloudCol){clearTimeout(saveTimer);saveTimer=null;MINE.add(S.updated);writeDoc(SAVE_ID,{s:JSON.parse(JSON.stringify(S))})}SNAP={s:S,logs:LOGS};const cp=ds.k==='copy';S=cp?JSON.parse(JSON.stringify(S)):defaults();LOGS=cp?JSON.parse(JSON.stringify(LOGS)):[];
+    SANDBOX=true;document.body.classList.add('sbx');stopRest();RAID_VIEW=true;OB={step:0,name:'',cls:'warrior',units:U()};while(sheets.length)closeSheet();if(S.hunter){rollDaily();rollTower()}TAB='status';render();toast('Test mode on. Nothing you do here is saved.','gold','[System]',true);break}
+  case'sbx-exit':{if(!SANDBOX)return;S=SNAP.s;LOGS=SNAP.logs;const push=SNAP.push;SNAP=null;SANDBOX=false;document.body.classList.remove('sbx');stopRest();clearInterval(raidTick);RAID_VIEW=true;while(sheets.length)closeSheet();
+    if(push&&push.length)persist(push,true);else if(cloudCol&&(FAILED.size||SNAP_DIRTY))retrySync();else try{localStorage.setItem(LS,JSON.stringify({s:S,logs:LOGS}))}catch(_){}
+    if(S.hunter)rollDaily();render();toast('Test mode off. Your real progress is back.');break}
+  case'units':convertUnits(ds.u);drawSettings();render();break;
+  case'dq-add':S.daily.tasks.push({id:'d'+uid(),name:'New goal',target:10,unit:'reps',stat:'STR'});persist();drawSettings();break;
+  case'dq-rm':S.daily.tasks.splice(+ds.i,1);persist();drawSettings();render();break;
+  case'export':{const txt=JSON.stringify({app:'gatebreaker',s:S,logs:LOGS});
+    const done=()=>toast('Backup copied. Paste it somewhere safe (notes, email).');
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,()=>showText(txt));else showText(txt);break}
+  case'import':{const el=openSheet(`<div class="wt">Restore backup</div><textarea class="f" id="imp" rows="6" placeholder="Paste backup text here"></textarea><div class="row" style="margin-top:10px"><button class="btn grow" data-a="close">Cancel</button><button class="btn pri grow" id="impGo">Restore</button></div>`,{center:true});
+    el.querySelector('#impGo').onclick=()=>{try{const o=JSON.parse(el.querySelector('#imp').value);if(!o||o.app!=='gatebreaker'||!o.s||!o.s.hunter)throw 0;S=Object.assign(defaults(),o.s);LOGS=o.logs||[];persist([...new Set(LOGS.map(l=>l.date.slice(0,7)))],true);while(sheets.length)closeSheet();render();toast('Backup restored.')}catch(_){toast('That doesn’t look like an Arise backup.','red')}};break}
+  case'reset':confirmBox('Reset hunter','Erase your hunter, gates and all history? This cannot be undone.','Erase everything',async()=>{
+    const months=[...new Set(LOGS.map(l=>l.date.slice(0,7)))];S=defaults();LOGS=[];OB={step:0,name:'',cls:'warrior',units:'lb'};
+    if(!SANDBOX)try{localStorage.removeItem(LS)}catch(_){}
+    if(cloudCol&&!SANDBOX){try{await cloudCol.doc(SAVE_ID).delete();await cloudCol.doc('save').delete();for(const m of months){await cloudCol.doc(LOGP+m).delete();await cloudCol.doc('log-'+m).delete()}}catch(_){}}
+    while(sheets.length)closeSheet();render()},true);break;
+  }
+});
+function showText(txt){const el=openSheet(`<div class="wt">Backup</div><div class="small dim">Select all and copy this text:</div><textarea class="f" rows="7" readonly>${esc(txt)}</textarea><button class="btn block" style="margin-top:10px" data-a="close">Close</button>`,{center:true});el.querySelector('textarea').select()}
+
+document.addEventListener('input',e=>{const t=e.target;
+  if(t.dataset.ei!==undefined&&t.dataset.k&&S.active){const s=S.active.ex[+t.dataset.ei]?.sets[+t.dataset.si];if(s){if(t.dataset.k==='w')setWeight(+t.dataset.ei,+t.dataset.si,t.value);else s.r=tFrom(t.dataset.u==='sec',t.value);persist()}return}
+  if(t.dataset.lei!==undefined&&LED){const x=LED.ex[+t.dataset.lei].sets[+t.dataset.lsi];if(x)x[t.dataset.lk]=t.dataset.lk==='r'?tFrom(t.dataset.u==='sec',t.value):t.value;return}
+  if(t.dataset.led&&LED){LED.dur=t.value;return}
+  if(t.dataset.ge&&EDIT){EDIT[t.dataset.ge]=t.value;return}
+  if(t.dataset.gi!==undefined&&EDIT&&t.type==='checkbox'){EDIT.ex[+t.dataset.gi][t.dataset.gk]=t.checked?(t.dataset.gk==='wu'?1:true):0;return}
+  if(t.dataset.gi!==undefined&&EDIT){const v=t.value;const n=t.dataset.u==='sec'?(+v)/60:+v;EDIT.ex[+t.dataset.gi][t.dataset.gk]=v===''?'':Math.max(t.dataset.gk==='sets'?1:0,n);return}
+});
+document.addEventListener('change',e=>{const t=e.target;
+  if(t.dataset.st){if(t.dataset.st==='name'){const v=t.value.trim();if(v)S.hunter.name=v}else if(t.dataset.st==='cls')S.hunter.cls=t.value;else if(t.dataset.st==='vol'){S.vol=+t.value;out();sfx('blip')}else if(t.dataset.st==='rest')S.rest=Math.max(0,Math.min(900,+t.value||0));persist();render();return}
+  if(t.dataset.pe!==undefined&&PE){PE.cycle[+t.dataset.pe]=t.value;return}
+  if(t.dataset.dq!==undefined){const x=S.daily.tasks[+t.dataset.dq];if(!x)return;const k=t.dataset.k;x[k]=k==='target'?Math.max(1,+t.value||1):t.value;persist();render();return}
+});
+setInterval(()=>{const c=$('#qclock');if(c)c.textContent=msToMidnight();if(S.hunter&&S.daily.date!==today()){rollDaily();rollTower();if(!S.active||$('#raid').classList.contains('hide'))render()}},1000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.hunter){rollDaily();if(restEnd)tickRest()}});
+
+if(S.hunter){if(applyPacks())persist();if(fixForge())persist();rollDaily();rollTower();const n0=S.unlocked.length;checkAch();if(S.unlocked.length>n0)persist()}
+if(!S.hunter&&window.claude){BOOT=true;setTimeout(()=>{if(BOOT){BOOT=false;CLOUD_FAILED=!cloudCol;render()}},30000)}
+render();
+initCloud();
+let WL=null;async function wakeOn(){try{if(navigator.wakeLock&&!WL){WL=await navigator.wakeLock.request('screen');WL.addEventListener('release',()=>{WL=null})}}catch(e){}}
+function wakeOff(){try{WL&&WL.release()}catch(e){}WL=null}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.active)wakeOn()});
+setInterval(()=>{if(S.active)wakeOn();else if(WL)wakeOff()},3000);
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+<script type="module" src="firebase-cloud.js"></script>
+</body>
+</html>

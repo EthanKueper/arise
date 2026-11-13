@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Each hunter's private save and workout history: only that hunter can read or write it.
+    match /users/{uid}/{rest=**} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+    // Leaderboard cards: a signed-in hunter can read one card at a time (no browsing the list); only the owner writes it.
+    match /cards/{uid} {
+      allow get: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+    // Friend codes: look up one exact code at a time (no browsing); each code can be claimed once and never changed.
+    match /codes/{code} {
+      allow get: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if false;
+    }
+  }
+}
