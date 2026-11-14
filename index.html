@@ -471,7 +471,7 @@ const MINE=new Set();let WATCH=null,DUP_WARNED=false;
 function watchSave(col){try{if(WATCH)WATCH();WATCH=col.doc(SAVE_ID).onSnapshot(sn=>{if(!sn.exists||sn.metadata.hasPendingWrites||sn.metadata.fromCache)return;const r=JSON.parse(JSON.stringify((sn.data()||{}).s||null));if(!r||!r.hunter||MINE.has(r.updated))return;if((r.build||0)>BUILD){READONLY=true;toast('A newer version of Arise is open elsewhere. Close this copy and reopen Arise.','red','[System]',true);return}
   if((r.updated||0)>(S.updated||0)+2000){if(!DUP_WARNED){DUP_WARNED=true;toast('Arise was saved from another open copy (another tab, device or the chat preview). Keep just one copy open to avoid conflicts.','red','[System]',true)}
     if(!S.active&&!SANDBOX&&!sheets.length&&r.hunter.created===(S.hunter&&S.hunter.created)){S=Object.assign(defaults(),r);applyPacks();rollDaily();try{localStorage.setItem(LS,JSON.stringify({s:S,logs:LOGS}))}catch(e){}render()}}},()=>{})}catch(e){}}
-const BUILD=2026111309,SAVE_ID='save2',LOGP='v2log-';let READONLY=false;
+const BUILD=2026111310,SAVE_ID='save2',LOGP='v2log-';let READONLY=false;
 let SYNC_ERR=null,LAST_OK=0,retryT=null;const FAILED=new Set();
 function docData(id){if(id===SAVE_ID){MINE.add(S.updated);return{s:JSON.parse(JSON.stringify(S))}}const m=id.slice(LOGP.length);return{items:JSON.parse(JSON.stringify(LOGS.filter(l=>l.date.slice(0,7)===m)))}}
 async function writeDoc(id,data){
@@ -908,87 +908,109 @@ function cardioMin(l){return l.ex.reduce((s,e)=>{const d=exInfo(e.id);return s+(
 /* ---------- named loot ---------- */
 const COLL={yn:'YN Collection',pyn:'Performative YN Collection',fur:'Furry Collection',gimp:'Gimp Collection'};
 const UNIQ=[
- // relics
- ['roids','relic','Roids','e','STR','','Gains in a syringe. Side effects include back acne, rage, and mysterious shrinkage.'],
+ // ===== relics (12 + 2 mythic)
  ['nic','relic','Nic Stick','c','END','','Mango flavored. Hit it between every set. Your lungs have filed a formal complaint.'],
- ['crack','relic','Crack','r','AGI','','Pre-workout, but the cartel makes it. Unbelievable cardio. Terrible teeth.'],
  ['lippill','relic','Lip Pillows','c','END','','Two pouches tucked in the top lip. +10 confidence, −1 gums.'],
- ['redbull','relic','Redbull','c','AGI','','Gives you wings. Does not give you a spotter.'],
- ['whitemon','relic','White Monster','r','END','','Zero sugar, infinite aura. Must be visibly held between sets at all times.'],
- ['creatine','relic','Creatine','r','STR','','The only relic in this bag your doctor would actually approve of. Water weight counts as gains.'],
+ ['redbull','relic','Redbull','c','AGI','','Liquid crack in a can. Four of these and you can hear your heartbeat in your teeth. Gives you wings, still won\'t spot you.'],
+ ['creatine','relic','Creatine','c','STR','','The only relic in this bag your doctor would actually approve of. Water weight counts as gains.'],
+ ['matcha','relic','Matcha','c','END','pyn','Iced oat milk matcha, carried in the left hand so the Seiko shows. Has never once been finished.'],
+ ['whitemon','relic','White Monster','r','END','','Zero sugar, infinite aura. The official blood supply of every goth girl with a septum piercing and a crush on you.'],
  ['plug','relic','Butt Plug','r','END','','Keeps your core engaged at all times. Do not drop during deadlifts.'],
+ ['crack','relic','Crack','r','AGI','','Hit the slopes in the parking lot before every session. Pre-workout, but the cartel makes it. Unbelievable cardio. Terrible teeth.'],
+ ['roids','relic','Roids','e','STR','','Gains in a syringe. Side effects include back acne, rage, and mysterious shrinkage.'],
  ['bluechew','relic','Blue Chews','e','VIT','','Stiffens resolve. Consult a healer if the effect lasts more than four hours.'],
  ['viphoney','relic','VIP Honey','e','VIT','','Royal honey packet from behind the gas station counter. Effects last three days. Nobody knows what is in it.'],
- ['spy','relic','Chinese Spy','e','AGI','','She liked your gym selfie, laughed at every joke, and asked a lot of questions about your bench. Your PRs are now in Beijing.'],
- ['matcha','relic','Matcha','r','END','pyn','Iced oat milk matcha, carried in the left hand so the Seiko shows. Has never once been finished.'],
- // boots
- ['frenchtip','boots','French Tip Feet','r','AGI','','Fresh pedicure with French tips. Silent on the gym floor. Devastating in sandals.'],
- ['tims','boots','Tims','c','VIT','','Wheat Timbs, zero creases. Will not be worn on leg day. Will not be worn in the rain.'],
- ['af1','boots','Black Air Forces','r','STR','yn','Equipping these raises Aggression. The wearer is now contractually obligated to start beef.'],
- ['furfeet','boots','Fur Feet','r','AGI','fur','Squeaky toe beans. Silent on the treadmill. Very loud at conventions.'],
- ['gimpboot','boots','Gimp Boots','r','VIT','gimp','Knee-high latex. Squeaks on every lunge. Nobody asks questions.'],
- ['nb','boots','New Balances','c','AGI','pyn','Grey dad-core runners. Built for walking to the matcha place, never for running.'],
- // chest
- ['milkers','chest','Mommy Milkers','e','STR','','Chest day went a little too well. The bar now rests on a natural shelf.'],
- ['jumper','chest','Jumper Cables','r','STR','','Clipped on for an extra spark during PR attempts. Red to positive. Do not ask.'],
- ['furbody','chest','Furry Body','r','END','fur','Full fursuit torso. It is 104°F inside. The sweat counts as cardio.'],
- ['gimpbody','chest','Gimp Body','r','END','gimp','Head-to-toe leather harness. Flawless posture. Zero breathability.'],
- ['qzip','chest','Quarter Zip','c','INT','pyn','Unzipped exactly enough to show collarbone. Worn to the gym. Never sweated in.'],
- ['techtop','chest','Nike Tech Hoodie','r','AGI','yn','Grey Tech Fleece zipped to the chin. Aura +50. Warmth +0.'],
- // legs
- ['willy','legs','Willy Wrapper','c','VIT','','A hand-knit sock for the little guy. Keeps him warm between sets.'],
- ['candythong','legs','Candy Thong','r','VIT','','Edible. Do NOT wear on cardio day. Sticky situation.'],
- ['chastity','legs','Chastity Belt','e','END','','Locked. Key lost somewhere in the dungeon. Focus has never been higher.'],
- ['tail','legs','Tail','r','AGI','','Bushy, swishy, and attached in a way we will not discuss. When pulled, makes a pop sound.'],
- ['furpants','legs','Furry Pants','r','VIT','fur','Fluffy fursuit legs. Hamstrings stay warm year round. Chafing begins at mile two.'],
- ['gimppants','legs','Gimp Pants','r','END','gimp','Shiny latex with zippers in places that raise questions.'],
- ['khakis','legs','Blue Khakis','c','INT','pyn','Cuffed at the ankle to show off the New Balances. Has never been near a squat rack.'],
- ['techpants','legs','Nike Tech Sweatpants','r','AGI','yn','Completes the set. Phone in one pocket, hand in the other. Running in these is its own crime.'],
- // helm
- ['furears','helm','Furry Ears','c','INT','fur','Twitch on every PR. Ask before petting.'],
- ['milwaukee','helm','Milwaukee 2s','r','VIT','','Milwaukee safety glasses. Rated for flying debris, rogue plates, and eye contact with the gym crush.'],
- ['gimpmask','helm','Gimp Mask','r','END','gimp','Zippered mouth. Muffles the grunting on heavy sets. Mostly.'],
- ['skimask','helm','Ski Mask','r','STR','yn','Black ski mask in July. Visibility −20. Intimidation +100.'],
- ['glasses','helm','Glasses','c','INT','pyn','Thin round frames, zero prescription. +5 Intelligence, perceived.'],
- // gloves
- ['glovelights','gloves','Gloving Lights','r','AGI','','LED fingertips. Turns every set into a rave. Pupils sold separately.'],
- ['jerkgloves','gloves','Masturbation Gloves','c','STR','','Fingerless. Well worn. Never washed. Grip strength is suspiciously elite.'],
- ['ojglove','gloves','OJs Glove','e','STR','','Black leather, one size too small. If it does not fit, you must acquit.'],
- ['furpaws','gloves','Fur Paws','c','VIT','fur','Squishy paw pads. Terrible barbell grip. Elite high-fives.'],
- ['gimpgloves','gloves','Gimp Gloves','r','STR','gimp','Elbow-length black latex. Snaps on with a menacing slap.'],
- ['seiko','gloves','Seiko Watch','r','INT','pyn','Checked loudly between every set so the whole gym knows it is a Seiko.'],
- // weapons
- ['horse','weapon','4ft Horse Cock','l','STR','','Rubber, heavy, and of deeply questionable origin. Swings like a mace. Nobody knows why it is in your bag.'],
- ['fleshlight','weapon','Fleshlight','r','END','','Shaped like a flashlight. Is not a flashlight. Does not light up the dungeon.'],
- ['onepiece','weapon','The One Piece','l','INT','','IT IS REAL. Found at the end of the Grand Line, apparently in your gym bag.'],
- ['slayer','weapon','Demon Slayer','e','AGI','','Blade from the anime you swore you would quit after episode three. Breathing technique: grunting.'],
- ['glock','weapon','Glock 19 with a Switch','e','STR','yn','Full auto. Every set is now a burst of thirty. Banned in every dungeon.'],
- ['tote','weapon','Tote Bag','c','INT','pyn','Canvas tote holding a Walkman, tampons (for her), and some shitty K. Carried to be seen, not to be used.'],
-// mythic (hidden until found)
+ ['spy','relic','Chinese Spy','l','AGI','','She liked your gym selfie, laughed at every joke, and asked a lot of questions about your bench. Your PRs are now in Beijing.'],
  ['plugnum','relic',"The Plug's Number",'m','AGI','',"One text and anything in this bag shows up in twenty minutes. Cash only. Don't call, text."],
  ['gaspills','relic','Gas Station Pill Sampler','m','VIT','','Every pill behind the counter, taken at once. You can now hear colors and bench a Honda.'],
+ // ===== boots (10 + 2)
+ ['nb','boots','New Balances','c','AGI','pyn','Grey dad-core runners. Built for walking to the matcha place, never for running.'],
+ ['tims','boots','Timbs','c','VIT','','Wheat Timbs, zero creases. Will not be worn on leg day. Will not be worn in the rain.'],
+ ['slidesocks','boots','Slides with Socks','c','VIT','','Crew socks, Nike slides, zero shame. Squats in these are a cry for help.'],
+ ['skechers','boots','Light-Up Skechers','c','AGI','','Flash red on every step. Bought in the kids section. Fit perfectly.'],
+ ['frenchtip','boots','French Tip Feet','r','AGI','','Fresh French tip pedicure, oiled up and glistening. Five stars on her foot page for leg press, calf raises, and foot jobs.'],
+ ['furfeet','boots','Fur Feet','r','AGI','fur','Squeaky toe beans. Someone online already paid $200 for pics. Silent on the treadmill, very loud at conventions.'],
+ ['vibrams','boots','Toe Shoes','r','AGI','','Every toe gets its own sleeping bag. The foot page community has been notified.'],
+ ['gimpboot','boots','Gimp Boots','e','VIT','gimp','Knee-high latex. Squeaks on every lunge. Nobody asks questions.'],
+ ['pleasers','boots','Clear Platform Heels','e','STR','','Eight inches of clear stripper heel. Calf raises have never been harder. Neither has the gym.'],
+ ['af1','boots','Black Air Forces','l','STR','yn','Equipping these raises Aggression. The wearer is now contractually obligated to start beef.'],
  ['heelys','boots','Heelys','m','AGI','','Roll between sets. Rest time cut in half. Dignity also cut in half.'],
  ['sportcrocs','boots','Crocs in Sport Mode','m','AGI','','Straps flipped back. The most dangerous footwear known to man. Nothing can stop you now.'],
- ['vest','chest','Bulletproof Vest','m','VIT','yn','For when the beef from the Air Forces escalates. Also stops a dropped barbell.'],
+ // ===== chest (10 + 2)
+ ['qzip','chest','Quarter Zip','c','AGI','pyn','Unzipped exactly enough to show collarbone. Worn to the gym. Never sweated in.'],
+ ['beater','chest','Mustard-Stained Wife Beater','c','STR','','Ribbed, white, and never washed. The mustard stain is load-bearing.'],
+ ['edhardy','chest','Ed Hardy Tee','c','STR','','Rhinestone tiger, two sizes too small. Smells like Axe and a 2009 club bathroom.'],
+ ['hooters','chest','Hooters Shirt','c','VIT','','Bought at the airport location. Worn very much not ironically.'],
+ ['jumper','chest','Jumper Cables','r','STR','','Clipped on for an extra spark during PR attempts. Red to positive. Do not ask.'],
+ ['furbody','chest','Furry Body','r','END','fur','Full fursuit torso. It is 104°F inside. Smells like Axe body spray and bad decisions from the last convention.'],
+ ['tassels','chest','Nipple Tassels','r','AGI','','Spin clockwise during cardio. Counter-clockwise on PRs. The whole gym is watching.'],
+ ['gimpbody','chest','Gimp Body','e','END','gimp','Head-to-toe leather harness. Flawless posture. Zero breathability.'],
+ ['milkers','chest','Mommy Milkers','e','STR','','Chest day went way too well. Bouncing on every rep, the bar rests on a natural shelf, and someone in the squat rack just called you mommy.'],
+ ['techtop','chest','Nike Tech Hoodie','l','AGI','yn','Grey Tech zipped to the chin in 90° heat. Comes with a Lime scooter, a cracked iPhone on Instagram Live, and $40 to your name.'],
+ ['vest','chest','Bulletproof Vest','m','VIT','','For when the beef from the Air Forces escalates. Also stops a dropped barbell.'],
  ['stringer','chest','Cut-to-the-Waist Stringer','m','STR','','Armholes down to the hips. Nips out, aura maxed. Banned from three Planet Fitnesses.'],
+ // ===== legs (10 + 2)
+ ['khakis','legs','Blue Khakis','c','AGI','pyn','Cuffed at the ankle, AirPods Max on with nothing playing. Reads poetry on the bench press so everyone sees.'],
+ ['willy','legs','Willy Wrapper','c','VIT','','Grandma knit it for her pinky finger. Fits you perfectly.'],
+ ['speedo','legs','Speedo','c','AGI','','Two sizes too small. Leaves nothing to the imagination, especially on the hip thrust machine.'],
+ ['candythong','legs','Candy Thong','r','VIT','','Edible. Do NOT wear on cardio day. Sticky situation for whoever finds it.'],
+ ['tail','legs','Tail','r','AGI','','Bushy, swishy, and attached in a way we will not discuss. When pulled, makes a pop sound.'],
+ ['furpants','legs','Furry Pants','r','VIT','fur','Fluffy fursuit legs with a very convenient butt flap. Hamstrings stay warm. Chafing begins at mile two.'],
+ ['gimppants','legs','Gimp Pants','e','END','gimp','Shiny latex with zippers in places that raise questions.'],
+ ['chastity','legs','Chastity Belt','e','END','','Locked. Key lost somewhere in the dungeon. Focus has never been higher.'],
+ ['chaps','legs','Assless Chaps','e','STR','','Full leather on the front, full send on the back. Hip thrusts are now a performance.'],
+ ['techpants','legs','Nike Tech Sweatpants','l','AGI','yn','Grey joggers tucked into crew socks. One hand down the front, the other filming a TikTok. Never paid for a membership, just walks in behind people.'],
  ['greysweats','legs','Grey Sweatpants','m','STR','','Forbidden in public. Reveals your true power level. The whole gym knows what day it is.'],
  ['jorts','legs','Jorts of Destiny','m','AGI','','Cut-off jean shorts handed down through generations of lawnmower dads. Thigh aura unmatched.'],
- ['tinfoil','helm','Tinfoil Hat','m','INT','','Blocks the Chinese Spy. Blocks 5G. Blocks your gym crush from reading your mind.'],
+ // ===== helm (10 + 2)
+ ['glasses','helm','Glasses','c','VIT','pyn','Thin round frames, zero prescription. +5 Intelligence, perceived.'],
+ ['milwaukee','helm','Milwaukee 2s','c','VIT','','Milwaukee safety glasses. Rated for flying debris, rogue plates, and eye contact with the gym crush.'],
+ ['snapback','helm','Backwards Snapback','c','STR','','Flat brim, backwards, sticker still on. Says "No Days Off." Takes every day off.'],
+ ['beerhat','helm','Beer Helmet','c','END','','Two cans, two straws, zero spotters needed. Hydration is hydration.'],
+ ['furears','helm','Furry Ears','r','VIT','fur','Twitch on every PR. Ask before petting. Or don\'t.'],
+ ['tiara','helm','Tiara','r','VIT','','Princess treatment only. Does not rerack weights. Does not wipe down benches.'],
+ ['vr','helm','VR Headset','r','END','','Currently in a VRChat bathroom with an anime girl. Do not disturb.'],
+ ['gimpmask','helm','Gimp Mask','e','END','gimp','Zippered mouth. Muffles the grunting on heavy sets. Mostly.'],
+ ['ballgag','helm','Ball Gag','e','END','','Silences the grunting. Drool counts as sweat. Safe word is "spot me."'],
+ ['skimask','helm','Ski Mask','l','STR','yn','Black ski mask in July. Visibility −20. Intimidation +100.'],
+ ['tinfoil','helm','Tinfoil Hat','m','VIT','','Blocks the Chinese Spy. Blocks 5G. Blocks your gym crush from reading your mind.'],
  ['halo','helm','Leg Day Halo','m','VIT','','Granted only to those who never skipped leg day. No hunter has ever been seen wearing one.'],
+ // ===== gloves (10 + 2)
+ ['seiko','gloves','Seiko Watch','c','AGI','pyn','Checked loudly between every set so the whole gym knows it is a Seiko.'],
+ ['jerkgloves','gloves','Masturbation Gloves','c','STR','','Fingerless. Well worn. Never washed. Grip strength is suspiciously elite.'],
+ ['biker','gloves','Fingerless Biker Gloves','c','STR','','Leather, studded, smells like a Harley. Has never lifted more than 135.'],
+ ['dishgloves','gloves','Yellow Dish Gloves','c','VIT','',"Grandma's. Smell like Dawn. She deadlifts more than you."],
+ ['glovelights','gloves','Gloving Lights','r','AGI','','LED fingertips. Turns every set into a rave. Pupils sold separately.'],
+ ['furpaws','gloves','Fur Paws','r','VIT','fur','Squishy paw pads with suspicious wear on the inside. Terrible barbell grip. Elite at other kinds of grip.'],
+ ['pinky','gloves','Pinky Ring','r','STR','','Gold, chunky, owned by a gas station owner named Big Sal. Flashes under the gym lights.'],
+ ['gimpgloves','gloves','Gimp Gloves','e','STR','gimp','Elbow-length black latex. Snaps on with a menacing slap.'],
+ ['examglove','gloves','Exam Glove','e','VIT','','Single latex glove, already lubed. Doctor says turn your head and cough.'],
+ ['ojglove','gloves','OJs Glove','l','STR','','Black leather, one size too small. If it does not fit, you must acquit.'],
  ['liarstraps','gloves',"Liar's Lifting Straps",'m','STR','','Contains every PR you have ever claimed without video. Weighs nothing. Lifts everything.'],
  ['wetwilly','gloves','Pre-Licked Fingers','m','AGI','','Ready for a wet willy at all times. Spotters now keep a respectful distance.'],
+ // ===== weapons (10 + 2)
+ ['tote','weapon','Tote Bag','c','END','pyn','Canvas tote holding a Walkman, tampons (for her), and some shitty K. Carried to be seen, not to be used.'],
+ ['noodle','weapon','Pool Noodle','c','AGI','','Bends on impact. Still won a fight at a Six Flags once.'],
+ ['selfiestick','weapon','Selfie Stick','c','AGI','','Extends to three feet. Captures every rep, mostly the mirror ones.'],
+ ['fleshlight','weapon','Fleshlight','r','END','','Shaped like a flashlight. Is not a flashlight. Does not light up the dungeon.'],
+ ['wand','weapon','Hitachi Wand','r','VIT','','Plugs into the wall. Vibrates hard enough to rerack your plates for you.'],
+ ['nerf','weapon','Nerf Blaster','r','AGI','','Full-auto foam darts. The legal version of the Glock.'],
+ ['slayer','weapon','Demon Slayer','e','AGI','','Blade from the anime you swore you would quit after episode three. Breathing technique: grunting.'],
+ ['horse','weapon','4ft Horse Cock','e','STR','','Rubber, heavy, and of deeply questionable origin. Swings like a mace. Nobody knows why it is in your bag.'],
+ ['onepiece','weapon','The One Piece','l','STR','','IT IS REAL. Found at the end of the Grand Line, apparently in your gym bag.'],
+ ['glock','weapon','Glock 19 with a Switch','l','STR','yn','Full auto. Every set is now a burst of thirty. Banned in every dungeon.'],
  ['doubleender','weapon','The Double Ender','m','STR','','Two-headed rubber war club. Swings both ways. Counts as two weapons.'],
  ['yomama','weapon','Yo Mama','m','STR','','So heavy she counts as a PR. Cannot be blocked, parried, or bench pressed.']
 ].map(([u,slot,name,r,stat,coll,desc])=>({u,slot,name,r,stat,coll,desc}));
 const UNIQM={};UNIQ.forEach(x=>UNIQM[x.u]=x);
 const SLOT_NAME={weapon:'Weapon',helm:'Helm',chest:'Chest Plate',legs:'Pants',gloves:'Gloves',boots:'Boots',relic:'Relic'};
-function migGear(){if(!S||!S.gear)return;S.gear.forEach(g=>{if(g.slot==='armor')g.slot='chest'});if(S.equip&&S.equip.armor){if(!S.equip.chest)S.equip.chest=S.equip.armor;delete S.equip.armor}}
+function migGear(){if(!S||!S.gear)return;S.gear.forEach(g=>{if(g.slot==='armor')g.slot='chest';const u=g.u&&UNIQM[g.u];if(u&&(g.r!==u.r||g.name!==u.name||g.stat!==u.stat)){g.r=u.r;g.name=u.name;g.stat=u.stat;g.slot=u.slot;g.sv=RSTAT[u.r];g.xp=RXP[u.r]}});if(S.equip&&S.equip.armor){if(!S.equip.chest)S.equip.chest=S.equip.armor;delete S.equip.armor}}
 const SLOTS={weapon:['Blade','Greatsword','Dagger','Warhammer','Spear','Longbow','Axe'],helm:['Helm','Hood','Crown','Visor'],chest:['Plate','Mail','Cloak','Cuirass'],legs:['Legplates','Tassets','Leggings','Chausses'],gloves:['Gauntlets','Grips','Handwraps'],boots:['Greaves','Boots','Striders'],relic:['Amulet','Ring','Sigil','Orb']};
 const SLOT_ICON={weapon:'🗡️',helm:'⛑️',chest:'🛡️',legs:'👖',gloves:'🧤',boots:'🥾',relic:'💍'};
 const PREFIX={c:['Worn','Iron','Sturdy','Plain'],r:['Tempered','Runed',"Hunter's",'Keen'],e:['Shadowforged','Stormbound','Abyssal','Starfall'],l:['Apex','Godslayer','Eternal','Sovereign']};
 const RXP={c:.01,r:.02,e:.03,l:.05,m:.08},RSTAT={c:1,r:2,e:3,l:5,m:8},SALV={c:5,r:10,e:25,l:50,m:100};
 function dropItem(r,src={}){
-  const myth=!src.emblem&&!src.cls&&Math.random()<(src.boss?0.06:0.004);if(myth)r='m';
+  const myth=!!src.boss&&src.boss.kind==='tower'&&Math.random()<Math.min(.12,.03+.01*(src.boss.tier||1));if(myth)r='m';
   const un=myth?pick(UNIQ.filter(x=>x.r==='m')):!src.emblem&&!src.cls&&Math.random()<0.4?(pool=>pool.length?pick(pool):null)(UNIQ.filter(x=>x.r===r)):null;
   const slot=un?un.slot:src.emblem?'relic':src.cls?'weapon':pick(Object.keys(SLOTS));const base=pick(SLOTS[slot]);
   const name=un?un.name:src.boss?`${src.boss.name.replace(/^The /,'')}'s ${base}`:src.emblem?`${src.emblem}-Rank Emblem`:src.cls?`${className()}'s ${base}`:`${pick(PREFIX[r])} ${base}${Math.random()<.5?' of the '+zoneOf(S.tower.floor).n.replace(/^The /,''):''}`;
@@ -998,7 +1020,10 @@ function dropItem(r,src={}){
   const cur=S.gear.find(x=>x.id===S.equip[slot]);if(!cur||RXP[cur.r]<RXP[r])S.equip[slot]=it.id;
   if(S.gear.length>60){const eq=new Set(Object.values(S.equip));const order='crelm';const victim=S.gear.filter(g=>!eq.has(g.id)).sort((a,b)=>order.indexOf(a.r)-order.indexOf(b.r)||a.t-b.t)[0];if(victim)S.gear=S.gear.filter(g=>g!==victim)}
   return it}
-function rollDrop(log){if(log.sets<5||Math.random()>0.15)return null;const y=Math.random();return dropItem(y<.05&&S.tower.floor>20?'e':y<.3?'r':'c')}
+/* drop odds by how hard the clear was (clear rank). Mythics never drop from gates, only tower guardians. */
+const DROP_W={E:{p:.10,w:[70,25,5,0]},D:{p:.12,w:[60,30,9,1]},C:{p:.15,w:[50,33,14,3]},B:{p:.18,w:[40,36,19,5]},A:{p:.22,w:[30,38,25,7]},S:{p:.26,w:[20,38,32,10]}};
+function wRoll(w,keys){const t=w.reduce((a,b)=>a+b,0);let x=Math.random()*t;for(let i=0;i<w.length;i++){x-=w[i];if(x<0)return keys[i]}return keys[keys.length-1]}
+function rollDrop(log){if(log.sets<5)return null;const D=DROP_W[log.crank]||DROP_W.E;if(Math.random()>D.p)return null;return dropItem(wRoll(D.w,['c','r','e','l']))}
 function equipped(){return Object.values(S.equip).map(id=>S.gear.find(g=>g.id===id)).filter(Boolean)}
 function xpBonus(){return equipped().reduce((s,g)=>s+g.xp,0)+CLASS_BONUS.xp[ctier()]+(S.comp?.02:0)}
 function itemHtml(it,small){const R=RAR[it.r==='c'?'c':it.r];return`<span style="color:${R.col}">${SLOT_ICON[it.slot]} ${esc(it.name)}</span>${small?'':` <span class="tiny dim">+${Math.round(it.xp*100)}% EXP · +${it.sv} ${it.stat}</span>`}`}
@@ -1033,7 +1058,7 @@ function bossGoal(b){const d=b.ex?exInfo(b.ex):null;
   const T=TRIALS[b.trial],best=S.trialBests[b.trial];
   return`<b>${esc(T.name)}:</b> ${esc(T.desc)} ${T.better==='low'?'Finish within':'Hold for at least'} the par of <b>${fmtT(b.par)}</b>${best!=null?`, or beat your best of <b>${fmtT(best)}</b>`:''}.`}
 function bossHP(b){if(b.type==='siege')return b.hp/b.max;if(b.type==='str'||b.type==='bw'){const base=b.start*.9;return Math.max(0,Math.min(1,1-(b.best-base)/(b.target-base)))}return 1}
-function bossReward(b){if(b.kind==='tower')return{xp:150+50*b.tier,r:b.tier>=6?'l':b.tier>=3?'e':'r'};if(b.kind==='exam')return{xp:300+60*rIdx(b.ref),r:rIdx(b.ref)>=4?'l':rIdx(b.ref)>=2?'e':'r'};return{xp:500,r:b.ref>=3?'l':'e'}}
+function bossReward(b){if(b.kind==='tower')return{xp:150+50*b.tier,r:wRoll(b.tier>=6?[0,10,50,40]:b.tier>=3?[0,30,50,20]:[10,50,32,8],['c','r','e','l'])};if(b.kind==='exam')return{xp:300+60*rIdx(b.ref),r:rIdx(b.ref)>=4?'l':rIdx(b.ref)>=2?'e':'r'};return{xp:500,r:b.ref>=3?'l':'e'}}
 function defeatBoss(b){S.bosses=S.bosses.filter(x=>x.id!==b.id);const R=bossReward(b);const rw={boss:b,xp:Math.round(R.xp*(1+xpBonus())),items:[],lines:[]};
   if(b.kind==='tower'){S.tower.beaten.push(b.ref);S.tower.floor=b.ref+1;S.tower.steps=0;S.tower.misses=0;rw.items.push(dropItem(R.r,{boss:b}));
     if(!S.comps.some(c=>c.id===b.ref)){S.comps.push({id:b.ref,name:b.name,icon:b.icon});rw.comp=b;if(!S.comp)S.comp=b.ref}
@@ -1141,7 +1166,7 @@ function openBoss(id){const b=S.bosses.find(x=>x.id===id);if(!b)return;const R=b
    <div class="bar hp" style="margin:12px 0 4px"><i style="width:${bossHP(b)*100}%"></i></div></div>
    <div class="win"><div class="wt" style="color:#ff8aa0">Victory condition</div><div class="small">${bossGoal(b)}</div></div>
    ${extra}
-   <div class="win"><div class="wt" style="color:var(--gold)">Spoils</div><div class="small">+${fmtN(Math.round(R.xp*(1+xpBonus())))} EXP · <span style="color:${RAR[R.r].col}">${RAR[R.r].n} gear</span>${b.kind==='tower'?' · Companion':b.kind==='exam'?` · ${b.ref}-Rank`:` · ${CLASS_TIERS[S.hunter.cls][b.ref-1]} class`}</div></div>
+   <div class="win"><div class="wt" style="color:var(--gold)">Spoils</div><div class="small">+${fmtN(Math.round(R.xp*(1+xpBonus())))} EXP · ${b.kind==='tower'?`<span style="color:var(--cyan)">Gear (rare–legendary)</span> · <span style="color:#ff3b5c">${Math.round(Math.min(.12,.03+.01*(b.tier||1))*100)}% mythic chance</span>`:`<span style="color:${RAR[R.r].col}">${RAR[R.r].n} gear</span>`}${b.kind==='tower'?' · Companion':b.kind==='exam'?` · ${b.ref}-Rank`:` · ${CLASS_TIERS[S.hunter.cls][b.ref-1]} class`}</div></div>
    <button class="btn block ghost" data-a="close">Close</button>`,{onClose:()=>{clearInterval(SW.timer)}})}
 function swTick(){const el=$('#swT');if(!el){clearInterval(SW.timer);return}const s=(SW.acc+(SW.on?Date.now()-SW.t0:0))/1000;el.textContent=fmtT(Math.floor(s));const inp=$('#trialIn');if(inp&&SW.on)inp.value=fmtT(Math.floor(s))}
 function parseT(v){v=String(v).trim();if(!v)return null;let m=v.match(/^(\d+):(\d{1,2})$/);if(m)return(+m[1])*60+(+m[2]);m=v.match(/^\d+(\.\d+)?$/);if(m)return Math.round(parseFloat(v)*60);return null}
@@ -1459,9 +1484,9 @@ const MANUAL=[
  ['⚜️','Class advancement',`<p>Each class has 3 tiers (e.g. Warrior → Berserker → Warlord).</p>
   <ul><li>Tier 2: clear tower floor 30 and reach C-Rank. Tier 3: floor 70 and A-Rank.</li>
   <li>Start the trial from <b>Tower → Class advancement</b>. Each tier adds main-attribute points and a % EXP bonus.</li></ul>`],
- ['🎁','Loot, armory and companions',`<ul><li>Gates with 5+ sets have a 15% gear drop chance. Bosses always drop gear.</li>
+ ['🎁','Loot, armory and companions',`<ul><li>Gates with 5+ sets have a 10–26% gear drop chance (higher for harder clears). Bosses always drop gear.</li>
   <li>Rarity: Common +1% EXP / +1 stat, Rare +2/+2, Epic +3/+3, Legendary +5/+5. Better items equip automatically.</li>
-  <li>Tap a slot in <b>Tower → Armory</b> to see every item for that slot: found ones in color, missing ones greyed out, and 2 hidden <b style="color:#ff3b5c">Mythic</b> items per slot. Mythics drop very rarely, more often from tower guardians.</li><li>Manage gear in <b>Tower → Armory</b>. Salvage spare items for 5 / 10 / 25 / 50 EXP.</li>
+  <li>Tap a slot in <b>Tower → Armory</b> to see every item for that slot: found ones in color, missing ones greyed out, and 2 hidden <b style="color:#ff3b5c">Mythic</b> items per slot. Mythics only drop from tower guardians (3% + 1% per guardian tier, up to 12%). Harder clears drop gear more often and rarer: an S clear has a 26% drop chance with 10% legendary odds, an E clear 10% with none.</li><li>Manage gear in <b>Tower → Armory</b>. Salvage spare items for 5 / 10 / 25 / 50 EXP.</li>
   <li>Defeated guardians become companions. Your active companion adds +2% EXP.</li></ul>`],
  ['🏆','Titles',`<p>78+ titles for milestones. Locked ones show progress bars; some are hidden until earned. Earning one gives Common +25, Rare +50, Epic +100, Legendary +250 EXP. Equip one to show it under your name.</p>`],
  ['📜','Chronicle',`<ul><li>Sets per week, skill records (tap one for its chart) and your raid log.</li>
