@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#04060c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -46,6 +46,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .btn.block{display:block;width:100%}
 .btn:disabled{opacity:.4}
 .ico{width:38px;height:38px;padding:0;display:inline-grid;place-items:center;font-size:18px}
+html,body,button,input,select,textarea,label,a{touch-action:manipulation}
+input,select,textarea{font-size:16px}
 input.f,select.f,textarea.f{width:100%;background:rgba(0,10,30,.6);border:1px solid rgba(110,200,255,.3);border-radius:4px;padding:9px 10px;color:var(--txt);outline:none}
 input.f:focus,select.f:focus,textarea.f:focus{border-color:var(--cyan);box-shadow:0 0 8px rgba(127,230,255,.35)}
 label.l{display:block;font-size:13px;color:var(--dim);margin:10px 0 4px;letter-spacing:.06em;text-transform:uppercase}
@@ -88,6 +90,15 @@ label.l{display:block;font-size:13px;color:var(--dim);margin:10px 0 4px;letter-s
 .ov{position:fixed;inset:0;z-index:40;background:rgba(2,4,10,.72);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center;animation:fade .18s}
 .sheet{width:100%;max-width:520px;max-height:92vh;max-height:92dvh;overflow:auto;background:#060d1c;border:1px solid var(--line);border-bottom:0;border-radius:12px 12px 0 0;padding:16px 16px calc(env(safe-area-inset-bottom) + 20px);box-shadow:0 -10px 40px rgba(58,160,255,.2);animation:up .22s ease-out}
 .ov.center{align-items:center;padding:20px}
+.sx{position:sticky;top:-4px;float:right;z-index:5;width:34px;height:34px;margin:-6px -6px 4px 10px;padding:0;border-radius:50%;background:rgba(6,13,28,.92);border:1px solid rgba(110,200,255,.35);color:#cfe6ff;font-size:15px;line-height:1;cursor:pointer;display:grid;place-items:center}.sx:active{background:rgba(40,90,170,.5)}
+.pklist{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.pk{display:block;width:100%;background:var(--panel2);border:1px solid rgba(110,200,255,.18);border-left:3px solid var(--rc,#556);border-radius:6px;padding:9px 10px;color:var(--txt);font:inherit;cursor:pointer}
+.pk.on{border-color:var(--rc);box-shadow:0 0 12px color-mix(in srgb,var(--rc) 45%,transparent) inset}
+.pk .pki{font-size:22px;line-height:1.2;width:28px;text-align:center}.pk .pkd{font-style:italic;color:#c9d8ee;margin:3px 0;line-height:1.4}
+.pk.lock{filter:grayscale(1);opacity:.42;border-left-color:#444;cursor:default}.pk.lock .h,.pk.lock .tiny,.pk.lock .pkd{color:#9aa}
+.pk.myth{animation:myth 2.4s ease-in-out infinite}@keyframes myth{50%{box-shadow:0 0 16px rgba(255,59,92,.55)}}
+.pk.myth0{filter:none;opacity:.75;background:#140409;border:1px dashed #5a1a28;border-left:3px solid #5a1a28}
+.sheet.shrink{transition:transform .22s ease-in,opacity .22s ease-in;transform:scale(.6);opacity:0}.ov.fade{transition:background .22s;background:transparent!important}
 .ov.center .sheet{border-radius:8px;border-bottom:1px solid var(--line);max-height:86vh;padding-bottom:18px}
 @keyframes up{from{transform:translateY(40px);opacity:0}}
 @keyframes fade{from{opacity:0}}
@@ -187,7 +198,7 @@ html.embed body::after{height:var(--avail)}
 .bicon{font-size:56px;line-height:1.1;margin:6px 0;filter:drop-shadow(0 0 16px rgba(255,77,109,.7));display:flex;justify-content:center}
 .boss-in{animation:shake .5s}@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
 .bmini{width:42px;height:42px;display:grid;place-items:center;font-size:26px;flex:none}
-.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.slotb{background:var(--panel2);border:1px solid rgba(110,200,255,.2);border-radius:5px;padding:8px 4px;text-align:center;min-height:74px;cursor:pointer}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.slotb{background:var(--panel2);border:1px solid rgba(110,200,255,.2);border-radius:5px;padding:8px 4px;text-align:center;min-height:74px;cursor:pointer}
 .comps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.comp{background:var(--panel2);border:1px solid rgba(110,200,255,.2);border-radius:5px;padding:6px 2px;cursor:pointer;color:var(--txt)}.comp.on{border-color:var(--gold);box-shadow:0 0 10px rgba(255,209,102,.4)}
 .weak{margin-top:6px;padding:6px 8px;border:1px dashed rgba(255,77,109,.7);border-radius:4px;font-size:13.5px;color:#ffc2cd;background:rgba(255,77,109,.08)}
 .tower .wt::before{color:var(--zc)}
@@ -312,7 +323,7 @@ function defaults(){return{v:1,updated:0,hunter:null,xp:0,title:'',unlocked:[],g
  plan:null,friends:[],onSched:0,tower:{floor:1,steps:0,misses:0,lastEval:'',dayD:'',dayAmt:0,beaten:[],regen:false},bosses:[],rankPassed:'E',trialBests:{},gear:[],equip:{},comps:[],comp:null,gearCount:0,bossKills:0,daily:{tasks:defaultDaily(),date:'',progress:{},claimed:false,streak:0,best:0,lastDone:'',claims:0,penaltyNote:false},active:null}}
 
 // rarity: c=common r=rare e=epic l=legendary · h=hidden until earned · p=progress [current,goal]
-const RAR={c:{n:'Common',col:'#a9b4c8',xp:25},r:{n:'Rare',col:'#4fb8ff',xp:50},e:{n:'Epic',col:'#b388ff',xp:100},l:{n:'Legendary',col:'#ffd166',xp:250}};
+const RAR={c:{n:'Common',col:'#a9b4c8',xp:25},r:{n:'Rare',col:'#4fb8ff',xp:50},e:{n:'Epic',col:'#b388ff',xp:100},l:{n:'Legendary',col:'#ffd166',xp:250},m:{n:'Mythic',col:'#ff3b5c',xp:500}};
 const LIFT=(c,id,lb,kg)=>(c.lift[id]||0)>=(c.units==='kg'?kg:lb);
 const ACH=[
  // — Gates cleared —
@@ -413,7 +424,7 @@ const ACH=[
 
 /* ================= STATE ================= */
 const LS='gatebreaker.v1';
-let SNAP_DIRTY=false,BOOT=false,CLOUD_FAILED=false,SANDBOX=false,SNAP=null,PEN_SND=false,S=defaults(),LOGS=[],TAB='status',RAID_VIEW=true;
+let VIEWER=false,SNAP_DIRTY=false,BOOT=false,CLOUD_FAILED=false,SANDBOX=false,SNAP=null,PEN_SND=false,S=defaults(),LOGS=[],TAB='status',RAID_VIEW=true;
 try{const raw=localStorage.getItem(LS);if(raw){const o=JSON.parse(raw);if(o&&o.s){S=Object.assign(defaults(),o.s);LOGS=Array.isArray(o.logs)?o.logs:[]}}}catch(e){}
 try{const t=localStorage.getItem(LS+'.tab');if(t)TAB=t}catch(e){}
 
@@ -428,6 +439,19 @@ const U=()=>S.hunter?.units||'lb';
 function exInfo(id){return EXM[id]||S.custom.find(c=>c.id===id)||{id,name:id,stat:'STR',type:'w'}}
 function req(L){return 100+25*L}
 function lvl(xp){let L=1,n=req(1);while(xp>=n){xp-=n;L++;n=req(L)}return{L,into:xp,need:n}}
+/* ---- System-assessed gate rank: based on the work in the gate, not a label ---- */
+const GATE_TH=[[0,'E'],[12,'D'],[17,'C'],[22,'B'],[27,'A'],[33,'S']];
+function exWork(id,sets,reps,wu){const d=exInfo(id);sets=Math.max(0,(+sets||0)-(+wu?1:0));reps=+reps||0;let per;
+  if(d.type==='t'){per=isSec(d)?Math.min(1,reps*0.7):Math.min(6,reps/5)}
+  else{per=(d.type==='bw'?0.8:1)*(reps>0&&reps<=2&&d.type!=='w'?0.5:1);if(reps<=0)per=0}
+  return d.type==='t'&&!isSec(d)?Math.min(6,per*Math.min(sets,3)):per*Math.min(sets,6)}
+function gateScore(g){return(g.ex||[]).reduce((a,e)=>Array.isArray(e)?a+exWork(e[0],e[1],e[2],0):a+exWork(e.id,e.sets,e.reps,e.wu),0)}
+function scoreRank(x){let r='E';GATE_TH.forEach(([m,k])=>{if(x>=m-1e-9)r=k});return r}
+function assessRank(g){return scoreRank(gateScore(g))}
+function syncRanks(){(S.gates||[]).forEach(g=>{const r=assessRank(g);if(g.rank!==r)g.rank=r})}
+/* score of work actually completed in a raid (warm-ups excluded, ≤6 sets per exercise counted) */
+function doneScore(a){return a.ex.reduce((t,e)=>{const d=exInfo(e.id);const ds=e.sets.filter(x=>x.done&&!x.wu&&(d.type!=='w'||(+x.w||0)>0));if(!ds.length)return t;
+  const avg=ds.reduce((q,x)=>q+(+x.r||0),0)/ds.length;return t+exWork(e.id,ds.length,avg,0)},0)}
 function rankOf(L){let r='E';RANKS.forEach(([m,k])=>{if(L>=m)r=k});return r}
 function hash(s){let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)}
 
@@ -447,7 +471,7 @@ const MINE=new Set();let WATCH=null,DUP_WARNED=false;
 function watchSave(col){try{if(WATCH)WATCH();WATCH=col.doc(SAVE_ID).onSnapshot(sn=>{if(!sn.exists||sn.metadata.hasPendingWrites||sn.metadata.fromCache)return;const r=JSON.parse(JSON.stringify((sn.data()||{}).s||null));if(!r||!r.hunter||MINE.has(r.updated))return;if((r.build||0)>BUILD){READONLY=true;toast('A newer version of Arise is open elsewhere. Close this copy and reopen Arise.','red','[System]',true);return}
   if((r.updated||0)>(S.updated||0)+2000){if(!DUP_WARNED){DUP_WARNED=true;toast('Arise was saved from another open copy (another tab, device or the chat preview). Keep just one copy open to avoid conflicts.','red','[System]',true)}
     if(!S.active&&!SANDBOX&&!sheets.length&&r.hunter.created===(S.hunter&&S.hunter.created)){S=Object.assign(defaults(),r);applyPacks();rollDaily();try{localStorage.setItem(LS,JSON.stringify({s:S,logs:LOGS}))}catch(e){}render()}}},()=>{})}catch(e){}}
-const BUILD=2026111303,SAVE_ID='save2',LOGP='v2log-';let READONLY=false;
+const BUILD=2026111309,SAVE_ID='save2',LOGP='v2log-';let READONLY=false;
 let SYNC_ERR=null,LAST_OK=0,retryT=null;const FAILED=new Set();
 function docData(id){if(id===SAVE_ID){MINE.add(S.updated);return{s:JSON.parse(JSON.stringify(S))}}const m=id.slice(LOGP.length);return{items:JSON.parse(JSON.stringify(LOGS.filter(l=>l.date.slice(0,7)===m)))}}
 async function writeDoc(id,data){
@@ -463,9 +487,9 @@ function syncErr(e){SYNC_ERR={code:(e&&e.code)||'unknown',msg:(e&&e.message)||St
 function retrySync(){clearTimeout(retryT);if(SANDBOX){retryT=setTimeout(retrySync,20000);return}if(!cloudCol){initCloud(true);return}const ids=FAILED.size?[...FAILED]:[SAVE_ID];ids.forEach(id=>writeDoc(id,docData(id)))}
 let SYNC='local';
 function setSync(s){SYNC=s;const el=$('#sync');if(el)el.outerHTML=syncHtml()}
-function syncHtml(){const m={local:['','Device save'],busy:['busy','Syncing…'],ok:['ok','Synced'],err:['err','Sync issue · tap'],slow:['busy','Cloud slow…']}[SYNC]||['','Device save'];return `<span id="sync" class="sync ${m[0]}" data-a="syncinfo" role="button">${'<i></i>'}${m[1]}</span>`}
+function syncHtml(){const m={viewer:['err','Not saved · tap'],local:['','Device save'],busy:['busy','Syncing…'],ok:['ok','Synced'],err:['err','Sync issue · tap'],slow:['busy','Cloud slow…']}[SYNC]||['','Device save'];return `<span id="sync" class="sync ${m[0]}" data-a="syncinfo" role="button">${'<i></i>'}${m[1]}</span>`}
 const SYNC_WHY={revoked:'The app was updated or its sharing changed while it was open. Close Arise completely and reopen it.',unavailable:'The connection dropped. It will keep retrying on its own.',resource_exhausted:'Too many saves in a short time. It will retry in a moment.',quota_exceeded:'Cloud storage for this app is full.',invalid_argument:'The cloud rejected the save. Your data is safe on this device. Send this code to whoever maintains the app.',not_granted:'Cloud saving isn’t available in this view. Make sure you’re signed in, then reopen.',capability_disabled:'Cloud saving isn’t available in this view. Reopen Arise.',capability_removed:'Cloud saving isn’t available in this view. Reopen Arise.',timeout:'The cloud didn’t answer in time. It will keep retrying.',unknown:'Something interrupted the save. It will keep retrying.'};
-function openSyncInfo(){const e=SYNC_ERR;const ago=t=>{const m=Math.round((Date.now()-t)/60000);return m<1?'just now':m<60?m+' min ago':Math.round(m/60)+' h ago'};
+function openSyncInfo(){if(VIEWER){openViewerInfo();return}const e=SYNC_ERR;const ago=t=>{const m=Math.round((Date.now()-t)/60000);return m<1?'just now':m<60?m+' min ago':Math.round(m/60)+' h ago'};
   openSheet(`<div class="wt">Cloud sync</div>
    <div class="small">Status: <b style="color:${SYNC==='err'?'var(--red)':SYNC==='ok'?'var(--green)':'var(--gold)'}">${{ok:'Synced',err:'Not syncing',busy:'Syncing…',slow:'Waiting for cloud',local:'Saving on this device only'}[SYNC]||SYNC}</b></div>
    <div class="small dim" style="margin-top:4px">Last successful cloud sync: ${LAST_OK?ago(LAST_OK):'not yet this session'}</div>
@@ -473,7 +497,7 @@ function openSyncInfo(){const e=SYNC_ERR;const ago=t=>{const m=Math.round((Date.
    ${e&&SYNC==='err'?`<div class="win" style="margin-top:10px"><div class="wt" style="color:var(--red)">Reason</div><div class="small">${esc(SYNC_WHY[e.code]||SYNC_WHY.unknown)}</div><div class="tiny dim mono" style="margin-top:6px">Code: ${esc(e.code)}${e.msg?' · '+esc(e.msg.slice(0,140)):''}</div></div>`:''}
    <div class="row" style="margin-top:12px"><button class="btn grow" data-a="close">Close</button><button class="btn pri grow" data-a="syncretry">Retry now</button></div>`,{center:true})}
 let CLOUD_TRY=0,CLOUD_BUSY=false;
-async function initCloud(manual){if(CLOUD_BUSY)return;CLOUD_BUSY=true;try{await initCloud_(manual)}finally{CLOUD_BUSY=false;if(BOOT){BOOT=false;CLOUD_FAILED=!cloudCol;render()}else if(cloudCol&&CLOUD_FAILED){CLOUD_FAILED=false;render()}}}
+async function initCloud(manual){if(CLOUD_BUSY)return;CLOUD_BUSY=true;try{await initCloud_(manual)}finally{CLOUD_BUSY=false;if(BOOT){BOOT=false;CLOUD_FAILED=!cloudCol&&!VIEWER;render()}else if(cloudCol&&CLOUD_FAILED){CLOUD_FAILED=false;render()}}}
 async function initCloud_(manual){
   let tries=0;while(!(window.claude&&window.claude.use)&&tries<20){await sleep(150);tries++}
   if(!(window.claude&&window.claude.use))return;
@@ -481,6 +505,10 @@ async function initCloud_(manual){
     const [db,user]=await Promise.all([window.claude.use('db'),window.claude.use('user')]);
     if(!db||!user)return;
     const id=await user.id();if(!id)return;
+    {let cw=null;try{cw=await Promise.race([user.can?user.can('data.write'):null,sleep(4000).then(()=>null)])}catch(e){}
+     if(cw===false&&!(user.isOwner&&await Promise.resolve(user.isOwner()).catch(()=>false))){
+       const ok=await Promise.race([db.collection('data/users/'+id).doc('probe').set({t:Date.now()}).then(()=>true,()=>false),sleep(8000).then(()=>false)]);
+       if(!ok){VIEWER=true;setSync('viewer');render();return}}}
     const col=db.collection('data/users/'+id);
     setSync('busy');
     const timer=setTimeout(()=>{if(SYNC==='busy')setSync('slow')},10000);
@@ -506,6 +534,8 @@ async function initCloud_(manual){
   }catch(e){SYNC_ERR={code:(e&&e.code)||'unknown',msg:(e&&e.message)||'',at:Date.now()};setSync('err');CLOUD_TRY++;if(CLOUD_TRY<8||manual){clearTimeout(retryT);retryT=setTimeout(()=>initCloud(),Math.min(60000,10000*CLOUD_TRY))}}
 }
 
+function viewerBanner(){return VIEWER?`<div class="callout red" style="margin:10px 0"><b>Your progress isn't being saved.</b> You opened Arise from a shared link with view-only access, so it can't save to your account, and the Claude app may erase it when it closes. <b>Tap Back up after every workout</b> and keep the text in your Notes, or ask the person who shared Arise for the Google version.<div class="row" style="margin-top:8px"><button class="btn sm pri" data-a="export">Back up now</button><button class="btn sm" data-a="import">Restore</button><button class="btn sm ghost" data-a="viewerinfo">Why?</button></div></div>`:''}
+function openViewerInfo(){openSheet(`<div class="wt" style="color:var(--red)">Progress not saved</div><div class="small" style="line-height:1.45">This copy of Arise was shared with you as <b>view-only</b>. Claude doesn't let view-only users save data to the cloud, and the Claude app can clear the copy on your phone whenever it closes, so your hunter can disappear.<br><br><b>To keep your progress:</b><br>• Tap <b>Back up now</b> after every workout and paste the text into your Notes app.<br>• Next time you open Arise, create any hunter name, then use <b>Restore</b> and paste your latest backup.<br>• Best option: ask the person who shared Arise for the <b>Google version</b>, which saves to your own account.</div><button class="btn block" style="margin-top:12px" data-a="close">Got it</button>`,{center:true})}
 /* ================= DERIVED ================= */
 function computeStats(){
   const st={STR:10,VIT:10,AGI:10,END:10};
@@ -526,7 +556,7 @@ function totals(){
     if(!l.side){c.maxDur=Math.max(c.maxDur,l.dur||0);c.mins+=l.dur||0;}const h=d.getHours();if(h<7)c.dawn=true;if(h>=21)c.night=true;if(!l.gateId)c.free++;
     const md=(d.getMonth()+1)+'-'+d.getDate();if(md==='1-1'||md==='12-25')c.holiday=true;
     if(l.full&&l.dur<=30&&l.sets>=12)c.speed=true;
-    const g=S.gates.find(x=>x.id===l.gateId);if(g&&g.rank==='S')c.sClear=true;
+    if(l.crank==='S')c.sClear=true;
     const wk=weekStart(d).getTime();weeks[wk]=(weeks[wk]||0)+1;const dow=d.getDay();if(dow===6||dow===0){wkend[wk]=(wkend[wk]||0)|(dow===6?1:2)}
     if(prev&&(d-prev)/864e5>=14)c.comeback=true;prev=d;
     l.ex.forEach(e=>{exs.add(e.id);const x=exInfo(e.id);e.sets.forEach(st=>{const r=+st.r||0,w=+st.w||0;
@@ -595,18 +625,21 @@ function sfx(n){try{if(actx&&SFX[n])SFX[n]()}catch(e){}}
 
 /* ================= SHEETS ================= */
 const sheets=[];
-function openSheet(html,{center=false,onClose}={}){const ov=document.createElement('div');ov.className='ov'+(center?' center':'');ov.innerHTML=`<div class="sheet">${html}</div>`;ov.addEventListener('click',e=>{if(e.target===ov)closeSheet()});document.body.appendChild(ov);sheets.push({ov,onClose});return ov.firstChild}
+function openSheet(html,{center=false,onClose}={}){const ov=document.createElement('div');ov.className='ov'+(center?' center':'');ov.innerHTML=`<div class="sheet"><button class="sx" data-a="close" aria-label="Close">✕</button>${html}</div>`;ov.addEventListener('click',e=>{if(e.target===ov)closeSheet()});document.body.appendChild(ov);sheets.push({ov,onClose});return ov.firstChild}
 function closeSheet(){const s=sheets.pop();if(s){s.ov.remove();s.onClose&&s.onClose()}if(!sheets.length)setTimeout(checkIntros,300)}
 function confirmBox(title,msg,okLabel,cb,danger){const el=openSheet(`<div class="sys"><div class="wt" style="justify-content:center">${esc(title)}</div><p>${msg}</p><div class="row" style="margin-top:14px"><button class="btn block grow" data-a="close">Cancel</button><button class="btn block grow ${danger?'red':'pri'}" id="cfOk">${esc(okLabel)}</button></div></div>`,{center:true});el.querySelector('#cfOk').onclick=()=>{closeSheet();cb()}}
 
 /* ================= RENDER ================= */
-function render(){
+if(!window.__noZoom){window.__noZoom=1;['gesturestart','gesturechange'].forEach(ev=>document.addEventListener(ev,e=>e.preventDefault(),{passive:false}));
+ let lastT=0,sx=0,sy=0;document.addEventListener('touchstart',e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY},{passive:true});
+ document.addEventListener('touchend',e=>{const t=e.changedTouches[0];if(Math.abs(t.clientX-sx)>10||Math.abs(t.clientY-sy)>10){lastT=0;return}const n=Date.now();if(n-lastT<350){const b=e.target.closest('button');if(b&&!b.disabled){e.preventDefault();b.click()}}lastT=n},{passive:false})}
+function render(){if(S&&S.gates)syncRanks();migGear();
   const app=$('#app');
   if(!S.hunter&&BOOT){$('#tabs').classList.add('hide');app.innerHTML=`<div style="min-height:70vh;display:grid;place-items:center"><div class="sys"><div class="portalspin"></div><div class="h" style="color:var(--cyan);margin-top:16px;letter-spacing:.2em">Connecting to the System…</div><div class="tiny dim" style="margin-top:6px">Loading your hunter</div></div></div>`;return}
-  if(!S.hunter){$('#tabs').classList.add('hide');app.innerHTML=(CLOUD_FAILED?`<div class="callout red" style="margin-top:12px">Couldn't reach your cloud save. <b>If you already have a hunter, don't create a new one.</b> Close Arise fully and reopen it, or tap Retry.<button class="btn sm pri" style="margin-top:8px" data-a="syncretry">Retry</button></div>`:'')+renderOnboard();return}
+  if(!S.hunter){$('#tabs').classList.add('hide');app.innerHTML=viewerBanner()+(CLOUD_FAILED?`<div class="callout red" style="margin-top:12px">Couldn't reach your cloud save. <b>If you already have a hunter, don't create a new one.</b> Close Arise fully and reopen it, or tap Retry.<button class="btn sm pri" style="margin-top:8px" data-a="syncretry">Retry</button></div>`:'')+renderOnboard();return}
   $('#tabs').classList.remove('hide');
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.t===TAB));
-  const top=`<div class="topbar"><span class="logo">ARISE</span>${syncHtml()}</div>`;
+  const top=`<div class="topbar"><span class="logo">ARISE</span>${syncHtml()}</div>`+(TAB!=='chron'?viewerBanner():'');
   const body={status:renderStatus,quest:renderQuest,gates:renderGates,tower:renderTower,chron:renderChron}[TAB]||renderStatus;
   app.innerHTML=top+body();
   const dt=$('#dtoday'),sp=$('#strip');if(dt&&sp)sp.scrollLeft=dt.offsetLeft-sp.offsetLeft-70;
@@ -795,6 +828,7 @@ function finishRaid(){
     if(b&&(!prev||b.m>prev.m+1e-9)){if(prev){newPRs.push({d,b});log.prs.push(e.id);S.prCount=(S.prCount||0)+1}S.prs[e.id]={...b,date:log.date}}});
   log.vol=Math.round(log.vol);
   const fullClear=doneCount>=planned;
+  log.crank=scoreRank(doneScore(a));
   const parts=[[`${log.sets} sets defeated`,log.sets*10],['Gate cleared',50]];
   if(fullClear)parts.push(['Full clear bonus',25]);
   {const ds=today(new Date(a.start)),p=planFor(ds);if(p&&!p.rest&&p.gate.id===a.gateId&&!logsOn(ds).some(l=>l.gateId===a.gateId)){parts.push(['On schedule',20]);S.onSched=(S.onSched||0)+1}}
@@ -822,11 +856,12 @@ function finishRaid(){
   render();
   openSheet(`<div class="sys gold">
     <div class="wt" style="justify-content:center;color:var(--gold)">Notification</div>
-    <div class="h1">GATE CLEARED</div><div class="dim small" style="margin:4px 0 12px">${esc(log.gateName)} · ${log.dur} min${log.vol?` · ${fmtN(U()==='kg'?log.vol/2.2046:log.vol)} ${U()} moved`:''}</div>
+    <div class="h1">GATE CLEARED</div><div class="row" style="justify-content:center;gap:8px;margin-top:8px"><span class="tiny dim h">Clear rank</span><span class="rank r${log.crank}">${log.crank}</span></div><div class="dim small" style="margin:4px 0 12px">${esc(log.gateName)} · ${log.dur} min${log.vol?` · ${fmtN(U()==='kg'?log.vol/2.2046:log.vol)} ${U()} moved`:''}</div>
     ${res.leveled?`<div class="lvlup">LEVEL UP!</div><div class="h" style="margin-bottom:6px">Level ${res.before.L} → <span style="color:var(--gold)">${L.L}</span></div>`:''}
     ${wins.map(victoryBlock).join('')}
     <div class="win" style="text-align:left;margin-top:12px"><div class="wt">Rewards</div>
      ${parts.map(p=>`<div class="row between small" style="padding:3px 0"><span>${esc(p[0])}</span><span class="mono" style="color:var(--cyan)">+${fmtN(p[1])} EXP</span></div>`).join('')}
+     
      <div class="row between" style="border-top:1px solid rgba(110,200,255,.2);margin-top:6px;padding-top:6px"><b>Total</b><b class="mono" style="color:var(--gold)">+${fmtN(log.xp)} EXP</b></div>
     </div>
     <div class="win" style="text-align:left;--zc:${zoneOf(T.floor).c}"><div class="wt" style="color:${zoneOf(T.floor).c}">Tower · Floor ${T.floor}</div>${towerLine}
@@ -836,7 +871,8 @@ function finishRaid(){
     ${newPRs.length?`<div class="win" style="text-align:left"><div class="wt" style="color:var(--gold)">Skill level up</div>${newPRs.map(({d,b})=>`<div class="small" style="padding:3px 0">★ ${esc(d.name)} — <span class="mono">${prText(d,b)}</span></div>`).join('')}</div>`:''}
     <div class="tiny dim" style="margin:4px 0 10px">EXP ${fmtN(L.into)} / ${fmtN(L.need)} to level ${L.L+1}</div>
     <div class="bar"><i style="width:${L.into/L.need*100}%"></i></div>
-    <button class="btn gold block" style="margin-top:16px" data-a="close">Continue</button></div>`,{center:true});
+    ${VIEWER?`<button class="btn pri block" style="margin-top:16px" data-a="export">Back up now (progress isn't saved)</button>`:''}
+    <button class="btn gold block" style="margin-top:${VIEWER?8:16}px" data-a="close">Continue</button></div>`,{center:true});
 }
 
 /* ================= TOWER · BOSSES · LOOT · CLASSES ================= */
@@ -869,18 +905,98 @@ function endOfDay(n){const d=new Date();d.setDate(d.getDate()+n);d.setHours(23,5
 function cardioMin(l){return l.ex.reduce((s,e)=>{const d=exInfo(e.id);return s+(d.type==='t'&&d.stat==='AGI'?e.sets.reduce((a,x)=>a+(+x.r||0),0):0)},0)}
 
 /* ---------- loot ---------- */
-const SLOTS={weapon:['Blade','Greatsword','Dagger','Warhammer','Spear','Longbow','Axe'],helm:['Helm','Hood','Crown','Visor'],armor:['Plate','Mail','Cloak','Cuirass'],gloves:['Gauntlets','Grips','Handwraps'],boots:['Greaves','Boots','Striders'],relic:['Amulet','Ring','Sigil','Orb']};
-const SLOT_ICON={weapon:'🗡️',helm:'⛑️',armor:'🛡️',gloves:'🧤',boots:'🥾',relic:'💍'};
+/* ---------- named loot ---------- */
+const COLL={yn:'YN Collection',pyn:'Performative YN Collection',fur:'Furry Collection',gimp:'Gimp Collection'};
+const UNIQ=[
+ // relics
+ ['roids','relic','Roids','e','STR','','Gains in a syringe. Side effects include back acne, rage, and mysterious shrinkage.'],
+ ['nic','relic','Nic Stick','c','END','','Mango flavored. Hit it between every set. Your lungs have filed a formal complaint.'],
+ ['crack','relic','Crack','r','AGI','','Pre-workout, but the cartel makes it. Unbelievable cardio. Terrible teeth.'],
+ ['lippill','relic','Lip Pillows','c','END','','Two pouches tucked in the top lip. +10 confidence, −1 gums.'],
+ ['redbull','relic','Redbull','c','AGI','','Gives you wings. Does not give you a spotter.'],
+ ['whitemon','relic','White Monster','r','END','','Zero sugar, infinite aura. Must be visibly held between sets at all times.'],
+ ['creatine','relic','Creatine','r','STR','','The only relic in this bag your doctor would actually approve of. Water weight counts as gains.'],
+ ['plug','relic','Butt Plug','r','END','','Keeps your core engaged at all times. Do not drop during deadlifts.'],
+ ['bluechew','relic','Blue Chews','e','VIT','','Stiffens resolve. Consult a healer if the effect lasts more than four hours.'],
+ ['viphoney','relic','VIP Honey','e','VIT','','Royal honey packet from behind the gas station counter. Effects last three days. Nobody knows what is in it.'],
+ ['spy','relic','Chinese Spy','e','AGI','','She liked your gym selfie, laughed at every joke, and asked a lot of questions about your bench. Your PRs are now in Beijing.'],
+ ['matcha','relic','Matcha','r','END','pyn','Iced oat milk matcha, carried in the left hand so the Seiko shows. Has never once been finished.'],
+ // boots
+ ['frenchtip','boots','French Tip Feet','r','AGI','','Fresh pedicure with French tips. Silent on the gym floor. Devastating in sandals.'],
+ ['tims','boots','Tims','c','VIT','','Wheat Timbs, zero creases. Will not be worn on leg day. Will not be worn in the rain.'],
+ ['af1','boots','Black Air Forces','r','STR','yn','Equipping these raises Aggression. The wearer is now contractually obligated to start beef.'],
+ ['furfeet','boots','Fur Feet','r','AGI','fur','Squeaky toe beans. Silent on the treadmill. Very loud at conventions.'],
+ ['gimpboot','boots','Gimp Boots','r','VIT','gimp','Knee-high latex. Squeaks on every lunge. Nobody asks questions.'],
+ ['nb','boots','New Balances','c','AGI','pyn','Grey dad-core runners. Built for walking to the matcha place, never for running.'],
+ // chest
+ ['milkers','chest','Mommy Milkers','e','STR','','Chest day went a little too well. The bar now rests on a natural shelf.'],
+ ['jumper','chest','Jumper Cables','r','STR','','Clipped on for an extra spark during PR attempts. Red to positive. Do not ask.'],
+ ['furbody','chest','Furry Body','r','END','fur','Full fursuit torso. It is 104°F inside. The sweat counts as cardio.'],
+ ['gimpbody','chest','Gimp Body','r','END','gimp','Head-to-toe leather harness. Flawless posture. Zero breathability.'],
+ ['qzip','chest','Quarter Zip','c','INT','pyn','Unzipped exactly enough to show collarbone. Worn to the gym. Never sweated in.'],
+ ['techtop','chest','Nike Tech Hoodie','r','AGI','yn','Grey Tech Fleece zipped to the chin. Aura +50. Warmth +0.'],
+ // legs
+ ['willy','legs','Willy Wrapper','c','VIT','','A hand-knit sock for the little guy. Keeps him warm between sets.'],
+ ['candythong','legs','Candy Thong','r','VIT','','Edible. Do NOT wear on cardio day. Sticky situation.'],
+ ['chastity','legs','Chastity Belt','e','END','','Locked. Key lost somewhere in the dungeon. Focus has never been higher.'],
+ ['tail','legs','Tail','r','AGI','','Bushy, swishy, and attached in a way we will not discuss. When pulled, makes a pop sound.'],
+ ['furpants','legs','Furry Pants','r','VIT','fur','Fluffy fursuit legs. Hamstrings stay warm year round. Chafing begins at mile two.'],
+ ['gimppants','legs','Gimp Pants','r','END','gimp','Shiny latex with zippers in places that raise questions.'],
+ ['khakis','legs','Blue Khakis','c','INT','pyn','Cuffed at the ankle to show off the New Balances. Has never been near a squat rack.'],
+ ['techpants','legs','Nike Tech Sweatpants','r','AGI','yn','Completes the set. Phone in one pocket, hand in the other. Running in these is its own crime.'],
+ // helm
+ ['furears','helm','Furry Ears','c','INT','fur','Twitch on every PR. Ask before petting.'],
+ ['milwaukee','helm','Milwaukee 2s','r','VIT','','Milwaukee safety glasses. Rated for flying debris, rogue plates, and eye contact with the gym crush.'],
+ ['gimpmask','helm','Gimp Mask','r','END','gimp','Zippered mouth. Muffles the grunting on heavy sets. Mostly.'],
+ ['skimask','helm','Ski Mask','r','STR','yn','Black ski mask in July. Visibility −20. Intimidation +100.'],
+ ['glasses','helm','Glasses','c','INT','pyn','Thin round frames, zero prescription. +5 Intelligence, perceived.'],
+ // gloves
+ ['glovelights','gloves','Gloving Lights','r','AGI','','LED fingertips. Turns every set into a rave. Pupils sold separately.'],
+ ['jerkgloves','gloves','Masturbation Gloves','c','STR','','Fingerless. Well worn. Never washed. Grip strength is suspiciously elite.'],
+ ['ojglove','gloves','OJs Glove','e','STR','','Black leather, one size too small. If it does not fit, you must acquit.'],
+ ['furpaws','gloves','Fur Paws','c','VIT','fur','Squishy paw pads. Terrible barbell grip. Elite high-fives.'],
+ ['gimpgloves','gloves','Gimp Gloves','r','STR','gimp','Elbow-length black latex. Snaps on with a menacing slap.'],
+ ['seiko','gloves','Seiko Watch','r','INT','pyn','Checked loudly between every set so the whole gym knows it is a Seiko.'],
+ // weapons
+ ['horse','weapon','4ft Horse Cock','l','STR','','Rubber, heavy, and of deeply questionable origin. Swings like a mace. Nobody knows why it is in your bag.'],
+ ['fleshlight','weapon','Fleshlight','r','END','','Shaped like a flashlight. Is not a flashlight. Does not light up the dungeon.'],
+ ['onepiece','weapon','The One Piece','l','INT','','IT IS REAL. Found at the end of the Grand Line, apparently in your gym bag.'],
+ ['slayer','weapon','Demon Slayer','e','AGI','','Blade from the anime you swore you would quit after episode three. Breathing technique: grunting.'],
+ ['glock','weapon','Glock 19 with a Switch','e','STR','yn','Full auto. Every set is now a burst of thirty. Banned in every dungeon.'],
+ ['tote','weapon','Tote Bag','c','INT','pyn','Canvas tote holding a Walkman, tampons (for her), and some shitty K. Carried to be seen, not to be used.'],
+// mythic (hidden until found)
+ ['plugnum','relic',"The Plug's Number",'m','AGI','',"One text and anything in this bag shows up in twenty minutes. Cash only. Don't call, text."],
+ ['gaspills','relic','Gas Station Pill Sampler','m','VIT','','Every pill behind the counter, taken at once. You can now hear colors and bench a Honda.'],
+ ['heelys','boots','Heelys','m','AGI','','Roll between sets. Rest time cut in half. Dignity also cut in half.'],
+ ['sportcrocs','boots','Crocs in Sport Mode','m','AGI','','Straps flipped back. The most dangerous footwear known to man. Nothing can stop you now.'],
+ ['vest','chest','Bulletproof Vest','m','VIT','yn','For when the beef from the Air Forces escalates. Also stops a dropped barbell.'],
+ ['stringer','chest','Cut-to-the-Waist Stringer','m','STR','','Armholes down to the hips. Nips out, aura maxed. Banned from three Planet Fitnesses.'],
+ ['greysweats','legs','Grey Sweatpants','m','STR','','Forbidden in public. Reveals your true power level. The whole gym knows what day it is.'],
+ ['jorts','legs','Jorts of Destiny','m','AGI','','Cut-off jean shorts handed down through generations of lawnmower dads. Thigh aura unmatched.'],
+ ['tinfoil','helm','Tinfoil Hat','m','INT','','Blocks the Chinese Spy. Blocks 5G. Blocks your gym crush from reading your mind.'],
+ ['halo','helm','Leg Day Halo','m','VIT','','Granted only to those who never skipped leg day. No hunter has ever been seen wearing one.'],
+ ['liarstraps','gloves',"Liar's Lifting Straps",'m','STR','','Contains every PR you have ever claimed without video. Weighs nothing. Lifts everything.'],
+ ['wetwilly','gloves','Pre-Licked Fingers','m','AGI','','Ready for a wet willy at all times. Spotters now keep a respectful distance.'],
+ ['doubleender','weapon','The Double Ender','m','STR','','Two-headed rubber war club. Swings both ways. Counts as two weapons.'],
+ ['yomama','weapon','Yo Mama','m','STR','','So heavy she counts as a PR. Cannot be blocked, parried, or bench pressed.']
+].map(([u,slot,name,r,stat,coll,desc])=>({u,slot,name,r,stat,coll,desc}));
+const UNIQM={};UNIQ.forEach(x=>UNIQM[x.u]=x);
+const SLOT_NAME={weapon:'Weapon',helm:'Helm',chest:'Chest Plate',legs:'Pants',gloves:'Gloves',boots:'Boots',relic:'Relic'};
+function migGear(){if(!S||!S.gear)return;S.gear.forEach(g=>{if(g.slot==='armor')g.slot='chest'});if(S.equip&&S.equip.armor){if(!S.equip.chest)S.equip.chest=S.equip.armor;delete S.equip.armor}}
+const SLOTS={weapon:['Blade','Greatsword','Dagger','Warhammer','Spear','Longbow','Axe'],helm:['Helm','Hood','Crown','Visor'],chest:['Plate','Mail','Cloak','Cuirass'],legs:['Legplates','Tassets','Leggings','Chausses'],gloves:['Gauntlets','Grips','Handwraps'],boots:['Greaves','Boots','Striders'],relic:['Amulet','Ring','Sigil','Orb']};
+const SLOT_ICON={weapon:'🗡️',helm:'⛑️',chest:'🛡️',legs:'👖',gloves:'🧤',boots:'🥾',relic:'💍'};
 const PREFIX={c:['Worn','Iron','Sturdy','Plain'],r:['Tempered','Runed',"Hunter's",'Keen'],e:['Shadowforged','Stormbound','Abyssal','Starfall'],l:['Apex','Godslayer','Eternal','Sovereign']};
-const RXP={c:.01,r:.02,e:.03,l:.05},RSTAT={c:1,r:2,e:3,l:5},SALV={c:5,r:10,e:25,l:50};
+const RXP={c:.01,r:.02,e:.03,l:.05,m:.08},RSTAT={c:1,r:2,e:3,l:5,m:8},SALV={c:5,r:10,e:25,l:50,m:100};
 function dropItem(r,src={}){
-  const slot=src.emblem?'relic':src.cls?'weapon':pick(Object.keys(SLOTS));const base=pick(SLOTS[slot]);
-  const name=src.boss?`${src.boss.name.replace(/^The /,'')}'s ${base}`:src.emblem?`${src.emblem}-Rank Emblem`:src.cls?`${className()}'s ${base}`:`${pick(PREFIX[r])} ${base}${Math.random()<.5?' of the '+zoneOf(S.tower.floor).n.replace(/^The /,''):''}`;
-  const stat=src.cls?CLASSES[S.hunter.cls].stat:pick(Object.keys(STATS));
-  const it={id:'i'+uid(),name,slot,r,stat,sv:RSTAT[r],xp:RXP[r],src:src.boss?`Floor ${src.boss.ref} guardian`:src.emblem?'Rank exam':src.cls?'Class trial':'Gate drop',t:Date.now()};
+  const myth=!src.emblem&&!src.cls&&Math.random()<(src.boss?0.06:0.004);if(myth)r='m';
+  const un=myth?pick(UNIQ.filter(x=>x.r==='m')):!src.emblem&&!src.cls&&Math.random()<0.4?(pool=>pool.length?pick(pool):null)(UNIQ.filter(x=>x.r===r)):null;
+  const slot=un?un.slot:src.emblem?'relic':src.cls?'weapon':pick(Object.keys(SLOTS));const base=pick(SLOTS[slot]);
+  const name=un?un.name:src.boss?`${src.boss.name.replace(/^The /,'')}'s ${base}`:src.emblem?`${src.emblem}-Rank Emblem`:src.cls?`${className()}'s ${base}`:`${pick(PREFIX[r])} ${base}${Math.random()<.5?' of the '+zoneOf(S.tower.floor).n.replace(/^The /,''):''}`;
+  const stat=un?un.stat:src.cls?CLASSES[S.hunter.cls].stat:pick(Object.keys(STATS));
+  const it={id:'i'+uid(),name,slot,r,stat,sv:RSTAT[r],xp:RXP[r],src:src.boss?`Floor ${src.boss.ref} guardian`:src.emblem?'Rank exam':src.cls?'Class trial':'Gate drop',t:Date.now()};if(un)it.u=un.u;
   S.gear.push(it);S.gearCount=(S.gearCount||0)+1;
   const cur=S.gear.find(x=>x.id===S.equip[slot]);if(!cur||RXP[cur.r]<RXP[r])S.equip[slot]=it.id;
-  if(S.gear.length>60){const eq=new Set(Object.values(S.equip));const order='crel';const victim=S.gear.filter(g=>!eq.has(g.id)).sort((a,b)=>order.indexOf(a.r)-order.indexOf(b.r)||a.t-b.t)[0];if(victim)S.gear=S.gear.filter(g=>g!==victim)}
+  if(S.gear.length>60){const eq=new Set(Object.values(S.equip));const order='crelm';const victim=S.gear.filter(g=>!eq.has(g.id)).sort((a,b)=>order.indexOf(a.r)-order.indexOf(b.r)||a.t-b.t)[0];if(victim)S.gear=S.gear.filter(g=>g!==victim)}
   return it}
 function rollDrop(log){if(log.sets<5||Math.random()>0.15)return null;const y=Math.random();return dropItem(y<.05&&S.tower.floor>20?'e':y<.3?'r':'c')}
 function equipped(){return Object.values(S.equip).map(id=>S.gear.find(g=>g.id===id)).filter(Boolean)}
@@ -983,8 +1099,8 @@ function renderTower(){const T=S.tower,f=T.floor,z=zoneOf(f);const tb=S.bosses.f
   else{const okF=f>req.floor,okR=rIdx(rank)>=rIdx(req.rank);clsHtml=`<div class="small">Next: <b style="color:var(--gold)">${CLASS_TIERS[S.hunter.cls][tierN]}</b> (+${CLASS_BONUS.stat[tierN+1]} ${CLASSES[S.hunter.cls].stat}, +${Math.round(CLASS_BONUS.xp[tierN+1]*100)}% EXP)</div>
     <div class="tiny" style="margin-top:4px">${okF?'✅':'⬜'} Clear tower floor ${req.floor} &nbsp; ${okR?'✅':'⬜'} Reach ${req.rank}-Rank</div>
     ${clsB?`<button class="btn sm red" style="margin-top:8px" data-a="boss" data-id="${clsB.id}">Trial in progress — face it</button>`:`<button class="btn sm ${okF&&okR?'gold':''}" style="margin-top:8px" data-a="cls-trial" ${okF&&okR?'':'disabled'}>Begin advancement trial</button>`}`}
-  const eqItems=Object.keys(SLOTS).map(sl=>{const it=S.gear.find(g=>g.id===S.equip[sl]);return`<button class="slotb" data-a="${it?'item':'noop'}" data-id="${it?it.id:''}" style="${it?`border-color:${RAR[it.r].col}`:''}"><div style="font-size:20px">${SLOT_ICON[sl]}</div><div class="tiny" style="color:${it?RAR[it.r].col:'var(--dim)'}">${it?esc(it.name):sl}</div></button>`}).join('');
-  const bag=S.gear.filter(g=>!Object.values(S.equip).includes(g.id)).sort((a,b)=>'lerc'.indexOf(a.r)-'lerc'.indexOf(b.r)||b.t-a.t);
+  const eqItems=Object.keys(SLOTS).map(sl=>{const it=S.gear.find(g=>g.id===S.equip[sl]);return`<button class="slotb" data-a="slotpick" data-sl="${sl}" style="${it?`border-color:${RAR[it.r].col}`:''}"><div style="font-size:20px">${SLOT_ICON[sl]}</div><div class="tiny" style="color:${it?RAR[it.r].col:'var(--dim)'}">${it?esc(it.name):SLOT_NAME[sl]}</div></button>`}).join('');
+  const bag=S.gear.filter(g=>!Object.values(S.equip).includes(g.id)).sort((a,b)=>'mlerc'.indexOf(a.r)-'mlerc'.indexOf(b.r)||b.t-a.t);
   return`<div class="win tower" style="--zc:${z.c}"><div class="wt" style="color:${z.c}">The Tower<span class="sp"></span><span class="tiny" style="color:${z.c}">${esc(z.n)}</span></div>
     <div class="row" style="align-items:flex-end"><div class="grow"><div class="tiny dim h">Floor</div><div class="big" style="color:${z.c};text-shadow:0 0 16px ${z.c}">${f}</div></div>
      <div style="text-align:right" class="small dim">${tb?`<span style="color:var(--red)">Guardian blocks the stairs</span>`:`Next guardian: floor ${nextG}`}<br>${T.beaten.length} guardian${T.beaten.length===1?'':'s'} slain</div></div>
@@ -1044,9 +1160,24 @@ function showVictory(wins,res){flash();buzz([80,50,80,50,300]);sfx('bossDefeat')
   openSheet(`<div class="sys gold"><div class="wt" style="justify-content:center;color:var(--gold)">Notification</div><div class="lvlup" style="font-size:34px">VICTORY</div>
    ${res&&res.leveled?`<div class="h" style="margin:6px 0">Level ${res.before.L} → <span style="color:var(--gold)">${res.after.L}</span></div>`:''}
    ${wins.map(victoryBlock).join('')}<button class="btn gold block" style="margin-top:12px" data-a="close">Claim spoils</button></div>`,{center:true})}
+function gearDesc(it){const u=UNIQM[it.u];if(u)return u.desc;return it.src==='Rank exam'?'Proof of a rank exam passed. Wear it with pride.':it.src==='Class trial'?'Awarded for advancing your class. Bound to your path.':/guardian/.test(it.src)?`Torn from a tower guardian (${it.src.toLowerCase()}).`:'Standard dungeon issue, dropped from a cleared gate.'}
+function shrinkClose(){const s=sheets[sheets.length-1];if(!s)return;const el=s.ov.querySelector('.sheet');el.classList.add('shrink');s.ov.classList.add('fade');setTimeout(closeSheet,220)}
+function openSlotPicker(sl){const eqId=S.equip[sl];const ord='mlerc';
+  const own=S.gear.filter(g=>g.slot===sl);const groups=[];const seen={};
+  own.sort((a,b)=>(b.id===eqId)-(a.id===eqId)||ord.indexOf(a.r)-ord.indexOf(b.r)||b.t-a.t).forEach(g=>{if(g.u){if(seen[g.u]){seen[g.u].n++;if(g.id===eqId)seen[g.u].g=g;return}seen[g.u]={g,n:1};groups.push(seen[g.u])}else groups.push({g,n:1})});
+  const missing=UNIQ.filter(u=>u.slot===sl&&!own.some(g=>g.u===u.u)).sort((a,b)=>ord.indexOf(b.r)-ord.indexOf(a.r));
+  const ownedN=UNIQ.filter(u=>u.slot===sl&&own.some(g=>g.u===u.u)).length,totalN=UNIQ.filter(u=>u.slot===sl).length;
+  const card=(g,n)=>{const u=UNIQM[g.u],R=RAR[g.r],on=g.id===eqId;return`<button class="pk ${on?'on':''} ${g.r==='m'?'myth':''}" data-a="pick-gear" data-id="${g.id}" style="--rc:${R.col}"><div class="row" style="gap:8px;align-items:flex-start"><div class="pki">${SLOT_ICON[sl]}</div><div class="grow" style="text-align:left"><div class="h" style="color:${R.col}">${esc(g.name)}${n>1?` <span class="tiny dim">×${n}</span>`:''}</div>
+    <div class="tiny h dim">${R.n}${u&&u.coll?` · <span style="color:var(--gold)">✦ ${COLL[u.coll]}</span>`:''}</div><div class="tiny pkd">“${esc(gearDesc(g))}”</div><div class="tiny" style="color:var(--cyan)">+${Math.round(g.xp*100)}% EXP · +${g.sv} ${g.stat}</div></div>${on?'<span class="tiny h" style="color:var(--green)">Equipped</span>':''}</div></button>`};
+  const ghost=u=>u.r==='m'?`<button class="pk lock myth0" data-a="pick-locked"><div class="row" style="gap:8px"><div class="pki">🔒</div><div class="grow" style="text-align:left"><div class="h" style="color:#7a2a3a">? ? ?</div><div class="tiny h" style="color:#7a2a3a">Mythic · hidden</div></div></div></button>`
+    :`<button class="pk lock" data-a="pick-locked"><div class="row" style="gap:8px;align-items:flex-start"><div class="pki">${SLOT_ICON[sl]}</div><div class="grow" style="text-align:left"><div class="h">${esc(u.name)}</div><div class="tiny h">${RAR[u.r].n}${u.coll?` · ✦ ${COLL[u.coll]}`:''} · not found</div><div class="tiny pkd">“${esc(u.desc)}”</div><div class="tiny">+${Math.round(RXP[u.r]*100)}% EXP · +${RSTAT[u.r]} ${u.stat}</div></div></div></button>`;
+  openSheet(`<div class="wt">${SLOT_ICON[sl]} ${SLOT_NAME[sl]}<span class="sp"></span><span class="tiny dim">${ownedN} / ${totalN} found</span></div>
+   <div class="pklist">${groups.map(x=>card(x.g,x.n)).join('')}${missing.map(ghost).join('')}</div>
+   ${eqId?`<button class="btn block ghost" style="margin-top:10px" data-a="pick-none" data-sl="${sl}">Unequip ${SLOT_NAME[sl]}</button>`:''}
+   <div class="tiny dim" style="margin-top:8px">Tap an item you own to equip it. To salvage spares, tap them in the bag.</div>`,{center:true})}
 function openItem(id){const it=S.gear.find(g=>g.id===id);if(!it)return;const eq=S.equip[it.slot]===it.id;
   openSheet(`<div class="sys"><div style="font-size:44px">${SLOT_ICON[it.slot]}</div><div class="h1" style="font-size:20px;color:${RAR[it.r].col};text-shadow:0 0 12px ${RAR[it.r].col}">${esc(it.name)}</div>
-   <div class="tiny h dim" style="margin:4px 0 10px">${RAR[it.r].n} ${it.slot} · ${esc(it.src)}</div>
+   <div class="tiny h dim" style="margin:4px 0 10px">${RAR[it.r].n} ${SLOT_NAME[it.slot]||it.slot} · ${esc(it.src)}</div>${(u=>u?`${u.coll?`<div class="tiny h" style="color:var(--gold);margin:-4px 0 8px">✦ ${COLL[u.coll]}</div>`:''}<div class="small" style="font-style:italic;color:#cfe0f5;margin:0 0 10px;line-height:1.45">“${esc(u.desc)}”</div>`:'')(UNIQM[it.u])}
    <div class="small">+${Math.round(it.xp*100)}% EXP gain · +${it.sv} ${it.stat}</div>
    <div class="row" style="margin-top:14px"><button class="btn red sm" data-a="salvage" data-id="${it.id}" ${eq?'disabled':''}>Salvage +${SALV[it.r]} EXP</button><span class="grow"></span>
    <button class="btn ${eq?'':'pri'}" data-a="${eq?'unequip':'equip-item'}" data-id="${it.id}">${eq?'Unequip':'Equip'}</button></div></div>`,{center:true})}
@@ -1175,7 +1306,7 @@ function renderRaid(){
     if(run){const moves=a.ex.slice(run[0],run[0]+run[1]);const rounds=Math.max(...moves.map(m=>m.sets.length));const secs=moves[0].sets[0]?Math.round((+moves[0].sets[0].r||0.5)*60):30;const left=moves.reduce((s,m)=>s+m.sets.filter(x=>!x.done).length,0);
       circ=`<div class="win circbox"><div class="wt" style="color:var(--purple)">Core circuit<span class="sp"></span><span class="tiny dim">${run[1]} moves · ${secs}s each${rounds>1?` · ${rounds} rounds`:''}</span></div>
        <div class="small dim">One tap runs it all: a countdown for each move, ${CEV()?`<b style="color:#fff">${CRS()}s rest after every ${CEV()} moves</b>, `:''}beeps to switch, and sets checked off automatically.</div>
-       <div class="row" style="margin-top:10px"><span class="tiny dim" style="min-width:74px">Rest after every</span><div class="seg grow">${[0,2,3,4].map(v=>`<button class="${CEV()===v?'on':''}" data-a="circ-ev" data-v="${v}">${v?v:'Off'}</button>`).join('')}</div></div>
+       <div class="row" style="margin-top:10px"><span class="tiny dim" style="min-width:74px">Rest after every</span><div class="seg grow">${[0,1,2,3,4].map(v=>`<button class="${CEV()===v?'on':''}" data-a="circ-ev" data-v="${v}">${v?v:'Off'}</button>`).join('')}</div></div>
        ${CEV()?`<div class="row" style="margin-top:6px"><span class="tiny dim" style="min-width:74px">Rest length</span><div class="seg grow">${[15,30,45,60].map(v=>`<button class="${CRS()===v?'on':''}" data-a="circ-rs" data-v="${v}">${v}s</button>`).join('')}</div></div>`:''}
        <div class="row" style="margin-top:6px"><span class="tiny dim" style="min-width:74px">Switch time</span><div class="seg grow">${[0,5,10].map(v=>`<button class="${(S.circPrep??5)===v?'on':''}" data-a="circ-prep" data-v="${v}">${v?v+'s':'None'}</button>`).join('')}</div></div>
        <button class="btn block" style="margin-top:10px;border-color:var(--purple);box-shadow:0 0 14px rgba(179,136,255,.35)" data-a="circ-go" data-s="${run[0]}" data-n="${run[1]}" ${left?'':'disabled'}>${CIRC&&CIRC.on?'Circuit running…':left?`▶ Start circuit (${left} left)`:'✓ Circuit complete'}</button></div>`}
@@ -1324,13 +1455,13 @@ const MANUAL=[
   <li><b>Siege</b>: 7 days to deal its HP. Every set in any workout deals 100 damage. If it survives, it heals and the siege restarts.</li>
   <li><b>Trial</b>: a timed challenge (burpees, run, plank…). Use the built-in stopwatch; beat the par or your own best.</li></ul>
   <p>Find active bosses under <b>Tower → Encounters</b>.</p>`],
- ['🎖️','Ranks and exams',`<p>E → D → C → B → A → S. Reaching level 10, 20, 35, 50 or 70 unlocks a <b>rank-up exam</b> boss. Pass it to rank up.</p>`],
+ ['🎖️','Ranks and exams',`<p>E → D → C → B → A → S. Reaching level 10, 20, 35, 50 or 70 unlocks a <b>rank-up exam</b> boss. Pass it to rank up.</p><p><b>Gate ranks</b> are assessed by the System from the work in the gate: working sets count, warm-ups don't, and only 6 sets per exercise count. Each clear also gets a <b>clear rank</b> from what you actually completed, and only an S clear earns <i>Into the Abyss</i>.</p>`],
  ['⚜️','Class advancement',`<p>Each class has 3 tiers (e.g. Warrior → Berserker → Warlord).</p>
   <ul><li>Tier 2: clear tower floor 30 and reach C-Rank. Tier 3: floor 70 and A-Rank.</li>
   <li>Start the trial from <b>Tower → Class advancement</b>. Each tier adds main-attribute points and a % EXP bonus.</li></ul>`],
  ['🎁','Loot, armory and companions',`<ul><li>Gates with 5+ sets have a 15% gear drop chance. Bosses always drop gear.</li>
   <li>Rarity: Common +1% EXP / +1 stat, Rare +2/+2, Epic +3/+3, Legendary +5/+5. Better items equip automatically.</li>
-  <li>Manage gear in <b>Tower → Armory</b>. Salvage spare items for 5 / 10 / 25 / 50 EXP.</li>
+  <li>Tap a slot in <b>Tower → Armory</b> to see every item for that slot: found ones in color, missing ones greyed out, and 2 hidden <b style="color:#ff3b5c">Mythic</b> items per slot. Mythics drop very rarely, more often from tower guardians.</li><li>Manage gear in <b>Tower → Armory</b>. Salvage spare items for 5 / 10 / 25 / 50 EXP.</li>
   <li>Defeated guardians become companions. Your active companion adds +2% EXP.</li></ul>`],
  ['🏆','Titles',`<p>78+ titles for milestones. Locked ones show progress bars; some are hidden until earned. Earning one gives Common +25, Rare +50, Epic +100, Legendary +250 EXP. Equip one to show it under your name.</p>`],
  ['📜','Chronicle',`<ul><li>Sets per week, skill records (tap one for its chart) and your raid log.</li>
@@ -1390,6 +1521,8 @@ window.addEventListener('arise-cloud',()=>{lbSubscribe();lbPublish();if(TAB==='s
 
 /* ================= GATE EDITOR / PICKER ================= */
 let EDIT=null;
+function geRankHtml(){const sc=gateScore(EDIT),r=scoreRank(sc),i=GATE_TH.findIndex(t=>t[1]===r),nx=GATE_TH[i+1];return`<div class="row" style="gap:10px"><span class="rank r${r}">${r}</span><div class="grow tiny dim">Work score <b class="mono" style="color:var(--txt)">${sc.toFixed(1)}</b>${nx?` · ${nx[1]} at ${nx[0]}`:' · max rank'}<br>Rank comes from working sets (warm-ups don't count, max 6 per exercise). Add exercises or sets to raise it.</div></div>`}
+function geRankUpd(){const el=$('#geRank');if(el&&EDIT)el.innerHTML=geRankHtml()}
 function openGateEditor(g){
   EDIT=g?JSON.parse(JSON.stringify(g)):{id:'g'+uid(),name:'',rank:'E',lore:'',ex:[],_new:true};
   EDIT.ex.forEach((e,i)=>{e.ssn=!!(e.ss&&EDIT.ex[i+1]&&EDIT.ex[i+1].ss===e.ss)});
@@ -1398,7 +1531,7 @@ function openGateEditor(g){
 function drawGateEditor(){const el=$('#ge');if(!el||!EDIT)return;
   el.innerHTML=`<div class="wt">${EDIT._new?'Forge gate':'Edit gate'}</div>
    <label class="l">Gate name</label><input class="f" data-ge="name" maxlength="40" value="${esc(EDIT.name)}" placeholder="e.g. Frost Cavern (Upper A)">
-   <label class="l">Rank</label><div class="seg">${['E','D','C','B','A','S'].map(r=>`<button class="${EDIT.rank===r?'on':''}" data-a="ge-rank" data-r="${r}">${r}</button>`).join('')}</div>
+   <label class="l">Rank · assessed by the System</label><div id="geRank">${geRankHtml()}</div>
    <label class="l">Lore / notes</label><textarea class="f" data-ge="lore" rows="2" maxlength="200">${esc(EDIT.lore)}</textarea>
    <label class="l">Monsters (exercises)</label>
    <div class="list">${EDIT.ex.map((e,i)=>{const d=exInfo(e.id);return`<div class="item"><div class="row"><span class="statdot s${d.stat}">${d.stat}</span><div class="grow">${esc(d.name)}</div>
@@ -1482,6 +1615,7 @@ document.addEventListener('click',e=>{
   case'lb-share':{const C=window.ARISE_CLOUD;const txt=`Add me on Arise! My hunter code: ${C.code}\n${location.origin+location.pathname}`;
     if(navigator.share){navigator.share({text:txt}).catch(()=>{})}else if(navigator.clipboard){navigator.clipboard.writeText(txt).then(()=>toast('Code copied. Send it to a friend.'),()=>showText(txt))}else showText(txt);break}
   case'signout':confirmBox('Sign out','Sign out of Arise on this device? Your progress stays saved in your account.','Sign out',()=>window.ARISE_CLOUD&&window.ARISE_CLOUD.signOut());break;
+  case'viewerinfo':openViewerInfo();break;
   case'syncinfo':openSyncInfo();break;
   case'syncretry':closeSheet();setSync('busy');retrySync();toast('Retrying sync…','','[System]',true);break;
   case'manual':openManual();break;
@@ -1519,6 +1653,10 @@ document.addEventListener('click',e=>{
   case'cls-trial':{const t=ctier()+1,req=CLASS_REQ[t];if(!req||S.tower.floor<=req.floor||rIdx(curRank())<rIdx(req.rank)||S.bosses.some(x=>x.kind==='class'))return;spawnClass(t);persist();render();break}
   case'comp':S.comp=S.comp===+ds.id?null:+ds.id;sfx('blip');persist();render();break;
   case'item':openItem(ds.id);break;
+  case'slotpick':openSlotPicker(ds.sl);break;
+  case'pick-gear':{const it=S.gear.find(g=>g.id===ds.id);if(!it)return;S.equip[it.slot]=it.id;sfx('loot');buzz(30);persist();render();shrinkClose();break}
+  case'pick-none':{delete S.equip[ds.sl];persist();render();shrinkClose();break}
+  case'pick-locked':buzz(15);break;
   case'equip-item':{const it=S.gear.find(g=>g.id===ds.id);if(it){S.equip[it.slot]=it.id;sfx('loot');persist();closeSheet();render()}break}
   case'unequip':{const it=S.gear.find(g=>g.id===ds.id);if(it){delete S.equip[it.slot];persist();closeSheet();render()}break}
   case'salvage':{const it=S.gear.find(g=>g.id===ds.id);if(!it||S.equip[it.slot]===it.id)return;closeSheet();confirmBox('Salvage',`Break down ${esc(it.name)} for +${SALV[it.r]} EXP?`,'Salvage',()=>{S.gear=S.gear.filter(g=>g.id!==it.id);const r=gainXp(SALV[it.r]);persist();render();toast(`Salvaged for <b>+${SALV[it.r]} EXP</b>.`);if(r.leveled)sfx('levelup')},true);break}
@@ -1567,7 +1705,7 @@ document.addEventListener('click',e=>{
   case'ge-save':{if(!EDIT.name.trim()){toast('Name your gate.','red');return}if(!EDIT.ex.length){toast('Add at least one exercise.','red');return}
     const L='ABCDEFGHIJ';let li=0;const exs=EDIT.ex.map(e=>{const o={id:e.id,sets:e.sets,reps:e.reps};if(+e.rmax>+e.reps)o.rmax=+e.rmax;if(e.wu)o.wu=1;return o});
     for(let q=0;q<EDIT.ex.length;q++){if(EDIT.ex[q].ssn&&exs[q+1]){const tag=exs[q].ss||L[li++%10];exs[q].ss=tag;exs[q+1].ss=tag}}
-    const g={id:EDIT.id,name:EDIT.name.trim(),rank:EDIT.rank,lore:EDIT.lore,ex:exs};const i=S.gates.findIndex(x=>x.id===g.id);if(i>=0)S.gates[i]=g;else S.gates.push(g);
+    const g={id:EDIT.id,name:EDIT.name.trim(),rank:'E',lore:EDIT.lore,ex:exs};g.rank=assessRank(g);const i=S.gates.findIndex(x=>x.id===g.id);if(i>=0)S.gates[i]=g;else S.gates.push(g);
     checkAch();persist();closeSheet();render();toast(`Gate <b>${esc(g.name)}</b> ${i>=0?'updated':'forged'}.`);break}
   case'ge-del':{const id=EDIT.id;confirmBox('Delete gate',`Delete <b>${esc(EDIT.name)}</b>? Your raid history is kept.`,'Delete',()=>{S.gates=S.gates.filter(x=>x.id!==id);if(S.plan)S.plan.cycle=S.plan.cycle.map(v=>v===id?'rest':v);persist();closeSheet();render()},true);break}
   case'pick':pickDone(ds.id);break;
@@ -1602,8 +1740,8 @@ document.addEventListener('input',e=>{const t=e.target;
   if(t.dataset.lei!==undefined&&LED){const x=LED.ex[+t.dataset.lei].sets[+t.dataset.lsi];if(x)x[t.dataset.lk]=t.dataset.lk==='r'?tFrom(t.dataset.u==='sec',t.value):t.value;return}
   if(t.dataset.led&&LED){LED.dur=t.value;return}
   if(t.dataset.ge&&EDIT){EDIT[t.dataset.ge]=t.value;return}
-  if(t.dataset.gi!==undefined&&EDIT&&t.type==='checkbox'){EDIT.ex[+t.dataset.gi][t.dataset.gk]=t.checked?(t.dataset.gk==='wu'?1:true):0;return}
-  if(t.dataset.gi!==undefined&&EDIT){const v=t.value;const n=t.dataset.u==='sec'?(+v)/60:+v;EDIT.ex[+t.dataset.gi][t.dataset.gk]=v===''?'':Math.max(t.dataset.gk==='sets'?1:0,n);return}
+  if(t.dataset.gi!==undefined&&EDIT&&t.type==='checkbox'){EDIT.ex[+t.dataset.gi][t.dataset.gk]=t.checked?(t.dataset.gk==='wu'?1:true):0;geRankUpd();return}
+  if(t.dataset.gi!==undefined&&EDIT){const v=t.value;const n=t.dataset.u==='sec'?(+v)/60:+v;EDIT.ex[+t.dataset.gi][t.dataset.gk]=v===''?'':Math.max(t.dataset.gk==='sets'?1:0,n);geRankUpd();return}
 });
 document.addEventListener('change',e=>{const t=e.target;
   if(t.dataset.st){if(t.dataset.st==='name'){const v=t.value.trim();if(v)S.hunter.name=v}else if(t.dataset.st==='cls')S.hunter.cls=t.value;else if(t.dataset.st==='vol'){S.vol=+t.value;out();sfx('blip')}else if(t.dataset.st==='rest')S.rest=Math.max(0,Math.min(900,+t.value||0));persist();render();return}
@@ -1614,7 +1752,7 @@ setInterval(()=>{const c=$('#qclock');if(c)c.textContent=msToMidnight();if(S.hun
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.hunter){rollDaily();if(restEnd)tickRest()}});
 
 if(S.hunter){if(applyPacks())persist();if(fixForge())persist();rollDaily();rollTower();const n0=S.unlocked.length;checkAch();if(S.unlocked.length>n0)persist()}
-if(!S.hunter&&window.claude){BOOT=true;setTimeout(()=>{if(BOOT){BOOT=false;CLOUD_FAILED=!cloudCol;render()}},30000)}
+if(!S.hunter&&window.claude){BOOT=true;setTimeout(()=>{if(BOOT){BOOT=false;CLOUD_FAILED=!cloudCol&&!VIEWER;render()}},30000)}
 render();
 initCloud();
 let WL=null;async function wakeOn(){try{if(navigator.wakeLock&&!WL){WL=await navigator.wakeLock.request('screen');WL.addEventListener('release',()=>{WL=null})}}catch(e){}}
