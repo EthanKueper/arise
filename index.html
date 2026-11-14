@@ -471,7 +471,7 @@ const MINE=new Set();let WATCH=null,DUP_WARNED=false;
 function watchSave(col){try{if(WATCH)WATCH();WATCH=col.doc(SAVE_ID).onSnapshot(sn=>{if(!sn.exists||sn.metadata.hasPendingWrites||sn.metadata.fromCache)return;const r=JSON.parse(JSON.stringify((sn.data()||{}).s||null));if(!r||!r.hunter||MINE.has(r.updated))return;if((r.build||0)>BUILD){READONLY=true;toast('A newer version of Arise is open elsewhere. Close this copy and reopen Arise.','red','[System]',true);return}
   if((r.updated||0)>(S.updated||0)+2000){if(!DUP_WARNED){DUP_WARNED=true;toast('Arise was saved from another open copy (another tab, device or the chat preview). Keep just one copy open to avoid conflicts.','red','[System]',true)}
     if(!S.active&&!SANDBOX&&!sheets.length&&r.hunter.created===(S.hunter&&S.hunter.created)){S=Object.assign(defaults(),r);applyPacks();rollDaily();try{localStorage.setItem(LS,JSON.stringify({s:S,logs:LOGS}))}catch(e){}render()}}},()=>{})}catch(e){}}
-const BUILD=2026111310,SAVE_ID='save2',LOGP='v2log-';let READONLY=false;
+const BUILD=2026111312,SAVE_ID='save2',LOGP='v2log-';let READONLY=false;
 let SYNC_ERR=null,LAST_OK=0,retryT=null;const FAILED=new Set();
 function docData(id){if(id===SAVE_ID){MINE.add(S.updated);return{s:JSON.parse(JSON.stringify(S))}}const m=id.slice(LOGP.length);return{items:JSON.parse(JSON.stringify(LOGS.filter(l=>l.date.slice(0,7)===m)))}}
 async function writeDoc(id,data){
@@ -921,6 +921,7 @@ const UNIQ=[
  ['bluechew','relic','Blue Chews','e','VIT','','Stiffens resolve. Consult a healer if the effect lasts more than four hours.'],
  ['viphoney','relic','VIP Honey','e','VIT','','Royal honey packet from behind the gas station counter. Effects last three days. Nobody knows what is in it.'],
  ['spy','relic','Chinese Spy','l','AGI','','She liked your gym selfie, laughed at every joke, and asked a lot of questions about your bench. Your PRs are now in Beijing.'],
+ ["drunkcigs","relic","Drunk Cigs","l","END","","\"I don't even smoke.\" Smoked the whole pack after drink four, then bummed two more off the bouncer."],
  ['plugnum','relic',"The Plug's Number",'m','AGI','',"One text and anything in this bag shows up in twenty minutes. Cash only. Don't call, text."],
  ['gaspills','relic','Gas Station Pill Sampler','m','VIT','','Every pill behind the counter, taken at once. You can now hear colors and bench a Honda.'],
  // ===== boots (10 + 2)
@@ -938,14 +939,14 @@ const UNIQ=[
  ['sportcrocs','boots','Crocs in Sport Mode','m','AGI','','Straps flipped back. The most dangerous footwear known to man. Nothing can stop you now.'],
  // ===== chest (10 + 2)
  ['qzip','chest','Quarter Zip','c','AGI','pyn','Unzipped exactly enough to show collarbone. Worn to the gym. Never sweated in.'],
- ['beater','chest','Mustard-Stained Wife Beater','c','STR','','Ribbed, white, and never washed. The mustard stain is load-bearing.'],
- ['edhardy','chest','Ed Hardy Tee','c','STR','','Rhinestone tiger, two sizes too small. Smells like Axe and a 2009 club bathroom.'],
- ['hooters','chest','Hooters Shirt','c','VIT','','Bought at the airport location. Worn very much not ironically.'],
+ ["beater","chest","Mustard-Stained Wife Beater","c","STR","","Ribbed, yellow pits, never washed. Pairs with a Busch Light, a lawn chair, and screaming at the TV. The mustard stain is load-bearing."],
+ ["edhardy","chest","Diddy's Linen Button Up","c","STR","","All-white linen, unbuttoned to the navel. Still smells like baby oil. You were not on the guest list."],
+ ["hooters","chest","Hooters Shirt","c","VIT","","Bought at the airport location. Two sizes too small and stretched in all the right places. The wings are mid. The view is not."],
  ['jumper','chest','Jumper Cables','r','STR','','Clipped on for an extra spark during PR attempts. Red to positive. Do not ask.'],
  ['furbody','chest','Furry Body','r','END','fur','Full fursuit torso. It is 104°F inside. Smells like Axe body spray and bad decisions from the last convention.'],
  ['tassels','chest','Nipple Tassels','r','AGI','','Spin clockwise during cardio. Counter-clockwise on PRs. The whole gym is watching.'],
  ['gimpbody','chest','Gimp Body','e','END','gimp','Head-to-toe leather harness. Flawless posture. Zero breathability.'],
- ['milkers','chest','Mommy Milkers','e','STR','','Chest day went way too well. Bouncing on every rep, the bar rests on a natural shelf, and someone in the squat rack just called you mommy.'],
+ ["milkers","chest","Mommy Milkers","e","STR","","Chest day went way too well. Double Ds bouncing on every rep, and the bar rests right on the shelf. Someone in the squat rack just called you mommy."],
  ['techtop','chest','Nike Tech Hoodie','l','AGI','yn','Grey Tech zipped to the chin in 90° heat. Comes with a Lime scooter, a cracked iPhone on Instagram Live, and $40 to your name.'],
  ['vest','chest','Bulletproof Vest','m','VIT','','For when the beef from the Air Forces escalates. Also stops a dropped barbell.'],
  ['stringer','chest','Cut-to-the-Waist Stringer','m','STR','','Armholes down to the hips. Nips out, aura maxed. Banned from three Planet Fitnesses.'],
@@ -965,21 +966,21 @@ const UNIQ=[
  // ===== helm (10 + 2)
  ['glasses','helm','Glasses','c','VIT','pyn','Thin round frames, zero prescription. +5 Intelligence, perceived.'],
  ['milwaukee','helm','Milwaukee 2s','c','VIT','','Milwaukee safety glasses. Rated for flying debris, rogue plates, and eye contact with the gym crush.'],
- ['snapback','helm','Backwards Snapback','c','STR','','Flat brim, backwards, sticker still on. Says "No Days Off." Takes every day off.'],
+ ["snapback","helm","Bald, Oiled & Shiny","c","VIT","","Freshly shaved and oiled up, blinding under the gym lights. Reminds you of a guy who's been a doctor, a plumber, a pizza guy, and an astronaut, and somehow every job ends the same way."],
  ['beerhat','helm','Beer Helmet','c','END','','Two cans, two straws, zero spotters needed. Hydration is hydration.'],
  ['furears','helm','Furry Ears','r','VIT','fur','Twitch on every PR. Ask before petting. Or don\'t.'],
- ['tiara','helm','Tiara','r','VIT','','Princess treatment only. Does not rerack weights. Does not wipe down benches.'],
+ ["tiara","helm","Fedora","r","VIT","","M'lady. Discord mod of a 40,000-member anime server, currently paying rent for three e-kittens. Tips it at the squat rack."],
  ['vr','helm','VR Headset','r','END','','Currently in a VRChat bathroom with an anime girl. Do not disturb.'],
  ['gimpmask','helm','Gimp Mask','e','END','gimp','Zippered mouth. Muffles the grunting on heavy sets. Mostly.'],
  ['ballgag','helm','Ball Gag','e','END','','Silences the grunting. Drool counts as sweat. Safe word is "spot me."'],
  ['skimask','helm','Ski Mask','l','STR','yn','Black ski mask in July. Visibility −20. Intimidation +100.'],
- ['tinfoil','helm','Tinfoil Hat','m','VIT','','Blocks the Chinese Spy. Blocks 5G. Blocks your gym crush from reading your mind.'],
+ ["tinfoil","helm","Tin Foil Hat","m","VIT","","Triple-layered Reynolds Wrap. Blocks 5G, chemtrails, fluoride, and the Chinese Spy. Birds aren't real, the moon landing was filmed in this gym, Epstein didn't kill himself, and the squat rack is a government tracking device."],
  ['halo','helm','Leg Day Halo','m','VIT','','Granted only to those who never skipped leg day. No hunter has ever been seen wearing one.'],
  // ===== gloves (10 + 2)
  ['seiko','gloves','Seiko Watch','c','AGI','pyn','Checked loudly between every set so the whole gym knows it is a Seiko.'],
  ['jerkgloves','gloves','Masturbation Gloves','c','STR','','Fingerless. Well worn. Never washed. Grip strength is suspiciously elite.'],
- ['biker','gloves','Fingerless Biker Gloves','c','STR','','Leather, studded, smells like a Harley. Has never lifted more than 135.'],
- ['dishgloves','gloves','Yellow Dish Gloves','c','VIT','',"Grandma's. Smell like Dawn. She deadlifts more than you."],
+ ["biker","gloves","Fuzzy Handcuffs","c","STR","","Pink, fluffy, and the key went missing in 2019. Perfect for strict curls, assisted pull-ups, and whatever happened at that Airbnb. Safe word is \"rerack.\""],
+ ["dishgloves","gloves","Yellow Dish Gloves","c","VIT","","Karen, 45, freshly divorced. Wears these in a bubble bath with a box of Franzia, a Bath & Body Works candle, and a waterproof friend named Steve."],
  ['glovelights','gloves','Gloving Lights','r','AGI','','LED fingertips. Turns every set into a rave. Pupils sold separately.'],
  ['furpaws','gloves','Fur Paws','r','VIT','fur','Squishy paw pads with suspicious wear on the inside. Terrible barbell grip. Elite at other kinds of grip.'],
  ['pinky','gloves','Pinky Ring','r','STR','','Gold, chunky, owned by a gas station owner named Big Sal. Flashes under the gym lights.'],
@@ -990,12 +991,12 @@ const UNIQ=[
  ['wetwilly','gloves','Pre-Licked Fingers','m','AGI','','Ready for a wet willy at all times. Spotters now keep a respectful distance.'],
  // ===== weapons (10 + 2)
  ['tote','weapon','Tote Bag','c','END','pyn','Canvas tote holding a Walkman, tampons (for her), and some shitty K. Carried to be seen, not to be used.'],
- ['noodle','weapon','Pool Noodle','c','AGI','','Bends on impact. Still won a fight at a Six Flags once.'],
- ['selfiestick','weapon','Selfie Stick','c','AGI','','Extends to three feet. Captures every rep, mostly the mirror ones.'],
+ ["noodle","weapon","Pepper Spray","c","AGI","","Temu women's self-defense spray, $1.99. Weaker than the pepper in your mom's linguine. Mostly used to season it."],
+ ["selfiestick","weapon","Brick","c","STR","","It's just a brick."],
  ['fleshlight','weapon','Fleshlight','r','END','','Shaped like a flashlight. Is not a flashlight. Does not light up the dungeon.'],
- ['wand','weapon','Hitachi Wand','r','VIT','','Plugs into the wall. Vibrates hard enough to rerack your plates for you.'],
- ['nerf','weapon','Nerf Blaster','r','AGI','','Full-auto foam darts. The legal version of the Glock.'],
- ['slayer','weapon','Demon Slayer','e','AGI','','Blade from the anime you swore you would quit after episode three. Breathing technique: grunting.'],
+ ["wand","weapon","Four Loko Molotov","e","STR","","Original pre-ban recipe with a gym sock for a fuse. Clears gyms, parking lots, and family reunions."],
+ ["nerf","weapon","Edward 40 Hands","r","STR","","Two 40s duct-taped to your hands. Can't unlock your phone, can't pee, can't stop until both are empty. Elite grip training."],
+ ["slayer","weapon","Demon Slayer","r","AGI","","Blade from the anime you swore you would quit after episode three. Breathing technique: grunting."],
  ['horse','weapon','4ft Horse Cock','e','STR','','Rubber, heavy, and of deeply questionable origin. Swings like a mace. Nobody knows why it is in your bag.'],
  ['onepiece','weapon','The One Piece','l','STR','','IT IS REAL. Found at the end of the Grand Line, apparently in your gym bag.'],
  ['glock','weapon','Glock 19 with a Switch','l','STR','yn','Full auto. Every set is now a burst of thirty. Banned in every dungeon.'],
