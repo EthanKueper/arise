@@ -471,7 +471,7 @@ const MINE=new Set();let WATCH=null,DUP_WARNED=false;
 function watchSave(col){try{if(WATCH)WATCH();WATCH=col.doc(SAVE_ID).onSnapshot(sn=>{if(!sn.exists||sn.metadata.hasPendingWrites||sn.metadata.fromCache)return;const r=JSON.parse(JSON.stringify((sn.data()||{}).s||null));if(!r||!r.hunter||MINE.has(r.updated))return;if((r.build||0)>BUILD){READONLY=true;toast('A newer version of Arise is open elsewhere. Close this copy and reopen Arise.','red','[System]',true);return}
   if((r.updated||0)>(S.updated||0)+2000){if(!DUP_WARNED){DUP_WARNED=true;toast('Arise was saved from another open copy (another tab, device or the chat preview). Keep just one copy open to avoid conflicts.','red','[System]',true)}
     if(!S.active&&!SANDBOX&&!sheets.length&&r.hunter.created===(S.hunter&&S.hunter.created)){S=Object.assign(defaults(),r);applyPacks();rollDaily();try{localStorage.setItem(LS,JSON.stringify({s:S,logs:LOGS}))}catch(e){}render()}}},()=>{})}catch(e){}}
-const BUILD=2026111312,SAVE_ID='save2',LOGP='v2log-';let READONLY=false;
+const BUILD=2026111313,SAVE_ID='save2',LOGP='v2log-';let READONLY=false;
 let SYNC_ERR=null,LAST_OK=0,retryT=null;const FAILED=new Set();
 function docData(id){if(id===SAVE_ID){MINE.add(S.updated);return{s:JSON.parse(JSON.stringify(S))}}const m=id.slice(LOGP.length);return{items:JSON.parse(JSON.stringify(LOGS.filter(l=>l.date.slice(0,7)===m)))}}
 async function writeDoc(id,data){
@@ -633,7 +633,7 @@ function confirmBox(title,msg,okLabel,cb,danger){const el=openSheet(`<div class=
 if(!window.__noZoom){window.__noZoom=1;['gesturestart','gesturechange'].forEach(ev=>document.addEventListener(ev,e=>e.preventDefault(),{passive:false}));
  let lastT=0,sx=0,sy=0;document.addEventListener('touchstart',e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY},{passive:true});
  document.addEventListener('touchend',e=>{const t=e.changedTouches[0];if(Math.abs(t.clientX-sx)>10||Math.abs(t.clientY-sy)>10){lastT=0;return}const n=Date.now();if(n-lastT<350){const b=e.target.closest('button');if(b&&!b.disabled){e.preventDefault();b.click()}}lastT=n},{passive:false})}
-function render(){if(S&&S.gates)syncRanks();migGear();
+function render(){if(S&&S.gates)syncRanks();migGear();if(S&&S.bosses)S.bosses.forEach(b=>{if(b.kind==='exam'&&b.ref==='S'&&b.trial==='run'){b.trial='monarch';b.par=TRIALS.monarch.par(9)}});
   const app=$('#app');
   if(!S.hunter&&BOOT){$('#tabs').classList.add('hide');app.innerHTML=`<div style="min-height:70vh;display:grid;place-items:center"><div class="sys"><div class="portalspin"></div><div class="h" style="color:var(--cyan);margin-top:16px;letter-spacing:.2em">Connecting to the System…</div><div class="tiny dim" style="margin-top:6px">Loading your hunter</div></div></div>`;return}
   if(!S.hunter){$('#tabs').classList.add('hide');app.innerHTML=viewerBanner()+(CLOUD_FAILED?`<div class="callout red" style="margin-top:12px">Couldn't reach your cloud save. <b>If you already have a hunter, don't create a new one.</b> Close Arise fully and reopen it, or tap Retry.<button class="btn sm pri" style="margin-top:8px" data-a="syncretry">Retry</button></div>`:'')+renderOnboard();return}
@@ -891,9 +891,10 @@ const TRIALS={
  gauntlet:{name:'The Gauntlet',desc:'50 push-ups, 50 squats, 50 sit-ups, then 25 burpees, as fast as you can.',better:'low',par:t=>14*60-(t-1)*30},
  burpee:{name:'Hundred Burpees',desc:'Complete 100 burpees as fast as you can.',better:'low',par:t=>15*60-(t-1)*30},
  run:{name:'Two-Mile Run',desc:'Run 2 miles (3.2 km) as fast as you can.',better:'low',par:t=>24*60-(t-1)*45},
+ monarch:{name:"Monarch's Gauntlet",desc:'1-mile run, then 50 pull-ups, 100 push-ups, 150 air squats, and 50 burpees, as fast as you can. Split the reps however you want, but finish each exercise before starting the next.',better:'low',par:t=>44*60-t*60},
  plank:{name:'Stone Vigil',desc:'Hold a plank as long as you can.',better:'high',par:t=>90+(t-1)*15}
 };
-const EXAMS={D:{type:'trial',trial:'gauntlet',tier:2},C:{type:'str',tier:3},B:{type:'siege',tier:5},A:{type:'str',tier:7},S:{type:'trial',trial:'run',tier:9}};
+const EXAMS={D:{type:'trial',trial:'gauntlet',tier:2},C:{type:'str',tier:3},B:{type:'siege',tier:5},A:{type:'str',tier:7},S:{type:'trial',trial:'monarch',tier:9}};
 const CLASS_TIERS={warrior:['Warrior','Berserker','Warlord'],juggernaut:['Juggernaut','Ironclad','Colossus'],assassin:['Assassin','Shadowblade','Phantom'],monk:['Monk','Ascetic','Grandmaster']};
 const CLASS_TRIAL={warrior:[{type:'str',ex:['bench','ohp']},{type:'str',ex:['ohp','bench']}],juggernaut:[{type:'str',ex:['squat','deadlift']},{type:'str',ex:['deadlift','squat']}],assassin:[{type:'trial',trial:'run'},{type:'trial',trial:'burpee'}],monk:[{type:'trial',trial:'plank'},{type:'trial',trial:'gauntlet'}]};
 const CLASS_REQ={2:{floor:30,rank:'C'},3:{floor:70,rank:'A'}};
@@ -1561,7 +1562,7 @@ function drawGateEditor(){const el=$('#ge');if(!el||!EDIT)return;
    <label class="l">Lore / notes</label><textarea class="f" data-ge="lore" rows="2" maxlength="200">${esc(EDIT.lore)}</textarea>
    <label class="l">Monsters (exercises)</label>
    <div class="list">${EDIT.ex.map((e,i)=>{const d=exInfo(e.id);return`<div class="item"><div class="row"><span class="statdot s${d.stat}">${d.stat}</span><div class="grow">${esc(d.name)}</div>
-     <button class="btn sm ghost" data-a="ge-up" data-i="${i}" ${i===0?'disabled':''}>▲</button><button class="btn sm ghost" data-a="ge-rm" data-i="${i}">✕</button></div>
+     <button class="btn sm ghost" data-a="ge-up" data-i="${i}" ${i===0?'disabled':''} aria-label="Move up">▲</button><button class="btn sm ghost" data-a="ge-down" data-i="${i}" ${i===EDIT.ex.length-1?'disabled':''} aria-label="Move down">▼</button><button class="btn sm ghost" data-a="ge-rm" data-i="${i}">✕</button></div>
      <div class="row" style="margin-top:6px"><span class="tiny dim">Sets</span><input class="f" style="width:70px" type="number" inputmode="numeric" min="1" data-gi="${i}" data-gk="sets" value="${e.sets}"><span class="tiny dim">${d.type==='t'?(isSec(d)?'Seconds':'Minutes'):'Reps'}</span><input class="f" style="width:80px" type="number" inputmode="decimal" min="0" step="any" data-gi="${i}" data-gk="reps" ${isSec(d)?'data-u="sec"':''} value="${d.type==='t'?tDisp(d,e.reps):e.reps}">${d.type==='w'||d.type==='bw'?`<span class="tiny dim">to</span><input class="f" style="width:64px" type="number" inputmode="numeric" min="0" placeholder="max" data-gi="${i}" data-gk="rmax" value="${e.rmax||''}">`:''}</div>
      <div class="row tiny dim" style="margin-top:6px;gap:14px"><label><input type="checkbox" data-gi="${i}" data-gk="wu" ${+e.wu?'checked':''}> 1st set is warm-up</label>${i<EDIT.ex.length-1?`<label><input type="checkbox" data-gi="${i}" data-gk="ssn" ${e.ssn?'checked':''}> Superset with next</label>`:''}</div></div>`}).join('')||'<div class="empty small">No monsters yet.</div>'}</div>
    <button class="btn block" style="margin-top:8px" data-a="ge-add">+ Add exercise</button>
@@ -1725,7 +1726,8 @@ document.addEventListener('click',e=>{
   case'newgate':openGateEditor(null);break;
   case'editgate':openGateEditor(S.gates.find(x=>x.id===ds.id));break;
   case'ge-rank':EDIT.rank=ds.r;drawGateEditor();break;
-  case'ge-up':{const i=+ds.i;[EDIT.ex[i-1],EDIT.ex[i]]=[EDIT.ex[i],EDIT.ex[i-1]];drawGateEditor();break}
+  case'ge-up':{const i=+ds.i;if(i<1)break;[EDIT.ex[i-1],EDIT.ex[i]]=[EDIT.ex[i],EDIT.ex[i-1]];drawGateEditor();break}
+  case'ge-down':{const i=+ds.i;if(i>=EDIT.ex.length-1)break;[EDIT.ex[i+1],EDIT.ex[i]]=[EDIT.ex[i],EDIT.ex[i+1]];drawGateEditor();break}
   case'ge-rm':EDIT.ex.splice(+ds.i,1);drawGateEditor();break;
   case'ge-add':openPicker(id=>{const d=exInfo(id);EDIT.ex.push({id,sets:d.type==='t'?1:3,reps:d.type==='t'?20:10});drawGateEditor()});break;
   case'ge-save':{if(!EDIT.name.trim()){toast('Name your gate.','red');return}if(!EDIT.ex.length){toast('Add at least one exercise.','red');return}
