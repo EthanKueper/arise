@@ -1575,7 +1575,7 @@ function lbInner(){const C=window.ARISE_CLOUD;const me=C&&C.uid;const cards={...
 function renderGuild(){const C=window.ARISE_CLOUD;if(!C)return'';
   return`<div class="win"><div class="wt" style="color:var(--gold)">Guild leaderboard<span class="sp"></span><span class="tiny dim">${(S.friends||[]).length} friend${(S.friends||[]).length===1?'':'s'}</span></div>
    <div class="row" style="margin-bottom:8px"><div class="grow small">Your code: <b class="mono" style="color:var(--gold);letter-spacing:.15em">${C.code||'…'}</b></div><button class="btn sm" data-a="lb-share" ${C.code?'':'disabled'}>Share</button><button class="btn sm pri" data-a="lb-add">+ Friend</button></div>
-   <div class="seg" style="margin-bottom:6px">${Object.entries(LB_SORTS).map(([k,v])=>`<button class="${LB_SORT===k?'on':''}" data-a="lb-sort" data-k="${k}">${v[0]}</button>`).join('')}</div>
+   <div class="seg" style="margin-bottom:6px">${Object.entries(LB_SORTS).map(([k,v])=>`<button class="${LB_SORT===k?'on':''}" data-a="lb-sort" data-k="${k}" style="padding:8px 2px;letter-spacing:.02em;font-size:13px;white-space:nowrap">${v[0]}</button>`).join('')}</div>
    <div id="lb">${lbInner()}</div>
    ${(S.friends||[]).length?`<button class="btn sm ghost" style="margin-top:6px" data-a="lb-manage">Manage friends</button>`:''}</div>`}
 function openAddFriend(){const el=openSheet(`<div class="wt" style="color:var(--gold)">Add friend</div><div class="small dim" style="margin-bottom:8px">Ask your friend for their 6-character code (Status › Guild leaderboard). They add yours too, so you both see each other.</div>
