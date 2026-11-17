@@ -478,11 +478,11 @@ const MINE=new Set();let WATCH=null,DUP_WARNED=false;
 function watchSave(col){try{if(WATCH)WATCH();WATCH=col.doc(SAVE_ID).onSnapshot(sn=>{if(!sn.exists||sn.metadata.hasPendingWrites||sn.metadata.fromCache)return;const r=JSON.parse(JSON.stringify((sn.data()||{}).s||null));if(!r||!r.hunter||MINE.has(r.updated))return;if((r.build||0)>BUILD){READONLY=true;toast('A newer version of Arise is open elsewhere. Close this copy and reopen Arise.','red','[System]',true);return}
   if((r.updated||0)>(S.updated||0)+2000){if(!DUP_WARNED){DUP_WARNED=true;toast('Arise was saved from another open copy (another tab, device or the chat preview). Keep just one copy open to avoid conflicts.','red','[System]',true)}
     if(!S.active&&!SANDBOX&&!sheets.length&&r.hunter.created===(S.hunter&&S.hunter.created)){S=Object.assign(defaults(),r);applyPacks();rollDaily();try{localStorage.setItem(LS,JSON.stringify({s:S,logs:LOGS}))}catch(e){}render()}}},()=>{})}catch(e){}}
-const BUILD=2026111601,SAVE_ID='save2',LOGP='v2log-';let READONLY=false;
+const BUILD=2026111602,SAVE_ID='save2',LOGP='v2log-';let READONLY=false;
 let SYNC_ERR=null,LAST_OK=0,retryT=null;const FAILED=new Set();
 function docData(id){if(id===SAVE_ID){MINE.add(S.updated);return{s:JSON.parse(JSON.stringify(S))}}const m=id.slice(LOGP.length);return{items:JSON.parse(JSON.stringify(LOGS.filter(l=>l.date.slice(0,7)===m)))}}
 async function writeDoc(id,data){
-  wq[id]=data;if(wbusy[id])return;wbusy[id]=true;setSync('busy');
+  wq[id]=data;if(wbusy[id])return;wbusy[id]=true;setSync('busy');clearTimeout(PEND_T);PEND_T=setTimeout(()=>{if(SYNC==='busy')setSync('pend')},4000);
   try{while(wq[id]){const d=wq[id];wq[id]=null;let ok=false,err=null;
     for(let a=0;a<3&&!ok;a++){try{await cloudCol.doc(id).set(d);ok=true}catch(e){err=e;const c=e&&e.code;if(c==='unavailable'||c==='resource_exhausted'){await sleep((a+1)*1200+Math.random()*800)}else break}}
     if(ok){FAILED.delete(id);LAST_OK=Date.now()}else{FAILED.add(id);syncErr(err)}
@@ -492,9 +492,10 @@ function syncErr(e){SYNC_ERR={code:(e&&e.code)||'unknown',msg:(e&&e.message)||St
   if(e&&e.code==='quota_exceeded')toast('Cloud storage is full — your data is still saved on this device.','red','[System]');
   clearTimeout(retryT);retryT=setTimeout(retrySync,20000)}
 function retrySync(){clearTimeout(retryT);if(SANDBOX){retryT=setTimeout(retrySync,20000);return}if(!cloudCol){initCloud(true);return}const ids=FAILED.size?[...FAILED]:[SAVE_ID];ids.forEach(id=>writeDoc(id,docData(id)))}
-let SYNC='local';
+let SYNC='local',PEND_T=null;
+window.addEventListener('arise-reconnected',()=>{if(cloudCol&&(FAILED.size||SYNC==='err'||SYNC==='pend'))retrySync()});
 function setSync(s){SYNC=s;const el=$('#sync');if(el)el.outerHTML=syncHtml()}
-function syncHtml(){const m={viewer:['err','Not saved · tap'],local:['','Device save'],busy:['busy','Syncing…'],ok:['ok','Synced'],err:['err','Sync issue · tap'],slow:['busy','Cloud slow…']}[SYNC]||['','Device save'];return `<span id="sync" class="sync ${m[0]}" data-a="syncinfo" role="button">${'<i></i>'}${m[1]}</span>`}
+function syncHtml(){const m={viewer:['err','Not saved · tap'],local:['','Device save'],busy:['busy','Syncing…'],pend:['busy','Saved · uploading'],ok:['ok','Synced'],err:['err','Sync issue · tap'],slow:['busy','Cloud slow…']}[SYNC]||['','Device save'];return `<span id="sync" class="sync ${m[0]}" data-a="syncinfo" role="button">${'<i></i>'}${m[1]}</span>`}
 const SYNC_WHY={revoked:'The app was updated or its sharing changed while it was open. Close Arise completely and reopen it.',unavailable:'The connection dropped. It will keep retrying on its own.',resource_exhausted:'Too many saves in a short time. It will retry in a moment.',quota_exceeded:'Cloud storage for this app is full.',invalid_argument:'The cloud rejected the save. Your data is safe on this device. Send this code to whoever maintains the app.',not_granted:'Cloud saving isn’t available in this view. Make sure you’re signed in, then reopen.',capability_disabled:'Cloud saving isn’t available in this view. Reopen Arise.',capability_removed:'Cloud saving isn’t available in this view. Reopen Arise.',timeout:'The cloud didn’t answer in time. It will keep retrying.',unknown:'Something interrupted the save. It will keep retrying.'};
 function openSyncInfo(){if(VIEWER){openViewerInfo();return}const e=SYNC_ERR;const ago=t=>{const m=Math.round((Date.now()-t)/60000);return m<1?'just now':m<60?m+' min ago':Math.round(m/60)+' h ago'};
   openSheet(`<div class="wt">Cloud sync</div>

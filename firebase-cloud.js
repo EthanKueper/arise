@@ -4,7 +4,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.19.0/fireba
 import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword,
   signInWithEmailAndPassword, sendPasswordResetEmail, signOut as fbSignOut } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import { initializeFirestore, persistentLocalCache, persistentSingleTabManager, collection, doc, getDoc, getDocs,
-  setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+  setDoc, deleteDoc, onSnapshot, disableNetwork, enableNetwork } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 
 const $ = s => document.querySelector(s);
 const ui = {
@@ -25,6 +25,21 @@ const auth = getAuth(app);
 let db;
 try { db = initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentSingleTabManager() }) }); }
 catch (e) { db = initializeFirestore(app, {}); }
+
+// iOS freezes the app in the background and silently drops the database connection. Firestore then
+// waits (backing off up to a minute) before noticing. Reconnect right away when the app comes back.
+let hiddenAt = 0, kicking = false;
+async function kick() {
+  if (kicking || !db) return; kicking = true;
+  try { await disableNetwork(db); await enableNetwork(db); } catch (e) {} finally { kicking = false; }
+  window.dispatchEvent(new Event('arise-reconnected'));
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { hiddenAt = Date.now(); return; }
+  if (hiddenAt && Date.now() - hiddenAt > 4000) kick();
+});
+window.addEventListener('online', kick);
+window.addEventListener('pageshow', e => { if (e.persisted) kick(); });
 
 const errCode = e => String((e && e.code) || 'unknown').replace(/^firestore\//, '').replace(/-/g, '_');
 const wrapErr = e => ({ code: errCode(e) === 'permission_denied' ? 'not_granted' : errCode(e), message: (e && e.message) || String(e) });
