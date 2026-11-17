@@ -5,16 +5,60 @@ service cloud.firestore {
     match /users/{uid}/{rest=**} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
-    // Leaderboard cards: a signed-in hunter can read one card at a time (no browsing the list); only the owner writes it.
+
+    // Leaderboard cards: a signed-in hunter can read one card at a time (no browsing the list).
+    // Only the owner writes their own card, and every write is checked so nobody can post fake numbers.
     match /cards/{uid} {
       allow get: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid && validCard();
+      allow delete: if false;
     }
+
     // Friend codes: look up one exact code at a time (no browsing); each code can be claimed once and never changed.
     match /codes/{code} {
       allow get: if request.auth != null;
       allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
       allow update, delete: if false;
+    }
+
+    // ---------- leaderboard card checks ----------
+    function validCard() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['name', 'cls', 'clsName', 'icon', 'level', 'xp', 'rank', 'floor',
+                               'streak', 'title', 'squat', 'bench', 'code', 'updated'])
+        // time comes from Google's server, not the phone
+        && d.updated == request.time
+        && textOk(d, 'name', 24) && textOk(d, 'cls', 20) && textOk(d, 'clsName', 30)
+        && textOk(d, 'icon', 8) && textOk(d, 'title', 40)
+        && (!('code' in d) || (d.code is string && d.code.size() == 6))
+        && (!('rank' in d) || d.rank in ['E', 'D', 'C', 'B', 'A', 'S'])
+        && numOk(d, 'level', 1, 150) && numOk(d, 'xp', 0, 2000000)
+        && numOk(d, 'floor', 0, 2000) && numOk(d, 'streak', 0, 5000)
+        && numOk(d, 'squat', 0, 1100) && numOk(d, 'bench', 0, 800)
+        && levelMatchesXp(d)
+        && xpRiseOk(d);
+    }
+    function textOk(d, k, max) { return !(k in d) || (d[k] is string && d[k].size() <= max); }
+    function numOk(d, k, lo, hi) { return !(k in d) || (d[k] is number && d[k] >= lo && d[k] <= hi); }
+    // The level shown must be backed by enough EXP (same curve the app uses).
+    function levelMatchesXp(d) {
+      return !('level' in d) || !('xp' in d)
+        || 2 * d.xp >= 200 * (d.level - 1) + 25 * (d.level - 1) * d.level - 2;
+    }
+    // EXP can drop (a reset), but can only rise by a realistic amount: 3,000 per save plus 4,000 per day
+    // since the card was last updated (so days offline still sync). A brand-new card can't start huge.
+    function xpRiseOk(d) {
+      return !('xp' in d)
+        || (resource == null && d.xp <= 3000)
+        || (resource != null && !('xp' in resource.data) && d.xp <= 3000)
+        || (resource != null && ('xp' in resource.data)
+            && d.xp * 86400000 <= (resource.data.xp + 3000) * 86400000 + 4000 * msSince(resource.data));
+    }
+    // whole milliseconds since the card was last saved (old cards stored the phone's clock as a number)
+    function msSince(old) {
+      return !('updated' in old) ? 0
+        : request.time.toMillis() - (old.updated is timestamp ? old.updated.toMillis()
+            : (old.updated is int ? old.updated : request.time.toMillis()));
     }
   }
 }

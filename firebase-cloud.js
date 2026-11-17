@@ -4,7 +4,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.19.0/fireba
 import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword,
   signInWithEmailAndPassword, sendPasswordResetEmail, signOut as fbSignOut } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import { initializeFirestore, persistentLocalCache, persistentSingleTabManager, collection, doc, getDoc, getDocs,
-  setDoc, deleteDoc, onSnapshot, disableNetwork, enableNetwork } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+  setDoc, deleteDoc, onSnapshot, disableNetwork, enableNetwork, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 
 const $ = s => document.querySelector(s);
 const ui = {
@@ -50,9 +50,15 @@ function makeDb(uid) {
   const base = () => collection(db, 'users', uid, 'data');
   return {
     collection: () => ({
-      get: async () => {
-        try { const snap = await getDocs(base()); return { docs: snap.docs.map(d => ({ id: d.id, data: () => d.data() })) }; }
-        catch (e) { throw wrapErr(e); }
+      get: async (opts) => {
+        try {
+          // Only specific docs (save + recent months) when the phone already has the rest: far fewer reads.
+          if (opts && Array.isArray(opts.only)) {
+            const snaps = await Promise.all(opts.only.map(id => getDoc(doc(db, 'users', uid, 'data', id))));
+            return { partial: true, docs: snaps.filter(s => s.exists()).map(s => ({ id: s.id, data: () => s.data() })) };
+          }
+          const snap = await getDocs(base()); return { docs: snap.docs.map(d => ({ id: d.id, data: () => d.data() })) };
+        } catch (e) { throw wrapErr(e); }
       },
       doc: (id) => ({
         set: async (data) => { try { await setDoc(doc(db, 'users', uid, 'data', id), clean(data)); } catch (e) { throw wrapErr(e); } },
@@ -76,7 +82,7 @@ const cloud = {
     if (mine && mine.exists() && mine.data().code) { this.code = mine.data().code; return this.code; }
     for (let i = 0; i < 8; i++) {
       const c = newCode();
-      try { await setDoc(doc(db, 'codes', c), { uid: this.uid }); this.code = c; await setDoc(doc(db, 'cards', this.uid), { code: c, updated: Date.now() }, { merge: true }); return c; }
+      try { await setDoc(doc(db, 'codes', c), { uid: this.uid }); this.code = c; await setDoc(doc(db, 'cards', this.uid), { code: c, updated: serverTimestamp() }, { merge: true }); return c; }
       catch (e) { /* taken: try another */ }
     }
     return '';
@@ -87,7 +93,7 @@ const cloud = {
     const key = JSON.stringify(body);
     if (key === lastCard) return;
     lastCard = key;
-    try { await setDoc(doc(db, 'cards', this.uid), { ...body, updated: Date.now() }); } catch (e) { lastCard = ''; }
+    try { await setDoc(doc(db, 'cards', this.uid), { ...body, updated: serverTimestamp() }); } catch (e) { lastCard = ''; console.warn('Leaderboard card rejected', e && e.code); }
   },
   async addFriend(code) {
     code = String(code || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -104,7 +110,7 @@ const cloud = {
     if (unsubCards) { unsubCards.forEach(u => u()); unsubCards = null; }
     const list = [...new Set(uids)].filter(Boolean).slice(0, 30);
     const out = {}; unsubCards = list.map(uid => onSnapshot(doc(db, 'cards', uid),
-      d => { if (d.exists()) out[uid] = d.data(); else delete out[uid]; cb({ ...out }); }, () => {}));
+      d => { if (d.exists()) { const x = d.data(); if (x.updated && typeof x.updated.toMillis === 'function') x.updated = x.updated.toMillis(); out[uid] = x; } else delete out[uid]; cb({ ...out }); }, () => {}));
   },
   async signOut() {
     try { await fbSignOut(auth); } catch (e) {}
