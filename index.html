@@ -483,7 +483,7 @@ const MINE=new Set();let WATCH=null,DUP_WARNED=false;
 function watchSave(col){try{if(WATCH)WATCH();WATCH=col.doc(SAVE_ID).onSnapshot(sn=>{if(!sn.exists||sn.metadata.hasPendingWrites||sn.metadata.fromCache)return;const r=JSON.parse(JSON.stringify((sn.data()||{}).s||null));if(!r||!r.hunter||MINE.has(r.updated))return;if((r.build||0)>BUILD){READONLY=true;toast('A newer version of Arise is open elsewhere. Close this copy and reopen Arise.','red','[System]',true);return}
   if((r.updated||0)>(S.updated||0)+2000){if(!DUP_WARNED){DUP_WARNED=true;toast('Arise was saved from another open copy (another tab, device or the chat preview). Keep just one copy open to avoid conflicts.','red','[System]',true)}
     if(!S.active&&!SANDBOX&&!sheets.length&&r.hunter.created===(S.hunter&&S.hunter.created)){S=Object.assign(defaults(),r);applyPacks();rollDaily();try{localStorage.setItem(LS,JSON.stringify({s:S,logs:LOGS}))}catch(e){}render()}}},()=>{})}catch(e){}}
-const BUILD=2026111604,SAVE_ID='save2',LOGP='v2log-';let READONLY=false;
+const BUILD=2026111801,SAVE_ID='save2',LOGP='v2log-';let READONLY=false;
 let SYNC_ERR=null,LAST_OK=0,retryT=null;const FAILED=new Set();
 function docData(id){if(id===SAVE_ID){MINE.add(S.updated);return{s:JSON.parse(JSON.stringify(S))}}const m=id.slice(LOGP.length);return{items:JSON.parse(JSON.stringify(LOGS.filter(l=>l.date.slice(0,7)===m)))}}
 async function writeDoc(id,data){
@@ -543,7 +543,7 @@ async function initCloud_(manual){
     let pushSave=false;
     const diff=rs&&rs.hunter&&S.hunter&&rs.hunter.created!==S.hunter.created;
     if(rs&&rs.hunter&&(!S.hunter||(diff?(rs.xp||0)>=(S.xp||0):(rs.updated||0)>(S.updated||0)))){S=Object.assign(defaults(),rs)}else if(S.hunter)pushSave=true;
-    cloudCol=col;LAST_OK=Date.now();setSync('ok');watchSave(col);setTimeout(()=>{lbSubscribe();lbPublish()},0);
+    cloudCol=col;LAST_OK=Date.now();setSync('ok');watchSave(col);setTimeout(()=>{lbSubscribe();lbPublish();if(window.LINK)LINK.start()},0);
     const allM=[...new Set(LOGS.map(l=>l.date.slice(0,7)))];
     if(!hasNew&&S.hunter)persist(allM,true);else if(pushSave||pushMonths.size)persist([...pushMonths],true);
     else try{localStorage.setItem(LS,JSON.stringify({s:S,logs:LOGS}))}catch(e){}
@@ -597,10 +597,22 @@ function planFor(ds){const P=S.plan;if(!P||!P.cycle.length)return null;const n=P
 function logsOn(ds){return LOGS.filter(l=>today(new Date(l.date))===ds)}
 function gainXp(n){const b=lvl(S.xp);S.xp+=n;const a=lvl(S.xp);return{before:b,after:a,leveled:a.L>b.L,rankUp:rankOf(a.L)!==rankOf(b.L)}}
 
+/* ---------- vacation mode ---------- */
+const VAC_MAX=30;
+function vacOn(){return !!(S.vac&&S.vac.on)}
+function liveStreak(){return vacOn()||S.daily.lastDone===today()||S.daily.lastDone===yesterday()?S.daily.streak:0}
+function startVacation(end){S.vac={on:true,start:today(),end,pausedAt:Date.now()};persist(null,true)}
+function endVacation(why){if(!vacOn())return;const away=Date.now()-(S.vac.pausedAt||Date.now());
+  S.bosses.forEach(b=>{if(b.type==='siege'&&b.deadline)b.deadline+=away});
+  if(S.daily.streak>0&&S.daily.lastDone&&S.daily.lastDone<yesterday())S.daily.lastDone=yesterday();
+  S.tower.lastEval=yesterday();S.tower.misses=0;
+  S.vac={on:false,last:S.vac.end};persist(null,true);toast(why||'Vacation mode ended. Welcome back, Hunter.','gold')}
+function checkVacation(){if(vacOn()&&today()>S.vac.end)endVacation('Your vacation ended. Welcome back, Hunter. Your streak, tower steps and boss timers were protected.')}
 function rollDaily(){
+  checkVacation();
   const d=S.daily,t=today();
   if(d.date!==t){
-    if(d.streak>0&&d.lastDone&&d.lastDone<yesterday()){d.streak=0;d.penaltyNote=true;PEN_SND=true}
+    if(d.streak>0&&d.lastDone&&d.lastDone<yesterday()&&!vacOn()){d.streak=0;d.penaltyNote=true;PEN_SND=true}
     d.date=t;d.progress={};d.claimed=false;persist();
   }
 }
@@ -610,7 +622,9 @@ function toast(html,cls='',tag='[System]',quiet){if(!quiet)sfx(cls==='red'?'erro
 function flash(){const f=document.createElement('div');f.className='flash';document.body.appendChild(f);setTimeout(()=>f.remove(),800)}
 function buzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
 let actx=null;
-function audioInit(){try{if(!actx){const A=window.AudioContext||window.webkitAudioContext;if(A)actx=new A()}if(actx&&actx.state==='suspended')actx.resume()}catch(e){}}
+function mixAudio(){try{if(navigator.audioSession&&navigator.audioSession.type!=='ambient')navigator.audioSession.type='ambient'}catch(e){}}
+function fmtDate(d){try{return new Date(d+'T12:00:00').toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})}catch(e){return d}}
+function audioInit(){mixAudio();try{if(!actx){const A=window.AudioContext||window.webkitAudioContext;if(A)actx=new A()}if(actx&&actx.state==='suspended')actx.resume()}catch(e){}}
 let master=null,noiseBuf=null;
 function out(){if(!actx)return null;if(!master){master=actx.createGain();const comp=actx.createDynamicsCompressor();master.connect(comp);comp.connect(actx.destination)}master.gain.value=(S.sfx===false?0:(S.vol??.7));return master}
 function tone(f,at,dur,{type='sine',g=.2,f2=null,a=.005}={}){const o=out();if(!o)return;const t=actx.currentTime+at,os=actx.createOscillator(),gn=actx.createGain();os.type=type;os.frequency.setValueAtTime(f,t);if(f2)os.frequency.exponentialRampToValueAtTime(f2,t+dur);gn.gain.setValueAtTime(.0001,t);gn.gain.exponentialRampToValueAtTime(g,t+a);gn.gain.exponentialRampToValueAtTime(.0001,t+dur);os.connect(gn);gn.connect(o);os.start(t);os.stop(t+dur+.05)}
@@ -658,7 +672,7 @@ function render(){if(S&&S.gates){migGateNames();syncRanks()}migGear();if(S&&S.bo
   if(!S.hunter){$('#tabs').classList.add('hide');app.innerHTML=viewerBanner()+(CLOUD_FAILED?`<div class="callout red" style="margin-top:12px">Couldn't reach your cloud save. <b>If you already have a hunter, don't create a new one.</b> Close Arise fully and reopen it, or tap Retry.<button class="btn sm pri" style="margin-top:8px" data-a="syncretry">Retry</button></div>`:'')+renderOnboard();return}
   $('#tabs').classList.remove('hide');
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.t===TAB));
-  const top=`<div class="topbar"><span class="logo">ARISE</span>${syncHtml()}</div>`+(TAB!=='chron'?viewerBanner():'');
+  const top=`<div class="topbar"><span class="logo">ARISE</span>${syncHtml()}</div>`+(TAB!=='chron'?viewerBanner():'')+(TAB==='status'?vacBanner():'');
   const body={status:renderStatus,quest:renderQuest,gates:renderGates,tower:renderTower,chron:renderChron}[TAB]||renderStatus;
   app.innerHTML=top+body();
   const dt=$('#dtoday'),sp=$('#strip');if(dt&&sp)sp.scrollLeft=dt.offsetLeft-sp.offsetLeft-70;
@@ -686,9 +700,10 @@ function renderOnboard(){
   </div>`;
 }
 
+function vacBanner(){return vacOn()?`<div class="callout" style="margin:10px 0">🏖 <b>Vacation mode</b> until ${fmtDate(S.vac.end)}. Your streak, tower steps and boss timers are protected. <button class="btn sm ghost" data-a="vac-end" style="margin-left:6px">End</button></div>`:''}
 function renderStatus(){
   const L=lvl(S.xp),r=curRank(),st=computeStats(),c=totals(),cls=CLASSES[S.hunter.cls];const exam=S.bosses.find(b=>b.kind==='exam'),comp=S.comps.find(x=>x.id===S.comp),xb=xpBonus();
-  const streak=(S.daily.lastDone===today()||S.daily.lastDone===yesterday())?S.daily.streak:0;
+  const streak=liveStreak();
   const eq=ACH.find(a=>a.id===S.title);
   return`<div class="win"><div class="wt">Status<span class="sp"></span><button class="btn ghost sm" data-a="settings" aria-label="Settings">⚙</button></div>
    <div class="row" style="align-items:flex-end">
@@ -761,10 +776,10 @@ function renderGates(){
   return act+renderPlan()+`<div class="sys dim small" style="margin:8px 0 2px">Choose a gate to enter. Each gate is a workout plan.</div>
   ${S.gates.map(g=>{const sets=g.ex.reduce((a,e)=>a+(+e.sets||0),0);const last=LOGS.find(l=>l.gateId===g.id);const ago=last?Math.floor((Date.now()-new Date(last.date))/864e5):null;
    return`<div class="win gate r${g.rank}"><div class="portal"></div>
-    <div class="row"><span class="rank r${g.rank}">${g.rank}</span><div class="grow"><div class="h" style="color:#fff;font-size:17px">${esc(g.name)}</div><div class="tiny dim">${g.ex.length} monsters · ${sets} sets${ago!==null?` · cleared ${ago===0?'today':ago+'d ago'}`:''}</div></div></div>
+    <div class="row"><span class="rank r${g.rank}">${g.rank}</span><div class="grow"><div class="h" style="color:#fff;font-size:17px">${esc(g.name)}</div><div class="tiny dim">${g.ex.length} monsters · ${sets} sets${ago!==null?` · cleared ${ago===0?'today':ago+'d ago'}`:''}</div>${g.link?`<div class="tiny" style="color:var(--gold);margin-top:2px">🔗 Linked · ${g.link.mine?'you manage this gate':'managed by '+esc(g.link.by||'a friend')}</div>`:''}</div></div>
     ${g.lore?`<div class="small dim" style="margin:8px 0">${esc(g.lore)}</div>`:''}
     <div class="tiny" style="margin:6px 0 10px;color:var(--txt);opacity:.85">${g.ex.map(e=>esc(exInfo(e.id).name)).join(' · ')}</div>
-    <div class="row"><button class="btn sm" data-a="editgate" data-id="${g.id}">Edit</button><span class="grow"></span><button class="btn pri" data-a="enter" data-id="${g.id}" ${S.active?'disabled':''}>Enter gate</button></div>
+    <div class="row"><button class="btn sm" data-a="editgate" data-id="${g.id}">${g.link&&!g.link.mine?'View':'Edit'}</button><span class="grow"></span><button class="btn pri" data-a="enter" data-id="${g.id}" ${S.active?'disabled':''}>Enter gate</button></div>
    </div>`}).join('')}
   <div class="row" style="gap:8px;margin-top:4px"><button class="btn block grow" data-a="newgate">+ Forge new gate</button><button class="btn block grow" data-a="quickraid" ${S.active?'disabled':''}>Freestyle raid</button></div>
   <button class="btn green block" style="margin-top:8px" data-a="side">+ Log side quest (hiking, sports…)</button>`;
@@ -816,8 +831,9 @@ function renderChron(){
 }
 
 /* ================= RAID ================= */
-function startRaid(g){
+function startRaid(g,force){
   audioInit();
+  if(vacOn()&&!force){confirmBox('End vacation mode?','Starting a workout ends vacation mode. Your streak, tower steps and boss timers pick up where they left off.','End and start',()=>{endVacation();startRaid(g,true)});return}
   RAID_VIEW=true;S.active={gateId:g?g.id:null,name:g?g.name:'Freestyle Raid',start:Date.now(),ex:(g?g.ex:[]).map(e=>newRaidEx(e.id,(+e.sets||0),e.reps,e.wu,e.ss,e.rmax))};
   persist();flash();buzz(40);render();
   sfx('portal');toast(`You have entered <b>${esc(S.active.name)}</b>.`,'', '[Gate]',true);
@@ -1048,7 +1064,7 @@ function dropItem(r,src={}){
   if(S.gear.length>60){const eq=new Set(Object.values(S.equip));const order='crelm';const victim=S.gear.filter(g=>!eq.has(g.id)).sort((a,b)=>order.indexOf(a.r)-order.indexOf(b.r)||a.t-b.t)[0];if(victim)S.gear=S.gear.filter(g=>g!==victim)}
   return it}
 /* drop odds by how hard the clear was (clear rank). Mythics never drop from gates, only tower guardians. */
-const DROP_W={E:{p:.10,w:[70,25,5,0]},D:{p:.12,w:[60,30,9,1]},C:{p:.15,w:[50,33,14,3]},B:{p:.18,w:[40,36,19,5]},A:{p:.22,w:[30,38,25,7]},S:{p:.26,w:[20,38,32,10]}};
+const DROP_W={E:{p:.20,w:[70,25,5,0]},D:{p:.26,w:[60,30,9,1]},C:{p:.32,w:[50,33,14,3]},B:{p:.38,w:[40,36,19,5]},A:{p:.44,w:[30,38,25,7]},S:{p:.50,w:[20,38,32,10]}};
 function wRoll(w,keys){const t=w.reduce((a,b)=>a+b,0);let x=Math.random()*t;for(let i=0;i<w.length;i++){x-=w[i];if(x<0)return keys[i]}return keys[keys.length-1]}
 function rollDrop(log){if(log.sets<5)return null;const D=DROP_W[log.crank]||DROP_W.E;if(Math.random()>D.p)return null;return dropItem(wRoll(D.w,['c','r','e','l']))}
 function equipped(){return Object.values(S.equip).map(id=>S.gear.find(g=>g.id===id)).filter(Boolean)}
@@ -1104,12 +1120,10 @@ function bossesOnRaid(log){const out=[];
 
 /* ---------- climbing ---------- */
 function awardSteps(log){const T=S.tower,ds=today(new Date(log.date));
-  if(log.sets<5&&cardioMin(log)<20)return{amt:0,reason:'Too short to climb: needs 5+ sets or 20+ cardio minutes'};
+  if(!(log.sets>0||cardioMin(log)>0))return{amt:0,reason:'Log at least one set to climb'};
   if(S.bosses.some(b=>b.kind==='tower')){const g=S.bosses.find(b=>b.kind==='tower');return{amt:0,reason:`${g.name} blocks the stairs. Defeat the guardian to keep climbing`}}
   if(T.dayD!==ds){T.dayD=ds;T.dayAmt=0}
-  const p=planFor(ds);let amt=.5,reason=S.plan?'Off-plan workout':'No training cycle set';
-  if(p&&!p.rest&&p.gate.id===log.gateId&&!logsOn(ds).some(l=>l.gateId===log.gateId)){amt=1;reason='Planned workout'}
-  else if(S.plan){const y=addDays(ds,-1),py=planFor(y);if(py&&!py.rest&&y>=S.plan.start&&!logsOn(y).length)reason='Make-up for yesterday'}
+  const p=planFor(ds);let amt=1,reason=!S.plan?'Workout':p&&p.rest?'Rest-day workout':p&&p.gate.id===log.gateId?'Planned workout':'Workout';
   amt=Math.min(amt,1-T.dayAmt);if(amt<=0)return{amt:0,reason:'Daily climb limit reached (1 step per day)'};
   T.dayAmt+=amt;T.misses=0;T.steps+=amt;const floors=[];let spawned=null;
   while(T.steps>=4){T.steps-=4;T.floor++;floors.push(T.floor);if(T.floor%10===0&&!T.beaten.includes(T.floor)){T.steps=0;spawnTower(T.floor);spawned=T.floor;break}}
@@ -1117,9 +1131,9 @@ function awardSteps(log){const T=S.tower,ds=today(new Date(log.date));
 function rollTower(){if(!S.hunter)return;const T=S.tower,t=today(),yd=addDays(t,-1);let changed=false;
   if(S.plan){if(!T.lastEval||T.lastEval>yd)T.lastEval=yd;
     let d=addDays(T.lastEval,1),guard=0;if(d<S.plan.start)d=S.plan.start;
-    while(d<=yd&&guard++<400){const p=planFor(d);if(p&&!p.rest){if(logsOn(d).length)T.misses=0;else{T.misses++;if(T.misses>=3){if(T.steps>0){T.steps=0;T.regen=true}T.misses=0}}}d=addDays(d,1)}
+    while(d<=yd&&guard++<400){const p=planFor(d);if(p&&!p.rest&&!(vacOn()&&d>=S.vac.start&&d<=S.vac.end)){if(logsOn(d).length)T.misses=0;else{T.misses++;if(T.misses>=3){if(T.steps>0){T.steps=0;T.regen=true}T.misses=0}}}d=addDays(d,1)}
     if(T.lastEval!==yd){T.lastEval=yd;changed=true}}
-  S.bosses.forEach(b=>{if(b.type==='siege'&&Date.now()>b.deadline&&b.hp>0){const nb=makeSiege(b.tier,b.ref===100?1.5:1);b.hp=nb.max;b.max=nb.max;b.deadline=nb.deadline;b.escaped=(b.escaped||0)+1;b.notice=true;changed=true}});
+  S.bosses.forEach(b=>{if(b.type==='siege'&&!vacOn()&&Date.now()>b.deadline&&b.hp>0){const nb=makeSiege(b.tier,b.ref===100?1.5:1);b.hp=nb.max;b.max=nb.max;b.deadline=nb.deadline;b.escaped=(b.escaped||0)+1;b.notice=true;changed=true}});
   if(T.floor%10===0&&!T.beaten.includes(T.floor)&&!S.bosses.some(b=>b.kind==='tower')){spawnTower(T.floor);changed=true}
   if(rIdx(lvlRank())>rIdx(curRank())&&!S.bosses.some(b=>b.kind==='exam')){spawnExam(RANK_ORDER[rIdx(curRank())+1]);changed=true}
   if(changed)persist()}
@@ -1159,11 +1173,10 @@ function renderTower(){const T=S.tower,f=T.floor,z=zoneOf(f);const tb=S.bosses.f
      <div style="text-align:right" class="small dim">${tb?`<span style="color:var(--red)">Guardian blocks the stairs</span>`:`Next guardian: floor ${nextG}`}<br>${T.beaten.length} guardian${T.beaten.length===1?'':'s'} slain</div></div>
     <div class="pips">${pips}</div><div class="tiny dim">${tb?'Defeat the guardian to continue climbing.':`${T.steps} / 4 steps to floor ${f+1}`}</div>
     <div class="floors">${floors}</div>
-    ${!S.plan?`<div class="callout">Set a training cycle so each planned workout climbs a full step (other workouts climb ½).<button class="btn sm pri" style="margin-top:8px" data-a="plan">Set training cycle</button></div>`:''}
+    ${!S.plan?`<div class="callout">Set a training cycle to plan your week. Clearing the scheduled gate earns +20 EXP.<button class="btn sm pri" style="margin-top:8px" data-a="plan">Set training cycle</button></div>`:''}
     ${T.misses>0&&!tb?`<div class="callout red">⚠ ${T.misses} planned workout${T.misses>1?'s':''} missed in a row. ${3-T.misses} more and this floor's monsters regenerate (you'd lose your steps on this floor, never the floor itself).</div>`:''}
     <details style="margin-top:10px"><summary class="tiny h" style="color:var(--cyan)">How climbing works ▾</summary><div class="small dim" style="margin-top:6px;line-height:1.35">
-     • A planned workout done on its planned day = <b>1 step</b>. Any other workout (rest day, different gate, make-up) = <b>½ step</b>. Max 1 step per day.<br>
-     • A workout must have 5+ sets or 20+ cardio minutes to count. 4 steps = 1 floor.<br>
+     • A planned workout done or any other workout = <b>1 step</b>, even on a rest day. Side quests of 20+ minutes count too. Max 1 step per day.<br>      • 4 steps = 1 floor.<br>
      • Every 10th floor has a guardian. Climbing pauses until you defeat it.<br>
      • Missing 3 planned workouts in a row resets your steps on the current floor. You never lose a floor.</div></details>
   </div>
@@ -1263,7 +1276,7 @@ const ACTS=[
 ].map(([id,name,icon,stats])=>({id,name,icon,stats}));
 const ACTM={};ACTS.forEach(a=>ACTM[a.id]=a);
 const INT={light:{n:'Light',m:.6,xr:1.5},mod:{n:'Moderate',m:1,xr:2.5},hard:{n:'Hard',m:1.4,xr:3.3}};const SQ_CAP=150;
-const SQ_MIN=30;
+const SQ_MIN=20;
 function sideEq(l){return l.side?Math.round(l.side.min/6*INT[l.side.int].m):0}
 let SQ=null;
 function openSideQuest(){SQ={act:null,name:'',min:60,int:'mod',when:'today',move:'skip'};openSheet('<div id="sq"></div>',{onClose:()=>{SQ=null}});drawSQ()}
@@ -1287,7 +1300,7 @@ function drawSQ(){const el=$('#sq');if(!el||!SQ)return;
      <button class="clsc ${SQ.move==='push'?'on':''}" data-a="sq-move" data-k="push"><div class="h small">Push it back a day</div><div class="tiny dim">${esc(p.gate.name)} moves to ${SQ.when==='today'?'tomorrow':'today'} and the whole cycle shifts by one day.</div></button>
     </div>`:''}
    <div class="callout" style="margin-top:12px"><div class="row between small"><span>Reward</span><b class="mono" style="color:var(--gold)">~${xp} EXP</b></div>
-    <div class="tiny dim" style="margin-top:4px">${SQ.min>=SQ_MIN?`${planned?'Covers a planned training day: <b style="color:#fff">1 tower step</b>, no missed day.':'Extra activity: <b style="color:#fff">½ tower step</b>.'}`:`Needs ${SQ_MIN}+ minutes to climb the tower (still earns EXP).`}${a?` · Trains ${a.stats.join(' + ')}`:''}</div></div>
+    <div class="tiny dim" style="margin-top:4px">${SQ.min>=SQ_MIN?`${planned?'Covers a planned training day: <b style="color:#fff">1 tower step</b>, no missed day.':'Extra activity: <b style="color:#fff">1 tower step</b>.'}`:`Needs ${SQ_MIN}+ minutes to climb the tower (still earns EXP).`}${a?` · Trains ${a.stats.join(' + ')}`:''}</div></div>
    <div class="row" style="margin-top:14px"><button class="btn grow" data-a="close">Cancel</button><button class="btn gold grow" data-a="sq-go" ${SQ.act?'':'disabled'}>Complete side quest</button></div>`;
   const mi=el.querySelector('#sqMin');mi.addEventListener('change',()=>{SQ.min=Math.max(1,Math.min(600,Math.round(+mi.value||0)));drawSQ()});
   const nm=el.querySelector('#sqName');if(nm)nm.addEventListener('input',()=>{SQ.name=nm.value})}
@@ -1303,7 +1316,7 @@ function completeSideQuest(){const q=SQ;if(!q||!q.act)return;const mi=$('#sqMin'
   const T=S.tower;let climb={amt:0,reason:`Needs ${SQ_MIN}+ minutes to climb`};
   const tb=S.bosses.find(b=>b.kind==='tower');
   if(q.min>=SQ_MIN){if(tb)climb={amt:0,reason:`${tb.name} blocks the stairs`};
-    else{if(T.dayD!==ds){T.dayD=ds;T.dayAmt=0}let amt=Math.min(covers?1:.5,1-T.dayAmt);
+    else{if(T.dayD!==ds){T.dayD=ds;T.dayAmt=0}let amt=Math.min(1,1-T.dayAmt);
       if(amt<=0)climb={amt:0,reason:'Daily climb limit reached (1 step per day)'};
       else{T.dayAmt+=amt;T.steps+=amt;climb={amt,reason:covers?(q.move==='push'?'Training day covered, gate pushed back':'Side quest replaced planned workout'):'Extra activity',floors:[]};
         while(T.steps>=4){T.steps-=4;T.floor++;climb.floors.push(T.floor);if(T.floor%10===0&&!T.beaten.includes(T.floor)){T.steps=0;spawnTower(T.floor);climb.spawned=T.floor;break}}}}
@@ -1432,7 +1445,7 @@ function tickCirc(){const c=CIRC;if(!c||!c.on)return;if(!S.active){stopCirc();re
 function skipCirc(){const c=CIRC;if(!c)return;c.paused=false;
   if(c.phase==='prep'||c.phase==='rest'){c.end=Date.now();tickCirc();return}
   c.i++;if(c.i>=c.q.length){finishCirc();return}if(c.q[c.i-1][2]){c.phase='rest';c.prepLen=CRS();c.end=Date.now()+CRS()*1000;say('Rest');raidRerender();tickCirc();return}const p=S.circPrep??5;if(p>0){c.phase='prep';c.prepLen=p;c.end=Date.now()+p*1000}else{const nm=circMove();c.phase='work';c.end=Date.now()+Math.max(1,(+nm.s.r||0.5)*60)*1000}raidRerender();tickCirc()}
-function say(w){try{const ss=window.speechSynthesis;if(!ss||S.voice===false)return;ss.cancel();const u=new SpeechSynthesisUtterance(w);u.rate=1.05;u.pitch=1;u.volume=1;ss.speak(u)}catch(e){}}
+function say(w){try{const ss=window.speechSynthesis;if(!ss||S.voice===false)return;mixAudio();ss.cancel();const u=new SpeechSynthesisUtterance(w);u.rate=1.05;u.pitch=1;u.volume=1;ss.speak(u)}catch(e){}}
 function voiceUnlock(){try{const ss=window.speechSynthesis;if(!ss)return;const u=new SpeechSynthesisUtterance(' ');u.volume=0;ss.speak(u)}catch(e){}}
 function beepTick(f){try{tone(f,0,.08,{type:'square',g:.06})}catch(e){}}
 function stopCirc(){if(CIRC){clearInterval(CIRC.timer);CIRC.on=false}CIRC=null;const el=$('#circ');if(el)el.classList.remove('on')}
@@ -1519,8 +1532,7 @@ const MANUAL=[
   <li>On a planned day you can <b>Replace</b> the gate or <b>Push it back</b> a day (shifts your cycle).</li></ul>`],
  ['📅','Training cycle',`<p>Set it on the Gates tab: pick a pattern (3 on / 1 off, 6 on / 1 off…), choose a gate for each day, and a start date. It repeats forever and can be changed any time without losing history.</p>
   <p>The strip shows ✓ trained, ✗ missed, ◆ today.</p>`],
- ['🏯','The Tower',`<ul><li>A planned gate cleared on its day = <b>1 step</b>. Any other workout = ½ step. Max 1 step per day.</li>
-  <li>A workout needs 5+ sets or 20+ cardio minutes to count. <b>4 steps = 1 floor.</b></li>
+ ['🏯','The Tower',`<ul><li>Every workout = <b>1 step</b>, planned or not, even on a rest day. Side quests of 20+ minutes count too. Max 1 step per day.</li>   <li><b>4 steps = 1 floor.</b> Missing 3 planned workouts in a row resets your steps on the current floor (never the floor itself). Vacation mode in Settings pauses this.</li>
   <li>Every 10th floor has a guardian. Climbing pauses until you beat it.</li>
   <li>Missing 3 planned workouts in a row resets your steps on the current floor. You never lose a floor.</li></ul>`],
  ['☠️','Bosses',`<ul><li><b>Strength</b>: lift a target just above your best (e.g. 195 lb × 8). The exercise shows a ☠ weak point during raids.</li>
@@ -1531,7 +1543,7 @@ const MANUAL=[
  ['⚜️','Class advancement',`<p>Each class has 3 tiers (e.g. Warrior → Berserker → Warlord).</p>
   <ul><li>Tier 2: clear tower floor 30 and reach C-Rank. Tier 3: floor 70 and A-Rank.</li>
   <li>Start the trial from <b>Tower → Class advancement</b>. Each tier adds main-attribute points and a % EXP bonus.</li></ul>`],
- ['🎁','Loot, armory and companions',`<ul><li>Gates with 5+ sets have a 10–26% gear drop chance (higher for harder clears). Bosses always drop gear.</li>
+ ['🎁','Loot, armory and companions',`<ul><li>Gates with 5+ sets have a 20–50% gear drop chance (higher for harder clears). Bosses always drop gear.</li>
   <li>Rarity: Common +1% EXP / +1 stat, Rare +2/+2, Epic +3/+3, Legendary +5/+5. Better items equip automatically.</li>
   <li>Tap a slot in <b>Tower → Armory</b> to see every item for that slot: found ones in color, missing ones greyed out, and 2 hidden <b style="color:#ff3b5c">Mythic</b> items per slot. Mythics only drop from tower guardians (3% + 1% per guardian tier, up to 12%). Harder clears drop gear more often and rarer: an S clear has a 26% drop chance with 10% legendary odds, an E clear 10% with none.</li><li>Manage gear in <b>Tower → Armory</b>. Salvage spare items for 5 / 10 / 25 / 50 EXP.</li>
   <li>Defeated guardians become companions. Your active companion adds +2% EXP.</li></ul>`],
@@ -1588,11 +1600,74 @@ function openAddFriend(){const el=openSheet(`<div class="wt" style="color:var(--
 function openManageFriends(){openSheet(`<div class="wt">Friends</div><div class="list">${(S.friends||[]).map(f=>`<div class="item row"><div class="grow">${esc((LB[f.uid]&&LB[f.uid].name)||f.name)} <span class="tiny dim mono">${esc(f.code||'')}</span></div><button class="btn sm red" data-a="lb-rm" data-id="${esc(f.uid)}">Remove</button></div>`).join('')||'<div class="empty small">No friends yet.</div>'}</div><button class="btn block" style="margin-top:12px" data-a="close">Done</button>`)}
 window.addEventListener('arise-cloud',()=>{lbSubscribe();lbPublish();if(TAB==='status'&&!sheets.length&&S.hunter&&!(S.active&&RAID_VIEW))render()});
 
+/* ---------- linked gates (Google version only) ----------
+   One shared copy of each linked gate lives in /linked/{gateId}. Only its owner can change it;
+   everyone else's copy follows it. Built-in workout sets are owned by the friend codes below. */
+let PACK_OWNERS={'gx-cb':'NK9Q9E','gx-legs':'NK9Q9E','gx-arms':'NK9Q9E',
+  'gx-pusha':'BKC7PH','gx-pulla':'BKC7PH','gx-legs2':'BKC7PH','gx-pushb':'BKC7PH',
+  'gg-mon':'8RT28N','gg-tue':'8RT28N','gg-wed':'8RT28N','gg-thu':'8RT28N','gg-fri':'8RT28N'};
+const LINK=window.LINK={owners:{},watching:null,started:false,
+  cloud(){const C=window.ARISE_CLOUD;return C&&C.ready&&C.code&&S.hunter?C:null},
+  payload(g){const cx=g.ex.map(e=>e.id).filter(id=>/^c/.test(id)).map(id=>(S.custom||[]).find(x=>x.id===id)).filter(Boolean)
+    .map(x=>({id:x.id,name:x.name,stat:x.stat,type:x.type}));
+    return{name:g.name,lore:g.lore||'',ex:g.ex.map(e=>{const o={id:e.id,sets:+e.sets||0,reps:+e.reps||0};if(e.rmax)o.rmax=+e.rmax;if(e.wu)o.wu=1;if(e.ss)o.ss=e.ss;return o}),cx}},
+  async start(){const C=this.cloud();if(!C)return;let changed=false;
+    for(const g of S.gates){const oc=PACK_OWNERS[g.id];if(!oc)continue;
+      if(oc===C.code){if(!g.link||!g.link.mine){g.link={mine:true,by:S.hunter.name};changed=true}
+        const cur=await C.linkGet(g.id);if(cur===undefined)continue;
+        if(!cur||(cur.owner===C.uid&&(JSON.stringify(cur.gate)!==JSON.stringify(this.payload(g))||cur.ownerName!==S.hunter.name)))await this.publish(g,cur?cur.sharedWith:[])}
+      else if(!this.owners[oc])this.owners[oc]=await C.codeUid(oc)}
+    if(changed){persist();if(!EDIT)render()}
+    this.watch();if(!this.started){this.started=true;C.watchSharedWithMe(list=>this.onShared(list))}},
+  watch(){const C=this.cloud();if(!C)return;
+    const ids=S.gates.filter(g=>(PACK_OWNERS[g.id]&&PACK_OWNERS[g.id]!==C.code)||(g.link&&!g.link.mine)).map(g=>g.id).sort();
+    const key=ids.join(',');if(key===this.watching)return;this.watching=key;C.watchLinked(ids,(id,d)=>this.onDoc(id,d))},
+  expected(g){const oc=PACK_OWNERS[g.id];if(oc)return this.owners[oc]||null;return g.link&&g.link.uid||null},
+  onDoc(id,d){const g=S.gates.find(x=>x.id===id);if(!g)return;
+    if(!d){if(g.link&&!g.link.mine){const pack=!!PACK_OWNERS[id];delete g.link;persist();if(!EDIT)render();if(!pack)toast(`<b>${esc(g.name)}</b> is no longer shared with you. You kept your copy.`,'','[Guild]')}return}
+    const exp=this.expected(g);if(!exp||d.owner!==exp)return; // only trust the real owner
+    this.apply(g,d)},
+  apply(g,d){if(!d.gate||!Array.isArray(d.gate.ex))return;
+    (d.gate.cx||[]).forEach(x=>{if(x&&x.id&&!(S.custom||[]).some(c=>c.id===x.id)){S.custom=S.custom||[];S.custom.push({id:x.id,name:x.name,stat:x.stat,type:x.type})}});
+    const ng={id:g.id,name:d.gate.name,rank:'E',lore:d.gate.lore||'',ex:d.gate.ex,link:{mine:false,by:d.ownerName||'a friend',uid:d.owner}};ng.rank=assessRank(ng);
+    if(JSON.stringify(ng)===JSON.stringify(g))return;Object.keys(g).forEach(k=>delete g[k]);Object.assign(g,ng);persist();if(!EDIT)render()},
+  onShared(list){const C=this.cloud();if(!C)return;let added=0;
+    list.forEach(d=>{if(d.owner===C.uid||(S.linkGone||[]).includes(d.id))return;const g=S.gates.find(x=>x.id===d.id);
+      if(g){if(!g.link)g.link={mine:false,by:d.ownerName,uid:d.owner};this.apply(g,d);return}
+      const ng={id:d.id,name:'',rank:'E',ex:[]};S.gates.push(ng);this.apply(ng,d);added++;
+      toast(`<b>${esc(d.ownerName||'A friend')}</b> shared a gate with you: <b>${esc(d.gate.name)}</b>. It's in your Gates now.`,'gold','[Guild]')});
+    if(added){persist();if(!EDIT)render()}this.watch()},
+  async publish(g,sharedWith){const C=this.cloud();if(!C)return false;
+    try{await C.linkPublish(g.id,S.hunter.name,this.payload(g),sharedWith||[]);return true}catch(e){toast("Couldn't update the linked gate. Check your connection and try again.",'red');return false}},
+  async saved(g){const C=this.cloud();if(!C||!g.link||!g.link.mine)return;const cur=await C.linkGet(g.id);if(cur&&cur.owner!==C.uid)return;
+    if(await this.publish(g,cur?cur.sharedWith:[]))toast('Linked gate updated for everyone who has it.','','[Guild]',true)},
+  deleted(g){const C=this.cloud();if(!C||!g.link)return;if(g.link.mine)C.linkDelete(g.id);else S.linkGone=[...(S.linkGone||[]),g.id].slice(-100)},
+  async openShare(id){const C=this.cloud();const g=S.gates.find(x=>x.id===id);if(!C||!g)return;
+    if(g.link&&!g.link.mine){toast('Only the owner can share this gate.','red');return}
+    const fr=S.friends||[];if(!fr.length){toast('Add friends on your Status screen first, then you can share gates with them.');return}
+    const cur=await C.linkGet(g.id);const on=new Set(cur&&cur.owner===C.uid?cur.sharedWith||[]:[]);
+    openSheet(`<div class="wt">🔗 Share ${esc(g.name)}</div><div class="small dim" style="margin-bottom:8px">Friends you pick get this gate. When you edit it, their copy updates too. Only you can change it.</div>
+      <div class="list">${fr.map(f=>`<label class="item row" style="gap:10px"><input type="checkbox" class="shf" value="${esc(f.uid)}" ${on.has(f.uid)?'checked':''}><span class="grow">${esc((LB[f.uid]&&LB[f.uid].name)||f.name)}</span></label>`).join('')}</div>
+      <button class="btn pri block" style="margin-top:12px" data-a="lk-save" data-id="${esc(g.id)}">Save sharing</button>`)},
+  async saveShare(id){const C=this.cloud();const g=S.gates.find(x=>x.id===id);if(!C||!g)return;
+    const uids=[...document.querySelectorAll('.shf:checked')].map(x=>x.value);
+    if(!uids.length&&!PACK_OWNERS[g.id]){C.linkDelete(g.id);delete g.link;persist();while(sheets.length)closeSheet();render();toast('Stopped sharing. Friends keep the copy they had.');return}
+    g.link={mine:true,by:S.hunter.name};if(await this.publish(g,uids)){persist();while(sheets.length)closeSheet();render();toast(`Shared with ${uids.length} friend${uids.length===1?'':'s'}.`,'gold','[Guild]')}}
+};
+window.addEventListener('arise-cloud',()=>{if(S&&S.hunter)LINK.start()});
+
 /* ================= GATE EDITOR / PICKER ================= */
 let EDIT=null;
 function geRankHtml(){const sc=gateScore(EDIT),r=scoreRank(sc),i=GATE_TH.findIndex(t=>t[1]===r),nx=GATE_TH[i+1];return`<div class="row" style="gap:10px"><span class="rank r${r}">${r}</span><div class="grow tiny dim">Work score <b class="mono" style="color:var(--txt)">${sc.toFixed(1)}</b>${nx?` · ${nx[1]} at ${nx[0]}`:' · max rank'}<br>Rank comes from working sets (warm-ups don't count, max 6 per exercise). Add exercises or sets to raise it.</div></div>`}
 function geRankUpd(){const el=$('#geRank');if(el&&EDIT)el.innerHTML=geRankHtml()}
-function openGateEditor(g){
+function gateLocked(g){return !!(g&&g.link&&!g.link.mine)}
+function openLockedGate(g){const by=esc(g.link.by||'a friend');
+  openSheet(`<div class="wt">${esc(g.name)}</div><div class="callout" style="margin:6px 0 10px">🔗 <b>Linked gate · managed by ${by}.</b> When ${by} edits it, your copy updates automatically. Only ${by} can change it.</div>
+   ${g.lore?`<div class="small dim" style="margin-bottom:8px">${esc(g.lore)}</div>`:''}
+   <div class="list">${g.ex.map(e=>`<div class="item row"><div class="grow">${esc(exInfo(e.id).name)}${e.ss?` <span class="tiny" style="color:var(--purple)">superset ${e.ss}</span>`:''}</div><span class="tiny mono">${e.wu?'1 warm-up + ':''}${(+e.sets||0)-(e.wu?1:0)} × ${isSec(exInfo(e.id))?Math.round((+e.reps||0)*60)+' sec':e.reps+(e.rmax?'–'+e.rmax:'')+(exInfo(e.id).type==='t'?' min':'')}</span></div>`).join('')}</div>
+   <button class="btn block" style="margin-top:12px" data-a="ge-copy" data-id="${g.id}">Make my own copy</button>
+   <div class="tiny dim" style="margin-top:6px">Your copy is separate: you can edit it, and it won't change when ${by} edits theirs.</div>`)}
+function openGateEditor(g){if(gateLocked(g)){openLockedGate(g);return}
   EDIT=g?JSON.parse(JSON.stringify(g)):{id:'g'+uid(),name:'',rank:'E',lore:'',ex:[],_new:true};
   EDIT.ex.forEach((e,i)=>{e.ssn=!!(e.ss&&EDIT.ex[i+1]&&EDIT.ex[i+1].ss===e.ss)});
   openSheet('<div id="ge"></div>',{onClose:()=>{EDIT=null}});drawGateEditor();
@@ -1608,7 +1683,7 @@ function drawGateEditor(){const el=$('#ge');if(!el||!EDIT)return;
      <div class="row" style="margin-top:6px"><span class="tiny dim">Sets</span><input class="f" style="width:70px" type="number" inputmode="numeric" min="1" data-gi="${i}" data-gk="sets" value="${e.sets}"><span class="tiny dim">${d.type==='t'?(isSec(d)?'Seconds':'Minutes'):'Reps'}</span><input class="f" style="width:80px" type="number" inputmode="decimal" min="0" step="any" data-gi="${i}" data-gk="reps" ${isSec(d)?'data-u="sec"':''} value="${d.type==='t'?tDisp(d,e.reps):e.reps}">${d.type==='w'||d.type==='bw'?`<span class="tiny dim">to</span><input class="f" style="width:64px" type="number" inputmode="numeric" min="0" placeholder="max" data-gi="${i}" data-gk="rmax" value="${e.rmax||''}">`:''}</div>
      <div class="row tiny dim" style="margin-top:6px;gap:14px"><label><input type="checkbox" data-gi="${i}" data-gk="wu" ${+e.wu?'checked':''}> 1st set is warm-up</label>${i<EDIT.ex.length-1?`<label><input type="checkbox" data-gi="${i}" data-gk="ssn" ${e.ssn?'checked':''}> Superset with next</label>`:''}</div></div>`}).join('')||'<div class="empty small">No monsters yet.</div>'}</div>
    <button class="btn block" style="margin-top:8px" data-a="ge-add">+ Add exercise</button>
-   <div class="row" style="margin-top:14px">${EDIT._new?'':'<button class="btn red" data-a="ge-del">Delete</button>'}<span class="grow"></span><button class="btn" data-a="close">Cancel</button><button class="btn pri" data-a="ge-save">Save gate</button></div>`;
+   <div class="row" style="margin-top:14px">${EDIT._new?'':'<button class="btn red" data-a="ge-del">Delete</button>'}${window.LINK&&!EDIT._new?'<button class="btn" data-a="ge-share" style="margin-left:6px">🔗 Share</button>':''}<span class="grow"></span><button class="btn" data-a="close">Cancel</button><button class="btn pri" data-a="ge-save">Save gate</button></div>`;
 }
 let PICK_CB=null;
 function openPicker(cb){PICK_CB=cb;const el=openSheet(`<div class="wt">Choose exercise</div><input class="f" id="pq" placeholder="Search…" autocomplete="off"><div id="pl" style="margin-top:6px"></div>
@@ -1634,6 +1709,11 @@ function drawSettings(){const el=$('#st');if(!el)return;const d=S.daily;
   <label class="l">Class</label><select class="f" data-st="cls">${Object.entries(CLASSES).map(([k,c])=>`<option value="${k}" ${S.hunter.cls===k?'selected':''}>${c.name} (+3 ${c.stat})</option>`).join('')}</select>
   <label class="l">Weight units</label><div class="seg"><button class="${U()==='lb'?'on':''}" data-a="units" data-u="lb">LB</button><button class="${U()==='kg'?'on':''}" data-a="units" data-u="kg">KG</button></div>
   <div class="tiny dim" style="margin-top:4px">Switching converts every logged weight.</div>
+  <label class="l">Vacation mode</label>
+  ${vacOn()?`<div class="callout" style="margin:4px 0"><b>🏖 On vacation until ${fmtDate(S.vac.end)}.</b><div class="tiny dim" style="margin-top:4px">Missed workouts don't count, your daily streak is frozen, and siege timers are paused.</div><button class="btn sm" style="margin-top:8px" data-a="vac-end">End vacation now</button></div>`
+    :`<div class="row" style="gap:8px"><input class="f grow" type="date" id="vacEnd" min="${addDays(today(),1)}" max="${addDays(today(),VAC_MAX)}" value="${addDays(today(),7)}"><button class="btn sm pri" data-a="vac-start">Start</button></div><div class="tiny dim" style="margin-top:4px">Up to ${VAC_MAX} days. Protects your daily streak, tower steps and siege timers while you're away.</div>`}
+  <label class="l">Voice cues during circuits</label>
+  <div class="row"><div class="seg" style="width:120px"><button class="${S.voice!==false?'on':''}" data-a="voice" data-v="1">On</button><button class="${S.voice===false?'on':''}" data-a="voice" data-v="0">Off</button></div><span class="tiny dim grow" style="margin-left:8px">Says Start, Next, Rest, End</span></div>
   <label class="l">Sound effects</label>
   <div class="row"><div class="seg" style="width:120px"><button class="${S.sfx!==false?'on':''}" data-a="sfx" data-v="1">On</button><button class="${S.sfx===false?'on':''}" data-a="sfx" data-v="0">Off</button></div>
   <input type="range" class="grow" min="0" max="1" step="0.05" data-st="vol" value="${S.vol??.7}" ${S.sfx===false?'disabled':''}><button class="btn sm" data-a="sfxtest">Test</button></div>
@@ -1679,6 +1759,7 @@ document.addEventListener('click',e=>{
   case'lb-sort':LB_SORT=ds.k;render();break;
   case'lb-add':openAddFriend();break;
   case'lb-manage':openManageFriends();break;
+  case'lk-save':LINK.saveShare(ds.id);break;
   case'lb-rm':S.friends=(S.friends||[]).filter(f=>f.uid!==ds.id);delete LB[ds.id];persist(null,true);LB_KEY='';lbSubscribe();closeSheet();render();break;
   case'lb-share':{const C=window.ARISE_CLOUD;const txt=`Add me on Arise! My hunter code: ${C.code}\n${location.origin+location.pathname}`;
     if(navigator.share){navigator.share({text:txt}).catch(()=>{})}else if(navigator.clipboard){navigator.clipboard.writeText(txt).then(()=>toast('Code copied. Send it to a friend.'),()=>showText(txt))}else showText(txt);break}
@@ -1725,6 +1806,9 @@ document.addEventListener('click',e=>{
   case'pick-gear':{const it=S.gear.find(g=>g.id===ds.id);if(!it)return;S.equip[it.slot]=it.id;sfx('loot');buzz(30);persist();render();shrinkClose();break}
   case'pick-none':{delete S.equip[ds.sl];persist();render();shrinkClose();break}
   case'pick-locked':buzz(15);break;
+  case'vac-start':{const v=($('#vacEnd')||{}).value;if(!v||v<=today()||v>addDays(today(),VAC_MAX)){toast(`Pick an end date within ${VAC_MAX} days.`,'red');break}startVacation(v);openSettings();render();toast(`Vacation mode on until ${fmtDate(v)}. Enjoy it, Hunter.`,'gold');break}
+  case'vac-end':endVacation();if(sheets.length)openSettings();render();break;
+  case'voice':S.voice=ds.v==='1';persist();openSettings();if(S.voice)say('Next');break;
   case'pick-tab':{PICK_TAB=ds.t;const b=$('#pkbody'),t=$('#pktabs');if(b){b.innerHTML=pickerBody(ds.sl,ds.t);b.scrollTop=0}if(t)t.innerHTML=pickerTabs(ds.sl,ds.t);break}
   case'equip-item':{const it=S.gear.find(g=>g.id===ds.id);if(it){S.equip[it.slot]=it.id;sfx('loot');persist();closeSheet();render()}break}
   case'unequip':{const it=S.gear.find(g=>g.id===ds.id);if(it){delete S.equip[it.slot];persist();closeSheet();render()}break}
@@ -1775,9 +1859,11 @@ document.addEventListener('click',e=>{
   case'ge-save':{if(!EDIT.name.trim()){toast('Name your gate.','red');return}if(!EDIT.ex.length){toast('Add at least one exercise.','red');return}
     const L='ABCDEFGHIJ';let li=0;const exs=EDIT.ex.map(e=>{const o={id:e.id,sets:e.sets,reps:e.reps};if(+e.rmax>+e.reps)o.rmax=+e.rmax;if(e.wu)o.wu=1;return o});
     for(let q=0;q<EDIT.ex.length;q++){if(EDIT.ex[q].ssn&&exs[q+1]){const tag=exs[q].ss||L[li++%10];exs[q].ss=tag;exs[q+1].ss=tag}}
-    const g={id:EDIT.id,name:EDIT.name.trim(),rank:'E',lore:EDIT.lore,ex:exs};g.rank=assessRank(g);const i=S.gates.findIndex(x=>x.id===g.id);if(i>=0)S.gates[i]=g;else S.gates.push(g);
+    const g={id:EDIT.id,name:EDIT.name.trim(),rank:'E',lore:EDIT.lore,ex:exs};g.rank=assessRank(g);const i=S.gates.findIndex(x=>x.id===g.id);if(i>=0&&S.gates[i].link)g.link=S.gates[i].link;if(i>=0)S.gates[i]=g;else S.gates.push(g);if(window.LINK)LINK.saved(g);
     checkAch();persist();closeSheet();render();toast(`Gate <b>${esc(g.name)}</b> ${i>=0?'updated':'forged'}.`);break}
-  case'ge-del':{const id=EDIT.id;confirmBox('Delete gate',`Delete <b>${esc(EDIT.name)}</b>? Your raid history is kept.`,'Delete',()=>{S.gates=S.gates.filter(x=>x.id!==id);if(S.plan)S.plan.cycle=S.plan.cycle.map(v=>v===id?'rest':v);persist();closeSheet();render()},true);break}
+  case'ge-copy':{const o=S.gates.find(x=>x.id===ds.id);if(!o)break;const c=JSON.parse(JSON.stringify(o));delete c.link;c.id='g'+uid();c.name=(o.name+' (my copy)').slice(0,40);S.gates.push(c);persist();closeSheet();render();toast(`Made your own copy: <b>${esc(c.name)}</b>. Edit it however you like.`,'gold');openGateEditor(c);break}
+  case'ge-share':if(window.LINK)LINK.openShare(EDIT.id);break;
+  case'ge-del':{const id=EDIT.id;confirmBox('Delete gate',`Delete <b>${esc(EDIT.name)}</b>? Your raid history is kept.`,'Delete',()=>{{const dg=S.gates.find(x=>x.id===id);if(window.LINK&&dg)LINK.deleted(dg)}S.gates=S.gates.filter(x=>x.id!==id);if(S.plan)S.plan.cycle=S.plan.cycle.map(v=>v===id?'rest':v);persist();closeSheet();render()},true);break}
   case'pick':pickDone(ds.id);break;
   case'cx-add':{const n=$('#cxn').value.trim();if(!n){toast('Name the exercise.','red');return}const x={id:'c'+uid(),name:n,stat:$('#cxs').value,type:$('#cxt').value};S.custom.push(x);persist();pickDone(x.id);break}
   case'dellog':confirmBox('Delete entry','Remove this raid from your chronicle? EXP already earned is kept.','Delete',()=>{const l=LOGS.find(x=>x.id===ds.id);LOGS=LOGS.filter(x=>x.id!==ds.id);rebuildPRs();persist(l?[l.date.slice(0,7)]:[]);render()},true);break;

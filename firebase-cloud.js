@@ -4,7 +4,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.19.0/fireba
 import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword,
   signInWithEmailAndPassword, sendPasswordResetEmail, signOut as fbSignOut } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import { initializeFirestore, persistentLocalCache, persistentSingleTabManager, collection, doc, getDoc, getDocs,
-  setDoc, deleteDoc, onSnapshot, disableNetwork, enableNetwork, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+  setDoc, deleteDoc, onSnapshot, disableNetwork, enableNetwork, serverTimestamp, query, where } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 
 const $ = s => document.querySelector(s);
 const ui = {
@@ -74,7 +74,7 @@ function makeDb(uid) {
 // ---- friend codes and leaderboard cards
 const ALPH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const newCode = () => Array.from({ length: 6 }, () => ALPH[Math.floor(Math.random() * ALPH.length)]).join('');
-let lastCard = '', unsubCards = null;
+let lastCard = '', unsubCards = null, unsubLinked = null, unsubShared = null;
 const cloud = {
   uid: null, email: '', code: '', ready: false,
   async ensureCode() {
@@ -111,6 +111,28 @@ const cloud = {
     const list = [...new Set(uids)].filter(Boolean).slice(0, 30);
     const out = {}; unsubCards = list.map(uid => onSnapshot(doc(db, 'cards', uid),
       d => { if (d.exists()) { const x = d.data(); if (x.updated && typeof x.updated.toMillis === 'function') x.updated = x.updated.toMillis(); out[uid] = x; } else delete out[uid]; cb({ ...out }); }, () => {}));
+  },
+  // ---- linked gates: one shared copy per gate in /linked/{gateId}; only its owner can change it
+  async codeUid(code) {
+    try { const c = await getDoc(doc(db, 'codes', String(code || '').toUpperCase())); return c.exists() ? c.data().uid : null; } catch (e) { return null; }
+  },
+  async linkGet(id) {
+    try { const d = await getDoc(doc(db, 'linked', id)); return d.exists() ? d.data() : null; } catch (e) { return undefined; }
+  },
+  async linkPublish(id, ownerName, gate, sharedWith) {
+    await setDoc(doc(db, 'linked', id), { owner: this.uid, ownerName: String(ownerName || 'Hunter').slice(0, 24),
+      gate: clean(gate), sharedWith: (sharedWith || []).slice(0, 50), updated: serverTimestamp() });
+  },
+  async linkDelete(id) { try { await deleteDoc(doc(db, 'linked', id)); } catch (e) {} },
+  watchLinked(ids, cb) {
+    if (unsubLinked) { unsubLinked.forEach(u => u()); unsubLinked = null; }
+    unsubLinked = [...new Set(ids)].filter(Boolean).slice(0, 60).map(id =>
+      onSnapshot(doc(db, 'linked', id), d => cb(id, d.exists() ? d.data() : null), () => {}));
+  },
+  watchSharedWithMe(cb) {
+    if (unsubShared) { unsubShared(); unsubShared = null; }
+    unsubShared = onSnapshot(query(collection(db, 'linked'), where('sharedWith', 'array-contains', this.uid)),
+      snap => cb(snap.docs.map(d => ({ id: d.id, ...d.data() }))), () => {});
   },
   async signOut() {
     try { await fbSignOut(auth); } catch (e) {}

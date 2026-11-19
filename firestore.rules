@@ -21,6 +21,26 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Linked gates: one shared copy of a gate. Signed-in hunters can read one by its id, and can list
+    // only the ones shared with them. Only the owner can create, change or delete it.
+    match /linked/{gid} {
+      allow get: if request.auth != null;
+      allow list: if request.auth != null && request.auth.uid in resource.data.sharedWith;
+      allow create: if request.auth != null && request.resource.data.owner == request.auth.uid && validLinked();
+      allow update: if request.auth != null && resource.data.owner == request.auth.uid
+                    && request.resource.data.owner == request.auth.uid && validLinked();
+      allow delete: if request.auth != null && resource.data.owner == request.auth.uid;
+    }
+    function validLinked() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['owner', 'ownerName', 'gate', 'sharedWith', 'updated'])
+        && d.updated == request.time
+        && d.ownerName is string && d.ownerName.size() <= 24
+        && d.gate is map && d.gate.name is string && d.gate.name.size() <= 40
+        && d.gate.ex is list && d.gate.ex.size() <= 40
+        && d.sharedWith is list && d.sharedWith.size() <= 50;
+    }
+
     // ---------- leaderboard card checks ----------
     function validCard() {
       let d = request.resource.data;
